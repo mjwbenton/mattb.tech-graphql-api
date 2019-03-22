@@ -1,0 +1,31 @@
+{
+  "name": "@mattb.tech/graphql-api",
+  "version": "1.0.0",
+  "description": "Graphql API for mattb.tech",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit && prettier --check '**/*'",
+    "create-stack": "cf-create-stack -s mattb-tech-graphql-api -p mattb.tech-deploy -f template.yaml",
+    "update-stack": "cf-deploy-stack -s mattb-tech-graphql-api -p mattb.tech-deploy -f template.yaml",
+    "update-lambda": "cf-update-lambda -s mattb-tech-graphql-api -p mattb.tech-deploy -c mattb.tech-graphql-api -k graphql-api.zip -r GraphqlApi"
+  },
+  "author": "Matt Benton <m@mattb.tech>",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@mattb.tech/cloudformation-scripts": "^2.0.0",
+    "@types/dotenv": "^4.0.3",
+    "@types/graphql": "^14.0.7",
+    "typescript": "^3.3.3333"
+  },
+  "dependencies": {
+    "@mattb.tech/flickr-api": "^1.1.1",
+    "apollo-datasource": "^0.3.1",
+    "apollo-server-cache-dynamodb": "^2.0.0",
+    "apollo-server-lambda": "^2.4.8",
+    "aws-lambda": "^0.1.2",
+    "aws-sdk": "^2.424.0",
+    "dotenv": "^6.2.0",
+    "graphql": "^14.1.1"
+  }
+}

@@ -1,0 +1,57 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Api:
+    Cors:
+      AllowHeaders: "'content-type'"
+      AllowOrigin: "'*'"
+
+Resources:
+  CodeBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: mattb.tech-graphql-api
+
+  GraphqlApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/index.handler
+      Runtime: nodejs8.10
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:DeleteItem
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+              Resource:
+                Fn::GetAtt:
+                  - ApolloCacheTable
+                  - Arn
+      CodeUri: s3://mattb.tech-graphql-api/graphql-api.zip
+      Events:
+        GraphqlPlayground:
+          Type: Api
+          Properties:
+            Path: /graphql
+            Method: get
+        Graphql:
+          Type: Api
+          Properties:
+            Path: /graphql
+            Method: post
+
+  ApolloCacheTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "apollo-cache-table"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: CacheKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: CacheKey
+          KeyType: HASH
