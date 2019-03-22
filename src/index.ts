@@ -1,74 +1,46 @@
 import * as dotenv from "dotenv";
-import { ApolloServer, gql } from "apollo-server-lambda";
-import { FlickrDataSource } from "./FlickrApi";
-import DynamoDB from "aws-sdk/clients/dynamodb";
-import { DynamoDBCache } from "apollo-server-cache-dynamodb";
-
 dotenv.config();
 
-const { FLICKR_API_KEY } = process.env;
-const USER_ID = "83914470@N00";
+import { ApolloServer, gql, mergeSchemas } from "apollo-server-lambda";
+import githubSchema from "./githubSchema";
+import flickrSchema from "./flickrSchema";
+import { promisify } from "util";
+import cache from "./cache";
+import dataSources from "./dataSources";
 
-if (!FLICKR_API_KEY) {
-  throw new Error("Missing flickr API key");
-}
+let handler = null;
 
-const typeDefs = gql`
-  type Query {
-    recentPhotos: [Photo]
-    photoSet(photosetId: ID): [Photo]
-    photo(photoId: ID): Photo
+exports.handler = async (event, context, callback) => {
+  if (handler == null) {
+    const server = new ApolloServer({
+      schema: mergeSchemas({
+        schemas: [await flickrSchema(), await githubSchema()],
+        resolvers: mergeInfo => ({
+          Query: {}
+        })
+      }),
+      dataSources,
+      cache
+    });
+    console.log(`Server created ${JSON.stringify(server, null, 2)}`);
+
+    handler = promisify(
+      server.createHandler({
+        cors: {
+          origin: "*",
+          credentials: false
+        }
+      })
+    );
+    console.log(`Handler created ${JSON.stringify(handler, null, 2)}`);
   }
 
-  type Photo {
-    id: ID
-    pageUrl: String
-    title: String
-    mainSource: PhotoSource
-    sources: [PhotoSource]
-  }
-
-  type PhotoSource {
-    url: String
-    width: Int
-    height: Int
-  }
-`;
-
-const dataSources = {
-  flickr: new FlickrDataSource(FLICKR_API_KEY)
-};
-
-type ContextType = {
-  dataSources: typeof dataSources;
-};
-
-const resolvers = {
-  Query: {
-    recentPhotos: (_: never, __: never, context: ContextType) =>
-      context.dataSources.flickr.getRecentPhotos(),
-    photoSet: (
-      _: never,
-      { photosetId }: { photosetId: string },
-      context: ContextType
-    ) => context.dataSources.flickr.getPhotoSet(photosetId),
-    photo: (_: never, { photoId }: { photoId: string }, context: ContextType) =>
-      context.dataSources.flickr.getPhoto(photoId)
+  try {
+    const response = await handler(event, context);
+    console.log(`Result ${JSON.stringify(response, null, 2)}`);
+    callback(null, response);
+  } catch (err) {
+    console.error(`Error: ${JSON.stringify(err, null, 2)}`);
+    callback(err, null);
   }
 };
-
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  dataSources: () => dataSources,
-  cache: new DynamoDBCache(new DynamoDB.DocumentClient(), {
-    tableName: "apollo-cache-table"
-  })
-});
-
-exports.handler = server.createHandler({
-  cors: {
-    origin: "*",
-    credentials: false
-  }
-});

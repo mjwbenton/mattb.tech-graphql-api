@@ -6,9 +6,14 @@ const USER_ID = "83914470@N00";
 
 export class FlickrDataSource<TContext = any> extends DataSource {
   private cache!: KeyValueCache;
+  private apiKey: string;
 
-  constructor(private apiKey: string) {
+  constructor() {
     super();
+    this.apiKey = process.env.FLICKR_API_KEY;
+    if (!this.apiKey) {
+      throw new Error("Missing flickr API key");
+    }
   }
 
   initialize(config: DataSourceConfig<TContext>): void {

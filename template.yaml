@@ -7,6 +7,12 @@ Globals:
     Cors:
       AllowHeaders: "'content-type'"
       AllowOrigin: "'*'"
+    MethodSettings:
+      - LoggingLevel: "INFO"
+        MetricsEnabled: True
+        DataTraceEnabled: True
+        ResourcePath: "/*"
+        HttpMethod: "*"
 
 Resources:
   CodeBucket:
@@ -19,6 +25,7 @@ Resources:
     Properties:
       Handler: src/index.handler
       Runtime: nodejs8.10
+      Timeout: 20
       Policies:
         - Version: "2012-10-17"
           Statement:
