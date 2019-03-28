@@ -4,6 +4,7 @@ dotenv.config();
 import { ApolloServer, gql, mergeSchemas } from "apollo-server-lambda";
 import githubSchema from "./githubSchema";
 import flickrSchema from "./flickrSchema";
+import goodreadsSchema from "./goodreadsSchema";
 import { promisify } from "util";
 import cache from "./cache";
 import dataSources from "./dataSources";
@@ -14,10 +15,11 @@ exports.handler = async (event, context, callback) => {
   if (handler == null) {
     const server = new ApolloServer({
       schema: mergeSchemas({
-        schemas: [await flickrSchema(), await githubSchema()],
-        resolvers: mergeInfo => ({
-          Query: {}
-        })
+        schemas: await Promise.all([
+          await flickrSchema(),
+          await githubSchema(),
+          await goodreadsSchema()
+        ])
       }),
       dataSources,
       cache
@@ -32,7 +34,7 @@ exports.handler = async (event, context, callback) => {
         }
       })
     );
-    console.log(`Handler created ${JSON.stringify(handler, null, 2)}`);
+    console.log(`Handler created`);
   }
 
   try {

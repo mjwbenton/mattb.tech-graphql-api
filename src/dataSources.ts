@@ -1,7 +1,9 @@
 import { FlickrDataSource } from "./FlickrApi";
+import { GoodreadsDataSource } from "./GoodreadsApi";
 
 const dataSources = {
-  flickr: new FlickrDataSource()
+  flickr: new FlickrDataSource(),
+  goodreads: new GoodreadsDataSource()
 };
 
 export default () => dataSources;
