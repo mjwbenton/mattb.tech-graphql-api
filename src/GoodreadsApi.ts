@@ -73,8 +73,7 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
       return parsed.GoodreadsResponse.reviews[0].review.map(r => ({
         title: r.book[0].title[0],
         link: r.book[0].link[0],
-        rating: r.rating[0] !== "0" ? r.rating[0] : null,
-        year: r.book[0].published[0],
+        rating: r.rating[0] !== "0" ? parseInt(r.rating[0]) : null,
         image: r.book[0].image_url[0],
         authors: r.book[0].authors.map(a => {
           const nameWithSpaces = a.author[0].name;

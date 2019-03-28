@@ -7,13 +7,12 @@ const typeDefs = gql`
   }
 
   type Book {
-    title: String
-    link: String
-    ratings: String
-    year: String
+    title: String!
+    link: String!
+    rating: Int
     image: String
-    authors: [String]
-    read: Boolean
+    authors: [String]!
+    read: Boolean!
     started_at: String
     read_at: String
   }
