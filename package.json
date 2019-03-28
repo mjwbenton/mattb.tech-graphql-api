@@ -8,7 +8,8 @@
     "check": "tsc --noEmit && prettier --check '**/*'",
     "create-stack": "cf-create-stack -s mattb-tech-graphql-api -p mattb.tech-deploy -f template.yaml",
     "update-stack": "cf-deploy-stack -s mattb-tech-graphql-api -p mattb.tech-deploy -f template.yaml",
-    "update-lambda": "cf-update-lambda -s mattb-tech-graphql-api -p mattb.tech-deploy -c mattb.tech-graphql-api -k graphql-api.zip -r GraphqlApi"
+    "update-lambda": "cf-update-lambda -s mattb-tech-graphql-api -p mattb.tech-deploy -c mattb.tech-graphql-api -k graphql-api.zip -r GraphqlApi",
+    "goodreads-oauth": "node ./src/bin/goodreadsOauth.js"
   },
   "author": "Matt Benton <m@mattb.tech>",
   "license": "UNLICENSED",
@@ -18,6 +19,11 @@
     "@types/dotenv": "^4.0.3",
     "@types/graphql": "^14.0.7",
     "@types/node-fetch": "^2.1.7",
+    "@types/oauth": "^0.9.1",
+    "@types/request": "^2.48.1",
+    "@types/request-promise-native": "^1.0.15",
+    "@types/xml2js": "^0.4.3",
+    "oauth": "^0.9.15",
     "typescript": "^3.3.3333"
   },
   "dependencies": {
@@ -31,6 +37,9 @@
     "aws-sdk": "^2.424.0",
     "dotenv": "^6.2.0",
     "graphql": "^14.1.1",
-    "node-fetch": "^2.3.0"
+    "node-fetch": "^2.3.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7",
+    "xml2js": "^0.4.19"
   }
 }
