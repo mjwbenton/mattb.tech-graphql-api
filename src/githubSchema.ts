@@ -6,9 +6,10 @@ import {
   gql,
   mergeSchemas
 } from "apollo-server-lambda";
-import { HttpLink } from "apollo-link-http";
 import fetch from "node-fetch";
-import { setContext } from "apollo-link-context";
+import { print } from "graphql";
+import cache from "./cache";
+import doAndCache from "./doAndCache";
 
 const { GITHUB_TOKEN } = process.env;
 
@@ -16,16 +17,18 @@ if (!GITHUB_TOKEN) {
   throw new Error("Missing github token");
 }
 
-const link = setContext((request, prevContext) => ({
-  headers: {
-    Authorization: `bearer ${GITHUB_TOKEN}`
-  }
-})).concat(
-  new HttpLink({
-    uri: "https://api.github.com/graphql",
-    fetch
-  })
-);
+const fetcher = async ({ query: queryDocument, variables, operationName }) => {
+  const query = print(queryDocument);
+  const fetchResult = await fetch("https://api.github.com/graphql", {
+    method: "POST",
+    headers: {
+      Authorization: `bearer ${GITHUB_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ query, variables, operationName })
+  });
+  return fetchResult.json();
+};
 
 const typeDefs = gql`
   type Query {
@@ -35,8 +38,8 @@ const typeDefs = gql`
 
 export default async () => {
   const githubSchema = makeRemoteExecutableSchema({
-    schema: await introspectSchema(link),
-    link
+    schema: await introspectSchema(fetcher),
+    fetcher
   });
 
   const filteredSchema = transformSchema(githubSchema, [
