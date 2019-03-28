@@ -22,11 +22,7 @@ const recentBooks = async (
   _: never,
   { limit }: { limit: number } = { limit: 10 },
   context: DataSourcesContext
-) => {
-  const result = context.dataSources.goodreads.getRecentBooks(limit);
-  console.log(JSON.stringify(result, null, 2));
-  return result;
-};
+) => context.dataSources.goodreads.getRecentBooks(limit);
 
 const resolvers = {
   Query: {
