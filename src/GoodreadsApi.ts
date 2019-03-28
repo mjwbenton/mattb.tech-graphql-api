@@ -22,8 +22,7 @@ const BASE_URL = `https://www.goodreads.com/review/list/${USER_ID}.xml?`;
 const BASE_PARAMS = {
   v: 2,
   sort: "date_started",
-  shelf: "read",
-  page_page: 200
+  shelf: "read"
 };
 
 export class GoodreadsDataSource<TContext = any> extends DataSource {
@@ -58,10 +57,11 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
     this.cache = config.cache;
   }
 
-  public async getBooks() {
-    const cacheKey = `books`;
+  public async getRecentBooks(limit: number) {
+    const cacheKey = `recentBooks-limit-${limit}`;
     const url = `${BASE_URL}${qs.stringify({
-      ...BASE_PARAMS
+      ...BASE_PARAMS,
+      per_page: limit
     })}`;
 
     return doAndCache(this.cache, cacheKey, async () => {

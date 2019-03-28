@@ -3,7 +3,7 @@ import { DataSourcesContext } from "./dataSources";
 
 const typeDefs = gql`
   type Query {
-    recentBooks: [Book]
+    recentBooks(limit: Int): [Book]
   }
 
   type Book {
@@ -21,10 +21,10 @@ const typeDefs = gql`
 
 const recentBooks = async (
   _: never,
-  __: never,
+  { limit }: { limit: number } = { limit: 10 },
   context: DataSourcesContext
 ) => {
-  const result = context.dataSources.goodreads.getBooks();
+  const result = context.dataSources.goodreads.getRecentBooks(limit);
   console.log(JSON.stringify(result, null, 2));
   return result;
 };
