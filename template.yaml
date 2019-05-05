@@ -62,3 +62,6 @@ Resources:
       KeySchema:
         - AttributeName: CacheKey
           KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: CacheTTL
+        Enabled: True
