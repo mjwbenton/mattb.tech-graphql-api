@@ -8,6 +8,7 @@ const parseStringPromise = promisify(parseString) as (
 ) => Promise<any>;
 import qs from "querystring";
 import doAndCache from "./doAndCache";
+import moment from "moment";
 
 const USER_ID = "10445595";
 
@@ -24,6 +25,14 @@ const BASE_PARAMS = {
   sort: "date_started",
   shelf: "read"
 };
+
+function parseDate(dateStr?: string) {
+  if (dateStr == null) {
+    return dateStr;
+  }
+  const parsed = moment(dateStr, "ddd MMM DD HH:mm:ss Z YYYY");
+  return parsed.format("YYYY-MM-DD");
+}
 
 export class GoodreadsDataSource<TContext = any> extends DataSource {
   private cache!: KeyValueCache;
@@ -80,8 +89,8 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
           return `${nameWithSpaces}`.replace(/ +/g, " ");
         }),
         read: r.rating[0] !== "0",
-        started_at: r.started_at[0] || null,
-        read_at: r.read_at[0] || null
+        started_at: parseDate(r.started_at[0] || null),
+        read_at: parseDate(r.read_at[0] || r.date_added[0] || null)
       }));
     });
   }
