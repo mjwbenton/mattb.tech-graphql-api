@@ -22,8 +22,7 @@ type GoodreadsOauth = {
 const BASE_URL = `https://www.goodreads.com/review/list/${USER_ID}.xml?`;
 const BASE_PARAMS = {
   v: 2,
-  sort: "date_started",
-  shelf: "read"
+  sort: "date_started"
 };
 
 function parseDate(dateStr?: string) {
@@ -79,19 +78,35 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
         oauth: this.oauth
       });
       const parsed = await parseStringPromise(response);
-      return parsed.GoodreadsResponse.reviews[0].review.map(r => ({
-        title: r.book[0].title[0],
-        link: r.book[0].link[0],
-        rating: r.rating[0] !== "0" ? parseInt(r.rating[0]) : null,
-        image: r.book[0].image_url[0],
-        authors: r.book[0].authors.map(a => {
-          const nameWithSpaces = a.author[0].name;
-          return `${nameWithSpaces}`.replace(/ +/g, " ");
-        }),
-        read: r.rating[0] !== "0",
-        started_at: parseDate(r.started_at[0] || null),
-        read_at: parseDate(r.read_at[0] || r.date_added[0] || null)
-      }));
+      console.log(JSON.stringify(parsed, null, 2));
+      const result = parsed.GoodreadsResponse.reviews[0].review.map(
+        (r: any) => {
+          const book: any = {
+            title: r.book[0].title[0],
+            link: r.book[0].link[0],
+            rating: r.rating[0] !== "0" ? parseInt(r.rating[0]) : null,
+            image: r.book[0].image_url[0],
+            authors: r.book[0].authors.map((a: any) => {
+              const nameWithSpaces = a.author[0].name;
+              return `${nameWithSpaces}`.replace(/ +/g, " ");
+            }),
+            read: r.rating[0] !== "0"
+          };
+          book.started_at = parseDate(
+            r.started_at[0] || (!book.read && r.date_added[0]) || null
+          );
+          book.read_at = parseDate(
+            r.read_at[0] || (book.read && r.date_added[0]) || null
+          );
+          return book;
+        }
+      );
+      result.sort((x: any, y: any) => {
+        const xDate: string = x.started_at || x.read_at;
+        const yDate: string = y.started_at || y.read_at;
+        return yDate.localeCompare(xDate);
+      });
+      return result;
     });
   }
 }
