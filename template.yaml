@@ -24,7 +24,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/index.handler
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Timeout: 20
       Policies:
         - Version: "2012-10-17"
