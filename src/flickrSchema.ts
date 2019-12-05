@@ -40,8 +40,7 @@ const resolvers = {
   }
 };
 
-export default async () =>
-  makeExecutableSchema({
-    typeDefs,
-    resolvers
-  });
+export default makeExecutableSchema({
+  typeDefs,
+  resolvers
+});
