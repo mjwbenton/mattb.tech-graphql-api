@@ -20,7 +20,7 @@ const typeDefs = gql`
 
 const recentBooks = async (
   _: never,
-  { limit }: { limit: number } = { limit: 10 },
+  { limit = 10 }: { limit: number },
   context: DataSourcesContext
 ) => context.dataSources.goodreads.getRecentBooks(limit);
 
