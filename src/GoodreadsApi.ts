@@ -78,7 +78,6 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
         oauth: this.oauth
       });
       const parsed = await parseStringPromise(response);
-      console.log(JSON.stringify(parsed, null, 2));
       const result = parsed.GoodreadsResponse.reviews[0].review.map(
         (r: any) => {
           const book: any = {
