@@ -65,3 +65,33 @@ Resources:
       TimeToLiveSpecification:
         AttributeName: CacheTTL
         Enabled: True
+
+  HttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: GraphQL HTTP API
+      ProtocolType: "HTTP"
+      Target:
+        Fn::GetAtt:
+          - GraphqlApi
+          - Arn
+      CorsConfiguration:
+        AllowHeaders:
+          - "Content-Type"
+        AllowMethods:
+          - "*"
+        AllowOrigins:
+          - "*"
+        AllowCredentials: false
+
+  HttpApiLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - GraphqlApi
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
