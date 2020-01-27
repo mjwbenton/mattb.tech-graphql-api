@@ -2,18 +2,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 
-Globals:
-  Api:
-    Cors:
-      AllowHeaders: "'content-type'"
-      AllowOrigin: "'*'"
-    MethodSettings:
-      - LoggingLevel: "INFO"
-        MetricsEnabled: True
-        DataTraceEnabled: True
-        ResourcePath: "/*"
-        HttpMethod: "*"
-
 Resources:
   CodeBucket:
     Type: AWS::S3::Bucket
@@ -39,17 +27,6 @@ Resources:
                   - ApolloCacheTable
                   - Arn
       CodeUri: s3://mattb.tech-graphql-api/graphql-api.zip
-      Events:
-        GraphqlPlayground:
-          Type: Api
-          Properties:
-            Path: /graphql
-            Method: get
-        Graphql:
-          Type: Api
-          Properties:
-            Path: /graphql
-            Method: post
 
   ApolloCacheTable:
     Type: AWS::DynamoDB::Table
