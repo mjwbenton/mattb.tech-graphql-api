@@ -6,9 +6,8 @@
   "scripts": {
     "build": "tsc",
     "check": "tsc --noEmit && prettier --check '**/*'",
-    "create-stack": "cf-create-stack -s mattb-tech-graphql-api -p mattb.tech-deploy -f template.yaml",
-    "update-stack": "cf-deploy-stack -s mattb-tech-graphql-api -p mattb.tech-deploy -f template.yaml",
-    "update-lambda": "cf-update-lambda -s mattb-tech-graphql-api -p mattb.tech-deploy -c mattb.tech-graphql-api -k graphql-api.zip -r GraphqlApi",
+    "deploy": "npm run build && cdk deploy --profile mattb.tech-deploy",
+    "diff": "npm run build && cdk diff --profile mattb.tech-deploy",
     "goodreads-oauth": "node ./src/bin/goodreadsOauth.js",
     "start": "npm run build && node ./src/devServer.js"
   },
