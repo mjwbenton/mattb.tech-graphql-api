@@ -1,22 +1,17 @@
 {
-  "name": "@mattb.tech/graphql-api",
+  "name": "@mattb.tech/graphql-api-lambda",
   "version": "1.0.0",
-  "description": "Graphql API for mattb.tech",
+  "description": "Lambda function Graphql API for mattb.tech",
   "main": "src/index.js",
   "scripts": {
     "build": "tsc",
-    "check": "tsc --noEmit && prettier --check '**/*'",
-    "deploy": "npm run build && cdk deploy --profile mattb.tech-deploy",
-    "diff": "npm run build && cdk diff --profile mattb.tech-deploy",
+    "check": "tsc --noEmit && prettier --check '**/*.ts'",
     "goodreads-oauth": "node ./src/bin/goodreadsOauth.js",
     "start": "npm run build && node ./src/devServer.js"
   },
   "author": "Matt Benton <m@mattb.tech>",
   "license": "UNLICENSED",
   "devDependencies": {
-    "@aws-cdk/aws-s3": "^1.22.0",
-    "@aws-cdk/core": "^1.22.0",
-    "@mattb.tech/cloudformation-scripts": "^2.0.1",
     "@types/aws-lambda": "^8.10.40",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.2",
@@ -27,9 +22,9 @@
     "@types/request": "^2.48.4",
     "@types/request-promise-native": "^1.0.17",
     "@types/xml2js": "^0.4.5",
-    "aws-cdk": "^1.22.0",
     "express": "^4.17.1",
     "oauth": "^0.9.15",
+    "prettier": "^1.19.1",
     "typescript": "^3.7.5"
   },
   "dependencies": {

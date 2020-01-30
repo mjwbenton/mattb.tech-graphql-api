@@ -1,0 +1,25 @@
+{
+  "name": "@mattb.tech/graphql-api-cdk",
+  "version": "1.0.0",
+  "description": "Graphql API for mattb.tech",
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit && prettier --check '**/*.ts'",
+    "deploy": "npm run build && cdk deploy --profile mattb.tech-deploy",
+    "diff": "npm run build && cdk diff --profile mattb.tech-deploy"
+  },
+  "author": "Matt Benton <m@mattb.tech>",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@aws-cdk/aws-apigateway": "^1.22.0",
+    "@aws-cdk/aws-dynamodb": "^1.22.0",
+    "@aws-cdk/aws-lambda": "^1.22.0",
+    "@aws-cdk/aws-s3": "^1.22.0",
+    "@aws-cdk/core": "^1.22.0",
+    "@types/node": "^13.5.3",
+    "aws-cdk": "^1.22.0",
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.5"
+  },
+  "dependencies": {}
+}

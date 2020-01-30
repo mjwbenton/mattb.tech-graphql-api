@@ -68,9 +68,7 @@ async function run() {
   });
 
   console.log(
-    `GOODREADS_ACCESS_TOKEN=${
-      accessTokens.token
-    }\nGOODREADS_ACCESS_TOKEN_SECRET=${accessTokens.secret}`
+    `GOODREADS_ACCESS_TOKEN=${accessTokens.token}\nGOODREADS_ACCESS_TOKEN_SECRET=${accessTokens.secret}`
   );
 }
 
