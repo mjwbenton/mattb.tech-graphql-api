@@ -4,7 +4,8 @@
   "description": "mattb.tech GraphQL API",
   "scripts": {
     "build": "lerna run build",
-    "deploy": "npm run build && lerna run deploy"
+    "deploy": "npm run build && lerna run deploy",
+    "diff": "npm run build && lerna run diff"
   },
   "repository": {
     "type": "git",
