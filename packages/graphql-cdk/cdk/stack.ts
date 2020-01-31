@@ -16,7 +16,7 @@ export class MattbTechGraphQlApi extends cdk.Stack {
         name: "CacheKey",
         type: dynamodb.AttributeType.STRING
       },
-      timeToLiveAttribute: "CacheKey"
+      timeToLiveAttribute: "CacheTTL"
     });
 
     const lambdaFuntion = new lambda.Function(this, "LambdaFunction", {
