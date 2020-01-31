@@ -15,7 +15,6 @@ const server = new ApolloServer({
   dataSources,
   cache
 });
-console.log(`Server created ${JSON.stringify(server, null, 2)}`);
 
 export const handler = server.createHandler({
   cors: {
