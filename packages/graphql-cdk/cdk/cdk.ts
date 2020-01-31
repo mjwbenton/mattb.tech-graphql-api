@@ -2,4 +2,4 @@ import * as cdk from "@aws-cdk/core";
 import { MattbTechGraphQlApi } from "./stack";
 
 const app = new cdk.App();
-new MattbTechGraphQlApi(app, "mattb-tech-graphql-api-cdk");
+new MattbTechGraphQlApi(app, "Api");
