@@ -4,6 +4,14 @@ import path from "path";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as apigateway from "@aws-cdk/aws-apigatewayv2";
 import * as iam from "@aws-cdk/aws-iam";
+import * as route53 from "@aws-cdk/aws-route53";
+import * as route53targets from "@aws-cdk/aws-route53-targets";
+import * as cloudfront from "@aws-cdk/aws-cloudfront";
+import * as acm from "@aws-cdk/aws-certificatemanager";
+
+const HOSTED_ZONE = "mattb.tech";
+const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
+const DOMAIN_NAME = "api.mattb.tech";
 
 export class MattbTechGraphQlApi extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -49,6 +57,58 @@ export class MattbTechGraphQlApi extends cdk.Stack {
           resourceName: "*"
         },
         this
+      )
+    });
+
+    const certificate = new acm.Certificate(this, "Certificate", {
+      domainName: DOMAIN_NAME,
+      validationMethod: acm.ValidationMethod.DNS
+    });
+
+    const distribution = new cloudfront.CloudFrontWebDistribution(
+      this,
+      "Distribution",
+      {
+        originConfigs: [
+          {
+            behaviors: [
+              {
+                isDefaultBehavior: true,
+                defaultTtl: cdk.Duration.minutes(5),
+                compress: true,
+                allowedMethods: cloudfront.CloudFrontAllowedMethods.ALL,
+                forwardedValues: {
+                  queryString: true,
+                  headers: ["Accept", "accept"]
+                }
+              }
+            ],
+            customOriginSource: {
+              domainName: `${api.ref}.execute-api.${this.region}.amazonaws.com`,
+              httpsPort: 443,
+              originProtocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY
+            }
+          }
+        ],
+        viewerCertificate: cloudfront.ViewerCertificate.fromAcmCertificate(
+          certificate,
+          {
+            aliases: [DOMAIN_NAME]
+          }
+        ),
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
+      }
+    );
+
+    new route53.ARecord(this, "DomainRecord", {
+      zone: route53.HostedZone.fromHostedZoneAttributes(this, "Zone", {
+        hostedZoneId: HOSTED_ZONE_ID,
+        zoneName: HOSTED_ZONE
+      }),
+      recordName: DOMAIN_NAME,
+      ttl: cdk.Duration.minutes(5),
+      target: route53.RecordTarget.fromAlias(
+        new route53targets.CloudFrontTarget(distribution)
       )
     });
   }
