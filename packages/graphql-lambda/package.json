@@ -31,7 +31,7 @@
     "@mattb.tech/flickr-api": "^1.1.1",
     "apollo-datasource": "^0.6.4",
     "apollo-server-cache-dynamodb": "^2.0.1",
-    "apollo-server-lambda": "^2.9.16",
+    "apollo-server-lambda": "^2.14.2",
     "aws-lambda": "^1.0.5",
     "aws-sdk": "^2.610.0",
     "dotenv": "^8.2.0",
