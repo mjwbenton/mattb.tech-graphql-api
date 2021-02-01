@@ -27,19 +27,19 @@ export class MattbTechGraphQlApi extends cdk.Stack {
       timeToLiveAttribute: "CacheTTL"
     });
 
-    const lambdaFuntion = new lambda.Function(this, "LambdaFunction", {
+    const lambdaFunction = new lambda.Function(this, "LambdaFunction", {
       code: new lambda.AssetCode(path.join(__dirname, "../../graphql-lambda")),
       handler: "src/index.handler",
       runtime: lambda.Runtime.NODEJS_12_X
     });
 
-    lambdaFuntion.addEnvironment("CACHE_TABLE", cacheTable.tableName);
-    cacheTable.grantFullAccess(lambdaFuntion);
+    lambdaFunction.addEnvironment("CACHE_TABLE", cacheTable.tableName);
+    cacheTable.grantFullAccess(lambdaFunction);
 
     const api = new apigateway.CfnApi(this, "HttpEndpoint", {
       name: "GraphQL HTTP API",
       protocolType: "HTTP",
-      target: lambdaFuntion.functionArn,
+      target: lambdaFunction.functionArn,
       corsConfiguration: {
         allowHeaders: ["Content-Type"],
         allowMethods: ["*"],
@@ -48,7 +48,7 @@ export class MattbTechGraphQlApi extends cdk.Stack {
       }
     });
 
-    lambdaFuntion.addPermission("allowApiGateway", {
+    lambdaFunction.addPermission("allowApiGateway", {
       principal: new iam.ServicePrincipal("apigateway.amazonaws.com"),
       sourceArn: cdk.Arn.format(
         {
