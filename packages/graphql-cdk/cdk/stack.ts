@@ -22,15 +22,16 @@ export class MattbTechGraphQlApi extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       partitionKey: {
         name: "CacheKey",
-        type: dynamodb.AttributeType.STRING
+        type: dynamodb.AttributeType.STRING,
       },
-      timeToLiveAttribute: "CacheTTL"
+      timeToLiveAttribute: "CacheTTL",
     });
 
     const lambdaFunction = new lambda.Function(this, "LambdaFunction", {
       code: new lambda.AssetCode(path.join(__dirname, "../../graphql-lambda")),
       handler: "src/index.handler",
-      runtime: lambda.Runtime.NODEJS_12_X
+      runtime: lambda.Runtime.NODEJS_12_X,
+      memorySize: 1024,
     });
 
     lambdaFunction.addEnvironment("CACHE_TABLE", cacheTable.tableName);
@@ -44,8 +45,8 @@ export class MattbTechGraphQlApi extends cdk.Stack {
         allowHeaders: ["Content-Type"],
         allowMethods: ["*"],
         allowOrigins: ["*"],
-        allowCredentials: false
-      }
+        allowCredentials: false,
+      },
     });
 
     lambdaFunction.addPermission("allowApiGateway", {
@@ -54,15 +55,15 @@ export class MattbTechGraphQlApi extends cdk.Stack {
         {
           service: "execute-api",
           resource: api.ref,
-          resourceName: "*"
+          resourceName: "*",
         },
         this
-      )
+      ),
     });
 
     const certificate = new acm.Certificate(this, "Certificate", {
       domainName: DOMAIN_NAME,
-      validationMethod: acm.ValidationMethod.DNS
+      validationMethod: acm.ValidationMethod.DNS,
     });
 
     const distribution = new cloudfront.CloudFrontWebDistribution(
@@ -79,37 +80,37 @@ export class MattbTechGraphQlApi extends cdk.Stack {
                 allowedMethods: cloudfront.CloudFrontAllowedMethods.ALL,
                 forwardedValues: {
                   queryString: true,
-                  headers: ["Accept", "accept"]
-                }
-              }
+                  headers: ["Accept", "accept"],
+                },
+              },
             ],
             customOriginSource: {
               domainName: `${api.ref}.execute-api.${this.region}.amazonaws.com`,
               httpsPort: 443,
-              originProtocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY
-            }
-          }
+              originProtocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
+            },
+          },
         ],
         viewerCertificate: cloudfront.ViewerCertificate.fromAcmCertificate(
           certificate,
           {
-            aliases: [DOMAIN_NAME]
+            aliases: [DOMAIN_NAME],
           }
         ),
-        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       }
     );
 
     new route53.ARecord(this, "DomainRecord", {
       zone: route53.HostedZone.fromHostedZoneAttributes(this, "Zone", {
         hostedZoneId: HOSTED_ZONE_ID,
-        zoneName: HOSTED_ZONE
+        zoneName: HOSTED_ZONE,
       }),
       recordName: DOMAIN_NAME,
       ttl: cdk.Duration.minutes(5),
       target: route53.RecordTarget.fromAlias(
         new route53targets.CloudFrontTarget(distribution)
-      )
+      ),
     });
   }
 }
