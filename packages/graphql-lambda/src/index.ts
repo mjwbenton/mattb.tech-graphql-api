@@ -5,6 +5,7 @@ import { ApolloServer, mergeSchemas } from "apollo-server-lambda";
 import githubSchema from "./githubSchema";
 import flickrSchema from "./flickrSchema";
 import goodreadsSchema from "./goodreadsSchema";
+import spotifySchema from "./spotifySchema";
 import cache from "./cache";
 import dataSources from "./dataSources";
 
@@ -12,7 +13,7 @@ const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
 const server = new ApolloServer({
   schema: mergeSchemas({
-    schemas: [flickrSchema, githubSchema, goodreadsSchema],
+    schemas: [flickrSchema, githubSchema, goodreadsSchema, spotifySchema],
   }),
   dataSources,
   cache,
