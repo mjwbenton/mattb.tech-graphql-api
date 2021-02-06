@@ -4,15 +4,17 @@
   "description": "Lambda function Graphql API for mattb.tech",
   "main": "src/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run codegen && tsc",
     "check": "tsc --noEmit && prettier --check '**/*.ts'",
     "goodreads-oauth": "node ./src/bin/goodreadsOauth.js",
     "igdb-test": "node ./src/bin/igdbTest.js",
-    "start": "npm run build && node ./src/devServer.js"
+    "start": "npm run build && node ./src/devServer.js",
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "author": "Matt Benton <m@mattb.tech>",
   "license": "UNLICENSED",
   "devDependencies": {
+    "@graphql-codegen/cli": "1.20.1",
     "@types/aws-lambda": "^8.10.46",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.3",
@@ -26,7 +28,9 @@
     "express": "^4.17.1",
     "oauth": "^0.9.15",
     "prettier": "^1.19.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "@graphql-codegen/typescript": "1.20.2",
+    "@graphql-codegen/typescript-resolvers": "1.18.1"
   },
   "dependencies": {
     "@mattb.tech/flickr-api": "^1.1.1",
