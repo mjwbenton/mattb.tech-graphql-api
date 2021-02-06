@@ -1,5 +1,6 @@
 import { gql, makeExecutableSchema } from "apollo-server-lambda";
 import { DataSourcesContext } from "./dataSources";
+import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
   type Query {
@@ -18,19 +19,14 @@ const typeDefs = gql`
   }
 `;
 
-const recentBooks = async (
-  _: never,
-  { limit = 10 }: { limit: number },
-  context: DataSourcesContext
-) => context.dataSources.goodreads.getRecentBooks(limit);
-
-const resolvers = {
+const resolvers: Resolvers<DataSourcesContext> = {
   Query: {
-    recentBooks
-  }
+    recentBooks: async (_: never, { limit = 10 }, context) =>
+      context.dataSources.goodreads.getRecentBooks(limit),
+  },
 };
 
 export default makeExecutableSchema({
   typeDefs,
-  resolvers
+  resolvers,
 });

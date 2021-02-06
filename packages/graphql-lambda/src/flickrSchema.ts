@@ -1,5 +1,6 @@
 import { gql, makeExecutableSchema } from "apollo-server-lambda";
 import { DataSourcesContext } from "./dataSources";
+import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
   type Query {
@@ -23,24 +24,18 @@ const typeDefs = gql`
   }
 `;
 
-const resolvers = {
+const resolvers: Resolvers<DataSourcesContext> = {
   Query: {
-    recentPhotos: (_: never, __: never, context: DataSourcesContext) =>
+    recentPhotos: (_: never, __: never, context) =>
       context.dataSources.flickr.getRecentPhotos(),
-    photoSet: (
-      _: never,
-      { photosetId }: { photosetId: string },
-      context: DataSourcesContext
-    ) => context.dataSources.flickr.getPhotoSet(photosetId),
-    photo: (
-      _: never,
-      { photoId }: { photoId: string },
-      context: DataSourcesContext
-    ) => context.dataSources.flickr.getPhoto(photoId)
-  }
+    photoSet: (_: never, { photosetId }, context) =>
+      context.dataSources.flickr.getPhotoSet(photosetId),
+    photo: (_: never, { photoId }, context) =>
+      context.dataSources.flickr.getPhoto(photoId),
+  },
 };
 
 export default makeExecutableSchema({
   typeDefs,
-  resolvers
+  resolvers,
 });

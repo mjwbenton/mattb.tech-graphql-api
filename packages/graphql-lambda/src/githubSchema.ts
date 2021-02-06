@@ -1,5 +1,6 @@
 import { gql, makeExecutableSchema } from "apollo-server-lambda";
 import { DataSourcesContext } from "./dataSources";
+import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
   type Query {
@@ -18,19 +19,14 @@ const typeDefs = gql`
   }
 `;
 
-const githubRepositories = async (
-  _: never,
-  { limit = 20 }: { limit: number },
-  context: DataSourcesContext
-) => context.dataSources.github.getRepositories(limit);
-
-const resolvers = {
+const resolvers: Resolvers<DataSourcesContext> = {
   Query: {
-    githubRepositories
-  }
+    githubRepositories: async (_: never, { limit = 20 }, context) =>
+      context.dataSources.github.getRepositories(limit),
+  },
 };
 
 export default makeExecutableSchema({
   typeDefs,
-  resolvers
+  resolvers,
 });
