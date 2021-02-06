@@ -16,17 +16,14 @@ app.use((request, response) => {
       response.status(500).send(error);
       return;
     }
-    response
-      .status(200)
-      .set(val.headers)
-      .send(val.body);
+    response.status(200).set(val.headers).send(val.body);
   };
   handler(
     {
       httpMethod: request.method,
       path: request.path,
       headers: request.headers as { [name: string]: string },
-      body: JSON.stringify(request.body)
+      body: JSON.stringify(request.body),
     } as APIGatewayProxyEvent,
     ({ callbackWaitsForEmptyEventLoop: () => {} } as unknown) as Context,
     callback

@@ -35,7 +35,7 @@ async function run() {
       } else {
         resolve({
           token,
-          secret
+          secret,
         });
       }
     });
@@ -43,7 +43,7 @@ async function run() {
 
   console.log(
     `${AUTHORIZE_URL}?${qs.stringify({
-      oauth_token: requestTokens.token
+      oauth_token: requestTokens.token,
     })}`
   );
 
@@ -60,7 +60,7 @@ async function run() {
         } else {
           resolve({
             token,
-            secret
+            secret,
           });
         }
       }
@@ -75,11 +75,11 @@ async function run() {
 async function confirmAcceptance() {
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
   });
 
-  return new Promise(resolve =>
-    rl.question("Have you authorized?", answer => {
+  return new Promise<void>((resolve) =>
+    rl.question("Have you authorized?", (answer) => {
       rl.close();
       resolve();
     })

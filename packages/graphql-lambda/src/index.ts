@@ -12,18 +12,18 @@ const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
 const server = new ApolloServer({
   schema: mergeSchemas({
-    schemas: [flickrSchema, githubSchema, goodreadsSchema]
+    schemas: [flickrSchema, githubSchema, goodreadsSchema],
   }),
   dataSources,
   cache,
   persistedQueries: {
-    ttl: THIRTY_DAYS
-  }
+    ttl: THIRTY_DAYS,
+  },
 });
 
 export const handler = server.createHandler({
   cors: {
     origin: "*",
-    credentials: false
-  }
+    credentials: false,
+  },
 });

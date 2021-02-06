@@ -22,7 +22,7 @@ type GoodreadsOauth = {
 const BASE_URL = `https://www.goodreads.com/review/list/${USER_ID}.xml?`;
 const BASE_PARAMS = {
   v: 2,
-  sort: "date_started"
+  sort: "date_started",
 };
 
 function parseDate(dateStr?: string) {
@@ -43,7 +43,7 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
       GOODREADS_KEY,
       GOODREADS_SECRET,
       GOODREADS_ACCESS_TOKEN,
-      GOODREADS_ACCESS_TOKEN_SECRET
+      GOODREADS_ACCESS_TOKEN_SECRET,
     } = process.env;
     if (
       !GOODREADS_KEY ||
@@ -57,7 +57,7 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
       consumer_key: GOODREADS_KEY,
       consumer_secret: GOODREADS_SECRET,
       token: GOODREADS_ACCESS_TOKEN,
-      token_secret: GOODREADS_ACCESS_TOKEN_SECRET
+      token_secret: GOODREADS_ACCESS_TOKEN_SECRET,
     };
   }
 
@@ -69,13 +69,13 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
     const cacheKey = `recentBooks-limit-${limit}`;
     const url = `${BASE_URL}${qs.stringify({
       ...BASE_PARAMS,
-      per_page: limit
+      per_page: limit,
     })}`;
 
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await request.post({
         url,
-        oauth: this.oauth
+        oauth: this.oauth,
       });
       const parsed = await parseStringPromise(response);
       const result = parsed.GoodreadsResponse.reviews[0].review.map(
@@ -89,7 +89,7 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
               const nameWithSpaces = a.author[0].name;
               return `${nameWithSpaces}`.replace(/ +/g, " ");
             }),
-            read: r.rating[0] !== "0"
+            read: r.rating[0] !== "0",
           };
           book.started_at = parseDate(
             r.started_at[0] || (!book.read && r.date_added[0]) || null

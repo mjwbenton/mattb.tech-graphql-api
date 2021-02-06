@@ -60,7 +60,7 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
       const response = await this.fetch(QUERY(limit));
       const edges = response.data.repositoryOwner.repositories.edges;
       return edges
-        .map(edge => edge.node)
+        .map((edge) => edge.node)
         .map(
           ({
             name,
@@ -70,7 +70,7 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
             primaryLanguage,
             updatedAt,
             url,
-            readme
+            readme,
           }) => ({
             name,
             url,
@@ -79,7 +79,7 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
             description,
             license: (licenseInfo || {}).name || null,
             primaryLanguage: (primaryLanguage || {}).name || null,
-            readme: (readme || {}).text || null
+            readme: (readme || {}).text || null,
           })
         );
     });
@@ -90,9 +90,9 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
       method: "POST",
       headers: {
         Authorization: `bearer ${this.githubToken}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ operationName: null, variables: {}, query })
+      body: JSON.stringify({ operationName: null, variables: {}, query }),
     });
     return fetchResult.json();
   }
