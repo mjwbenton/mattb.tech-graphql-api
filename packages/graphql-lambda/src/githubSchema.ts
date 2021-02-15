@@ -4,7 +4,7 @@ import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
   type Query {
-    githubRepositories(limit: Int): [Repository]
+    githubRepositories(limit: Int): [Repository!]
   }
 
   type Repository {

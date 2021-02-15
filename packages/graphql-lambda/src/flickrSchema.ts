@@ -4,23 +4,23 @@ import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
   type Query {
-    recentPhotos: [Photo]
-    photoSet(photosetId: ID): [Photo]
+    recentPhotos: [Photo!]
+    photoSet(photosetId: ID): [Photo!]
     photo(photoId: ID): Photo
   }
 
   type Photo {
-    id: ID
-    pageUrl: String
+    id: ID!
+    pageUrl: String!
     title: String
-    mainSource: PhotoSource
-    sources: [PhotoSource]
+    mainSource: PhotoSource!
+    sources: [PhotoSource!]!
   }
 
   type PhotoSource {
-    url: String
-    width: Int
-    height: Int
+    url: String!
+    width: Int!
+    height: Int!
   }
 `;
 

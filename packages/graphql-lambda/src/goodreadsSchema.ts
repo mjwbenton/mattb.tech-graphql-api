@@ -4,15 +4,15 @@ import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
   type Query {
-    recentBooks(limit: Int): [Book]
+    recentBooks(limit: Int): [Book!]
   }
 
   type Book {
     title: String!
     link: String!
     rating: Int
-    image: String
-    authors: [String]!
+    image: String!
+    authors: [String!]!
     read: Boolean!
     started_at: String
     read_at: String
