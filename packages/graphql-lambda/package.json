@@ -8,7 +8,6 @@
     "prettier": "prettier --write '**/*.ts'",
     "check": "tsc --noEmit && prettier --check '**/*.ts'",
     "goodreads-oauth": "node ./src/bin/goodreadsOauth.js",
-    "igdb-test": "node ./src/bin/igdbTest.js",
     "start": "npm run build && node ./src/devServer.js",
     "codegen": "graphql-codegen --config codegen.yml"
   },
