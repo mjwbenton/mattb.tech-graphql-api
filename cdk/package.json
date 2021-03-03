@@ -4,7 +4,8 @@
   "description": "Graphql API for mattb.tech",
   "scripts": {
     "build": "tsc",
-    "check": "tsc --noEmit && prettier --check '**/*.ts'",
+    "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
+    "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
     "deploy": "npm run build && cdk deploy --profile mattb.tech-deploy --require-approval never",
     "diff": "npm run build && cdk diff --profile mattb.tech-deploy"
   },
@@ -23,7 +24,7 @@
     "@aws-cdk/core": "^1.22.0",
     "@types/node": "^13.5.3",
     "aws-cdk": "^1.22.0",
-    "prettier": "^1.19.1",
+    "prettier": "^2.2.1",
     "typescript": "^3.7.5"
   },
   "dependencies": {}

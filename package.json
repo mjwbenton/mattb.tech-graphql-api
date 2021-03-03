@@ -1,19 +1,23 @@
 {
   "name": "@mattb.tech/graphql-api",
   "version": "1.0.0",
+  "private": true,
   "description": "mattb.tech GraphQL API",
   "scripts": {
-    "build": "lerna run build",
-    "deploy": "npm run build && lerna run deploy",
-    "diff": "npm run build && lerna run diff"
+    "build": "yarn workspaces run build",
+    "check": "yarn workspaces run check",
+    "fix": "yarn workspaces run fix",
+    "deploy": "npm run build && yarn workspace @mattb.tech/graphql-api-cdk run deploy",
+    "diff": "npm run build && yarn workspace @mattb.tech/graphql-api-cdk run diff"
   },
+  "workspaces": [
+    "lambda",
+    "cdk"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mjwbenton/mattb.tech-graphql-api.git"
   },
   "author": "Matt Benton <m@mattb.tech>",
-  "license": "UNLICENSED",
-  "devDependencies": {
-    "lerna": "^3.20.2"
-  }
+  "license": "UNLICENSED"
 }

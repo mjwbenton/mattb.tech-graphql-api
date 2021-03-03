@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "build": "npm run codegen && tsc",
-    "prettier": "prettier --write '**/*.ts'",
-    "check": "tsc --noEmit && prettier --check '**/*.ts'",
+    "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
+    "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
     "goodreads-oauth": "node ./src/bin/goodreadsOauth.js",
     "start": "npm run build && node ./src/devServer.js",
     "codegen": "graphql-codegen --config codegen.yml"
