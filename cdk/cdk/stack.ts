@@ -1,5 +1,5 @@
 import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
+import * as lambda from "@aws-cdk/aws-lambda-nodejs";
 import path from "path";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as apigateway from "@aws-cdk/aws-apigatewayv2";
@@ -8,6 +8,7 @@ import * as route53 from "@aws-cdk/aws-route53";
 import * as route53targets from "@aws-cdk/aws-route53-targets";
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as acm from "@aws-cdk/aws-certificatemanager";
+import { Runtime } from "@aws-cdk/aws-lambda";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
@@ -27,10 +28,23 @@ export class MattbTechGraphQlApi extends cdk.Stack {
       timeToLiveAttribute: "CacheTTL",
     });
 
-    const lambdaFunction = new lambda.Function(this, "LambdaFunction", {
-      code: new lambda.AssetCode(path.join(__dirname, "../../lambda")),
-      handler: "dist/index.handler",
-      runtime: lambda.Runtime.NODEJS_14_X,
+    const lambdaFunction = new lambda.NodejsFunction(this, "LambdaFunction", {
+      entry: path.join(__dirname, "../../lambda/dist/index.js"),
+      handler: "index.handler",
+      bundling: {
+        target: "es2020",
+        environment: {
+          NODE_ENV: "production",
+        },
+        commandHooks: {
+          beforeBundling: () => [],
+          beforeInstall: () => [],
+          afterBundling(inputDir: string, outputDir: string): string[] {
+            return [`cp ${inputDir}/lambda/.env ${outputDir}`];
+          },
+        },
+      },
+      runtime: Runtime.NODEJS_14_X,
       memorySize: 1024,
     });
 
