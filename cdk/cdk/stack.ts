@@ -28,9 +28,9 @@ export class MattbTechGraphQlApi extends cdk.Stack {
     });
 
     const lambdaFunction = new lambda.Function(this, "LambdaFunction", {
-      code: new lambda.AssetCode(path.join(__dirname, "../../graphql-lambda")),
-      handler: "src/index.handler",
-      runtime: lambda.Runtime.NODEJS_12_X,
+      code: new lambda.AssetCode(path.join(__dirname, "../../lambda")),
+      handler: "dist/index.handler",
+      runtime: lambda.Runtime.NODEJS_14_X,
       memorySize: 1024,
     });
 
