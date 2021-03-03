@@ -1,26 +1,23 @@
-import request from "request-promise-native";
+import axios from "axios";
+import qs from "querystring";
 
-function buildAuthorizationRequestAuthHeader() {
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-  const inBase64 = Buffer.from(clientId + ":" + clientSecret).toString(
-    "base64"
-  );
-  return `Basic ${inBase64}`;
-}
+const QUERY = qs.stringify({
+  grant_type: "client_credentials",
+});
 
 async function makeClientAuthRequest() {
-  return await request({
-    method: "POST",
-    uri: "https://accounts.spotify.com/api/token",
-    form: {
-      grant_type: "client_credentials",
-    },
-    headers: {
-      Authorization: buildAuthorizationRequestAuthHeader(),
-    },
-    json: true,
-  });
+  return (
+    await axios.post("https://accounts.spotify.com/api/token", QUERY, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      auth: {
+        username: process.env.SPOTIFY_CLIENT_ID,
+        password: process.env.SPOTIFY_CLIENT_SECRET,
+      },
+    })
+  ).data;
 }
 
 let header: string | null = null;

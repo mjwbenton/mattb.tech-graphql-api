@@ -1,6 +1,6 @@
 import { DataSource, DataSourceConfig } from "apollo-datasource";
 import { KeyValueCache } from "apollo-server-core";
-import request from "request-promise-native";
+import axios from "axios";
 import doAndCache from "./doAndCache";
 
 import { getAuthorizationHeader } from "./spotifyAuth";
@@ -44,14 +44,13 @@ export class SpotifyDataSource<TContext = any> extends DataSource {
     const cacheKey = `playlist-${playlist}`;
     return doAndCache(this.cache, cacheKey, async () => {
       const authHeader = await getAuthorizationHeader();
-      const response = await request({
-        method: "GET",
-        uri: `https://api.spotify.com/v1/playlists/${playlist}`,
-        headers: {
-          Authorization: authHeader,
-        },
-        json: true,
-      });
+      const response = (
+        await axios.get(`https://api.spotify.com/v1/playlists/${playlist}`, {
+          headers: {
+            Authorization: authHeader,
+          },
+        })
+      ).data;
       const { name, description } = response;
       const link = response.external_urls.spotify;
       const tracks: Array<Track> = response.tracks.items.map((t: any) => {

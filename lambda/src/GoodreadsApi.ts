@@ -1,11 +1,12 @@
 import { DataSource, DataSourceConfig } from "apollo-datasource";
 import { KeyValueCache } from "apollo-server-core";
-import request from "request-promise-native";
+import request from "request";
 import { parseString } from "xml2js";
 import { promisify } from "util";
 const parseStringPromise = promisify(parseString) as (
   response: string
 ) => Promise<any>;
+const postPromise = promisify(request.post);
 import qs from "querystring";
 import doAndCache from "./doAndCache";
 import moment from "moment";
@@ -74,14 +75,13 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
     })}`;
 
     return doAndCache<Book[]>(this.cache, cacheKey, async () => {
-      const response = await request.post({
+      const response = await postPromise({
         url,
         oauth: this.oauth,
       });
-      const parsed = await parseStringPromise(response);
+      const parsed = await parseStringPromise(response.body);
       const result = parsed.GoodreadsResponse.reviews[0].review.map(
         (r: any) => {
-          console.log(JSON.stringify(r, null, 2));
           const read = r.rating[0] !== "0";
           const book: Book = {
             id: r.book[0].id[0]["_"],

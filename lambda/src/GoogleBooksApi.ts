@@ -1,6 +1,6 @@
 import { DataSource, DataSourceConfig } from "apollo-datasource";
 import { KeyValueCache } from "apollo-server-core";
-import requestPromise from "request-promise-native";
+import axios from "axios";
 import doAndCache from "./doAndCache";
 
 interface GoogleBook {
@@ -35,7 +35,7 @@ export class GoogleBooksDataSource extends DataSource {
           searchTitle
         )}%22+inauthor:%22${encodeURIComponent(author)}%22`
       );
-      const result = JSON.parse(await requestPromise(url));
+      const result = (await axios.get(url)).data;
       const image =
         result?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail ?? null;
       return image ? { image } : null;
