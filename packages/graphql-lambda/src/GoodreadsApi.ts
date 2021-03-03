@@ -9,6 +9,7 @@ const parseStringPromise = promisify(parseString) as (
 import qs from "querystring";
 import doAndCache from "./doAndCache";
 import moment from "moment";
+import { Book } from "./generated/graphql";
 
 const USER_ID = "10445595";
 
@@ -72,7 +73,7 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
       per_page: limit,
     })}`;
 
-    return doAndCache(this.cache, cacheKey, async () => {
+    return doAndCache<Book[]>(this.cache, cacheKey, async () => {
       const response = await request.post({
         url,
         oauth: this.oauth,
@@ -80,7 +81,10 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
       const parsed = await parseStringPromise(response);
       const result = parsed.GoodreadsResponse.reviews[0].review.map(
         (r: any) => {
-          const book: any = {
+          console.log(JSON.stringify(r, null, 2));
+          const read = r.rating[0] !== "0";
+          const book: Book = {
+            id: r.book[0].id[0]["_"],
             title: r.book[0].title[0],
             link: r.book[0].link[0],
             rating: r.rating[0] !== "0" ? parseInt(r.rating[0]) : null,
@@ -89,18 +93,18 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
               const nameWithSpaces = a.author[0].name;
               return `${nameWithSpaces}`.replace(/ +/g, " ");
             }),
-            read: r.rating[0] !== "0",
+            read,
+            started_at: parseDate(
+              r.started_at[0] || (read && r.date_added[0]) || null
+            ),
+            read_at: parseDate(
+              r.read_at[0] || (read && r.date_added[0]) || null
+            ),
           };
-          book.started_at = parseDate(
-            r.started_at[0] || (!book.read && r.date_added[0]) || null
-          );
-          book.read_at = parseDate(
-            r.read_at[0] || (book.read && r.date_added[0]) || null
-          );
           return book;
         }
       );
-      result.sort((x: any, y: any) => {
+      result.sort((x: Book, y: Book) => {
         const xDate: string = x.started_at || x.read_at;
         const yDate: string = y.started_at || y.read_at;
         return yDate.localeCompare(xDate);
