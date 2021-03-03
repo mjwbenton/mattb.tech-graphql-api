@@ -30,7 +30,7 @@ export class MattbTechGraphQlApi extends cdk.Stack {
 
     const lambdaFunction = new lambda.NodejsFunction(this, "LambdaFunction", {
       entry: path.join(__dirname, "../../lambda/dist/index.js"),
-      handler: "index.handler",
+      handler: "handler",
       bundling: {
         target: "es2020",
         environment: {
