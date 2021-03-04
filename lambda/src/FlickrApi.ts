@@ -30,15 +30,23 @@ export class FlickrDataSource<TContext = any> extends DataSource {
 
   public async getPhoto(photoId: string) {
     const cacheKey = `getPhoto-${photoId}`;
-    return doAndCache(this.cache, cacheKey, () =>
-      getPhoto(this.apiKey, photoId)
-    );
+    return doAndCache(this.cache, cacheKey, async () => {
+      const photo = await getPhoto(this.apiKey, photoId);
+      if (photo.userId !== USER_ID) {
+        throw new Error(`Cannot return photo not owned by ${USER_ID}`);
+      }
+      return photo;
+    });
   }
 
   public async getPhotoSet(photosetId: string) {
     const cacheKey = `getPhotoSet-${photosetId}`;
-    return doAndCache(this.cache, cacheKey, () =>
-      getPhotoSet(this.apiKey, photosetId)
-    );
+    return doAndCache(this.cache, cacheKey, async () => {
+      const photoSet = await getPhotoSet(this.apiKey, photosetId);
+      if (photoSet.length > 0 && photoSet[0].userId !== USER_ID) {
+        throw new Error(`Cannot return photo set not owned by ${USER_ID}`);
+      }
+      return photoSet;
+    });
   }
 }

@@ -1344,10 +1344,10 @@
   resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
   integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
-"@mattb.tech/flickr-api@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@mattb.tech/flickr-api/-/flickr-api-1.1.2.tgz#a20619e6f3be7082e1636047bd38991bc9358d43"
-  integrity sha512-lRLkt4YlSRZRpHYHED+2Vlm1GcPV+WQ6kRnwfqqwlwzDTXZEtE61poQmUm3OZlGTV7YcU4lXWzDqp+sYj7h7bQ==
+"@mattb.tech/flickr-api@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@mattb.tech/flickr-api/-/flickr-api-1.2.0.tgz#baa462ce0f5a830055c7299049c7aff416209f86"
+  integrity sha512-7NeQfca1PP7LJwTegPHOeuVPcSUlomSOVrFDhJvsGVaFBA5G54zm/UGq9kyyBeHyuYqH4mnu+MunAFrKBBZANg==
   dependencies:
     axios "^0.21.1"
 
