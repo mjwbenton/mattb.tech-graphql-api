@@ -5,8 +5,9 @@ import { Resolvers } from "./generated/graphql";
 const typeDefs = gql`
   type Query {
     recentPhotos: [Photo!]
-    photoSet(photosetId: ID): [Photo!]
-    photo(photoId: ID): Photo
+    photoSet(photosetId: ID!): [Photo!]
+    photo(photoId: ID!): Photo
+    photosWithTag(tag: ID!): [Photo!]
   }
 
   type Photo {
@@ -32,6 +33,8 @@ const resolvers: Resolvers<DataSourcesContext> = {
       context.dataSources.flickr.getPhotoSet(photosetId),
     photo: (_: never, { photoId }, context) =>
       context.dataSources.flickr.getPhoto(photoId),
+    photosWithTag: (_: never, { tag }, context) =>
+      context.dataSources.flickr.getPhotosWithTag(tag),
   },
 };
 

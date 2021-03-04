@@ -1,5 +1,10 @@
 import { DataSource, DataSourceConfig } from "apollo-datasource";
-import { getRecentPhotos, getPhotoSet, getPhoto } from "@mattb.tech/flickr-api";
+import {
+  getRecentPhotos,
+  getPhotoSet,
+  getPhoto,
+  getUserPhotosWithTag,
+} from "@mattb.tech/flickr-api";
 import { KeyValueCache } from "apollo-server-core";
 import doAndCache from "./doAndCache";
 
@@ -48,5 +53,12 @@ export class FlickrDataSource<TContext = any> extends DataSource {
       }
       return photoSet;
     });
+  }
+
+  public async getPhotosWithTag(tag: string) {
+    const cacheKey = `getPhotosWithTag-${tag}`;
+    return doAndCache(this.cache, cacheKey, async () =>
+      getUserPhotosWithTag(this.apiKey, USER_ID, tag)
+    );
   }
 }
