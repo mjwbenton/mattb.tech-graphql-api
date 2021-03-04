@@ -32,7 +32,6 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "@mattb.tech/flickr-api": "^1.3.0",
     "apollo-datasource": "^0.7.3",
     "apollo-server-cache-dynamodb": "^2.0.1",
     "apollo-server-lambda": "^2.19.2",
