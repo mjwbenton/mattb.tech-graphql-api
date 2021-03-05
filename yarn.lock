@@ -83,6 +83,20 @@
     "@aws-cdk/cx-api" "1.91.0"
     constructs "^3.2.0"
 
+"@aws-cdk/aws-apigatewayv2-integrations@^1.91.0":
+  version "1.91.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-apigatewayv2-integrations/-/aws-apigatewayv2-integrations-1.91.0.tgz#af9ecb31e6e4dae0312ef961c27d08e0d2e12ca2"
+  integrity sha512-C0pPNdVokGEwAr/g7LJScdz7sW307YR3FR8WU/xMF7gcJowjZs2qKYdzVxyZIJasQ9paZylfdyDZzLM1Rp4SAA==
+  dependencies:
+    "@aws-cdk/aws-apigatewayv2" "1.91.0"
+    "@aws-cdk/aws-ec2" "1.91.0"
+    "@aws-cdk/aws-elasticloadbalancingv2" "1.91.0"
+    "@aws-cdk/aws-iam" "1.91.0"
+    "@aws-cdk/aws-lambda" "1.91.0"
+    "@aws-cdk/aws-servicediscovery" "1.91.0"
+    "@aws-cdk/core" "1.91.0"
+    constructs "^3.2.0"
+
 "@aws-cdk/aws-apigatewayv2@1.91.0", "@aws-cdk/aws-apigatewayv2@^1.22.0":
   version "1.91.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-apigatewayv2/-/aws-apigatewayv2-1.91.0.tgz#184a7c38e1dce8db90560eb3baf60d26a1ae7692"
@@ -407,6 +421,17 @@
     "@aws-cdk/aws-kms" "1.91.0"
     "@aws-cdk/core" "1.91.0"
     "@aws-cdk/cx-api" "1.91.0"
+    constructs "^3.2.0"
+
+"@aws-cdk/aws-servicediscovery@1.91.0":
+  version "1.91.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-servicediscovery/-/aws-servicediscovery-1.91.0.tgz#3115ce5905cb99d4bd6ff26ee6c1fe20c5251758"
+  integrity sha512-JZh3OoAfDekTw5MkA+i4a7Vh7bLouwyy7JIzdk0Nz3U/BxQTB0SBbFspndaGt9gUE/6IPqGj25oGboVQB+AJmA==
+  dependencies:
+    "@aws-cdk/aws-ec2" "1.91.0"
+    "@aws-cdk/aws-elasticloadbalancingv2" "1.91.0"
+    "@aws-cdk/aws-route53" "1.91.0"
+    "@aws-cdk/core" "1.91.0"
     constructs "^3.2.0"
 
 "@aws-cdk/aws-sns@1.91.0":

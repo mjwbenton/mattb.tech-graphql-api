@@ -3,12 +3,13 @@ import * as lambda from "@aws-cdk/aws-lambda-nodejs";
 import path from "path";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as apigateway from "@aws-cdk/aws-apigatewayv2";
-import * as iam from "@aws-cdk/aws-iam";
+import * as apigatewayIntegrations from "@aws-cdk/aws-apigatewayv2-integrations";
 import * as route53 from "@aws-cdk/aws-route53";
 import * as route53targets from "@aws-cdk/aws-route53-targets";
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as acm from "@aws-cdk/aws-certificatemanager";
 import { Runtime } from "@aws-cdk/aws-lambda";
+import { HttpMethod, PayloadFormatVersion } from "@aws-cdk/aws-apigatewayv2";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
@@ -51,28 +52,17 @@ export class MattbTechGraphQlApi extends cdk.Stack {
     lambdaFunction.addEnvironment("CACHE_TABLE", cacheTable.tableName);
     cacheTable.grantFullAccess(lambdaFunction);
 
-    const api = new apigateway.CfnApi(this, "HttpEndpoint", {
-      name: "GraphQL HTTP API",
-      protocolType: "HTTP",
-      target: lambdaFunction.functionArn,
-      corsConfiguration: {
-        allowHeaders: ["Content-Type"],
-        allowMethods: ["*"],
-        allowOrigins: ["*"],
+    const api = new apigateway.HttpApi(this, "GraphQLApi", {
+      defaultIntegration: new apigatewayIntegrations.LambdaProxyIntegration({
+        handler: lambdaFunction,
+        payloadFormatVersion: PayloadFormatVersion.VERSION_1_0,
+      }),
+      corsPreflight: {
         allowCredentials: false,
+        allowOrigins: ["*"],
+        allowMethods: [HttpMethod.GET, HttpMethod.POST],
+        allowHeaders: ["Content-Type"],
       },
-    });
-
-    lambdaFunction.addPermission("allowApiGateway", {
-      principal: new iam.ServicePrincipal("apigateway.amazonaws.com"),
-      sourceArn: cdk.Arn.format(
-        {
-          service: "execute-api",
-          resource: api.ref,
-          resourceName: "*",
-        },
-        this
-      ),
     });
 
     const certificate = new acm.Certificate(this, "Certificate", {
@@ -99,7 +89,7 @@ export class MattbTechGraphQlApi extends cdk.Stack {
               },
             ],
             customOriginSource: {
-              domainName: `${api.ref}.execute-api.${this.region}.amazonaws.com`,
+              domainName: `${api.httpApiId}.execute-api.${this.region}.amazonaws.com`,
               httpsPort: 443,
               originProtocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
             },
