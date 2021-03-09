@@ -4,12 +4,15 @@
   "description": "Lambda function Graphql API for mattb.tech",
   "main": "src/index.js",
   "scripts": {
-    "build": "npm run codegen && tsc",
+    "build": "npm run codegen && npm run typescript",
     "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
     "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
     "goodreads-oauth": "node ./src/bin/goodreadsOauth.js",
-    "start": "npm run build && node ./dist/devServer.js",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "start": "npm run codegen:watch & npm run typescript:watch & nodemon ./dist/devServer.js",
+    "codegen": "graphql-codegen --config codegen.yml",
+    "codegen:watch": "graphql-codegen --config codegen.yml --watch",
+    "typescript": "tsc",
+    "typescript:watch": "tsc --watch"
   },
   "author": "Matt Benton <m@mattb.tech>",
   "license": "UNLICENSED",
@@ -27,6 +30,7 @@
     "@types/request": "^2.48.5",
     "@types/xml2js": "^0.4.8",
     "express": "^4.17.1",
+    "nodemon": "^2.0.7",
     "oauth": "^0.9.15",
     "prettier": "^2.2.1",
     "typescript": "^4.2.3"
