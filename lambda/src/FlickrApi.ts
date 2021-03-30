@@ -5,6 +5,7 @@ import axios from "axios";
 import { Photo, PhotoSource } from "./generated/graphql";
 
 const USER_ID = "83914470@N00";
+const DEFAULT_PAGE_SIZE = 50;
 
 const FLICKR_URL_BASE = "https://www.flickr.com/photos/";
 const FLICKR_API_BASE_URL = "https://api.flickr.com/services/rest/";
@@ -23,7 +24,7 @@ const API_KEY = process.env.FLICKR_API_KEY;
 
 async function callFlickr(
   methodName: string,
-  params: { [key: string]: string },
+  params: { [key: string]: string | number },
   retryNumber: number = 0
 ): Promise<any> {
   let url =
@@ -79,11 +80,21 @@ export class FlickrDataSource<TContext = any> extends DataSource {
     this.cache = config.cache;
   }
 
-  public async getPhotoSet(setId: string): Promise<Photo[]> {
-    const cacheKey = `getPhotoSet-${setId}`;
+  public async getPhotoSet({
+    photosetId,
+    perPage = DEFAULT_PAGE_SIZE,
+    page = 1,
+  }: {
+    photosetId: string;
+    perPage?: number;
+    page?: number;
+  }): Promise<Photo[]> {
+    const cacheKey = `getPhotoSet-${photosetId}-${perPage}p${page}`;
     return doAndCache(this.cache, cacheKey, async () => {
       const photosResponse = await callFlickr("flickr.photosets.getPhotos", {
-        photoset_id: setId,
+        photoset_id: photosetId,
+        per_page: perPage,
+        page: page,
       });
       const owner = photosResponse.photoset.owner;
       if (owner !== USER_ID) {
@@ -109,14 +120,23 @@ export class FlickrDataSource<TContext = any> extends DataSource {
     });
   }
 
-  public async getPhotosWithTag(tag: string): Promise<Photo[]> {
-    const cacheKey = `getPhotosWithTag-${tag}`;
+  public async getPhotosWithTag({
+    tag,
+    perPage = DEFAULT_PAGE_SIZE,
+    page = 1,
+  }: {
+    tag: string;
+    perPage?: number;
+    page?: number;
+  }): Promise<Photo[]> {
+    const cacheKey = `getPhotosWithTag-${tag}-${perPage}p${page}`;
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await callFlickr("flickr.photos.search", {
         user_id: USER_ID,
         tags: tag,
         extras: "url_z, url_c, url_l, url_k",
-        per_page: "50",
+        per_page: perPage,
+        page,
       });
       return response.photos.photo.map((p: any) => ({
         id: p.id,
@@ -132,13 +152,20 @@ export class FlickrDataSource<TContext = any> extends DataSource {
     });
   }
 
-  public async getRecentPhotos(): Promise<Photo[]> {
-    const cacheKey = `getRecentPhotos`;
+  public async getRecentPhotos({
+    perPage = DEFAULT_PAGE_SIZE,
+    page = 1,
+  }: {
+    perPage?: number;
+    page?: number;
+  }): Promise<Photo[]> {
+    const cacheKey = `getRecentPhotos-${perPage}p${page}`;
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await callFlickr("flickr.people.getPublicPhotos", {
         user_id: USER_ID,
         extras: "url_z, url_c, url_l, url_k",
-        per_page: "50",
+        per_page: perPage,
+        page,
       });
       return response.photos.photo.map((p: any) => ({
         id: p.id,

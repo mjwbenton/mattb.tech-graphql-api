@@ -4,10 +4,10 @@ import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
   type Query {
-    recentPhotos: [Photo!]
-    photoSet(photosetId: ID!): [Photo!]
+    recentPhotos(perPage: Int, page: Int): [Photo!]
+    photoSet(photosetId: ID!, perPage: Int, page: Int): [Photo!]
     photo(photoId: ID!): Photo
-    photosWithTag(tag: ID!): [Photo!]
+    photosWithTag(tag: ID!, perPage: Int, page: Int): [Photo!]
   }
 
   type Photo {
@@ -27,14 +27,20 @@ const typeDefs = gql`
 
 const resolvers: Resolvers<DataSourcesContext> = {
   Query: {
-    recentPhotos: (_: never, __: never, context) =>
-      context.dataSources.flickr.getRecentPhotos(),
-    photoSet: (_: never, { photosetId }, context) =>
-      context.dataSources.flickr.getPhotoSet(photosetId),
-    photo: (_: never, { photoId }, context) =>
-      context.dataSources.flickr.getPhoto(photoId),
-    photosWithTag: (_: never, { tag }, context) =>
-      context.dataSources.flickr.getPhotosWithTag(tag),
+    recentPhotos: (_: never, { perPage, page }, { dataSources: { flickr } }) =>
+      flickr.getRecentPhotos({ perPage, page }),
+    photoSet: (
+      _: never,
+      { photosetId, perPage, page },
+      { dataSources: { flickr } }
+    ) => flickr.getPhotoSet({ photosetId, perPage, page }),
+    photo: (_: never, { photoId }, { dataSources: { flickr } }) =>
+      flickr.getPhoto(photoId),
+    photosWithTag: (
+      _: never,
+      { tag, perPage, page },
+      { dataSources: { flickr } }
+    ) => flickr.getPhotosWithTag({ tag, perPage, page }),
   },
 };
 
