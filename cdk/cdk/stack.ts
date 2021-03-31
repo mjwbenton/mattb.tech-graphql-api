@@ -10,6 +10,7 @@ import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as acm from "@aws-cdk/aws-certificatemanager";
 import { Runtime } from "@aws-cdk/aws-lambda";
 import { HttpMethod, PayloadFormatVersion } from "@aws-cdk/aws-apigatewayv2";
+import { CloudFrontAllowedCachedMethods } from "@aws-cdk/aws-cloudfront";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
@@ -60,7 +61,7 @@ export class MattbTechGraphQlApi extends cdk.Stack {
       corsPreflight: {
         allowCredentials: false,
         allowOrigins: ["*"],
-        allowMethods: [HttpMethod.GET, HttpMethod.POST],
+        allowMethods: [HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS],
         allowHeaders: ["Content-Type"],
       },
     });
@@ -84,8 +85,9 @@ export class MattbTechGraphQlApi extends cdk.Stack {
                 allowedMethods: cloudfront.CloudFrontAllowedMethods.ALL,
                 forwardedValues: {
                   queryString: true,
-                  headers: ["Accept", "accept"],
+                  headers: ["Accept", "Origin"],
                 },
+                cachedMethods: CloudFrontAllowedCachedMethods.GET_HEAD_OPTIONS,
               },
             ],
             customOriginSource: {
