@@ -2,17 +2,24 @@ import { DataSource, DataSourceConfig } from "apollo-datasource";
 import { KeyValueCache } from "apollo-server-core";
 import fetch from "node-fetch";
 import doAndCache from "./doAndCache";
+import { PaginatedRepositories } from "./generated/graphql";
 
 const LOGIN = "mjwbenton";
 
-const QUERY = (limit: number) => `{
+const QUERY = (first: number, after?: string) => `{
   repositoryOwner(login: "${LOGIN}") {
     repositories(
-      first: ${limit}
+      first: ${first}
+      ${after ? `after: "${after}"` : ""}
       privacy: PUBLIC
       isFork: false
       orderBy: { field: UPDATED_AT, direction: DESC }
     ) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       edges {
         node {
           name
@@ -54,12 +61,25 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
     this.cache = config.cache;
   }
 
-  public async getRepositories(limit: number) {
-    const cacheKey = `recentRepositories-limit-${limit}`;
+  public async getRepositories({
+    first = 20,
+    after = null,
+  }: {
+    first?: number;
+    after?: string;
+  }): Promise<PaginatedRepositories> {
+    const cacheKey = `recentRepositories-first-${first}-after-${after}`;
     return doAndCache(this.cache, cacheKey, async () => {
-      const response = await this.fetch(QUERY(limit));
-      const edges = response.data.repositoryOwner.repositories.edges;
-      return edges
+      const response = await this.fetch(QUERY(first, after));
+      if (response.errors) {
+        throw new Error(JSON.stringify(response.errors));
+      }
+      const {
+        edges,
+        totalCount,
+        pageInfo,
+      } = response.data.repositoryOwner.repositories;
+      const items = edges
         .map((edge) => edge.node)
         .map(
           ({
@@ -82,6 +102,13 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
             readme: (readme || {}).text || null,
           })
         );
+
+      return {
+        total: totalCount,
+        hasNextPage: pageInfo.hasNextPage,
+        nextPageCursor: pageInfo.endCursor,
+        items,
+      };
     });
   }
 
