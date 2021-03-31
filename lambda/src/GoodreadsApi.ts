@@ -67,11 +67,18 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
     this.cache = config.cache;
   }
 
-  public async getRecentBooks(limit: number) {
-    const cacheKey = `recentBooks-limit-${limit}`;
+  public async getRecentBooks({
+    perPage = 20,
+    page = 1,
+  }: {
+    perPage: number;
+    page: number;
+  }) {
+    const cacheKey = `recentBooks-${perPage}p${page}`;
     const url = `${BASE_URL}${qs.stringify({
       ...BASE_PARAMS,
-      per_page: limit,
+      per_page: perPage,
+      page,
     })}`;
 
     return doAndCache<Book[]>(this.cache, cacheKey, async () => {

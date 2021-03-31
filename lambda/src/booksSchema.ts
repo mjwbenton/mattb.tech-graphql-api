@@ -4,7 +4,7 @@ import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
   type Query {
-    recentBooks(limit: Int): [Book!]
+    recentBooks(perPage: Int, page: Int): [Book!]!
   }
 
   type Book {
@@ -24,10 +24,10 @@ const resolvers: Resolvers<DataSourcesContext> = {
   Query: {
     recentBooks: async (
       _: never,
-      { limit = 10 },
+      { perPage, page },
       { dataSources: { goodreads, googleBooks } }
     ) => {
-      const result = await goodreads.getRecentBooks(limit);
+      const result = await goodreads.getRecentBooks({ perPage, page });
       return Promise.all(
         result.map(async (book) => {
           const gbResult = await googleBooks.search({
