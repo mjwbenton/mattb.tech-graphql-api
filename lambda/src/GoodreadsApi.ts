@@ -25,6 +25,7 @@ const BASE_URL = `https://www.goodreads.com/review/list/${USER_ID}.xml?`;
 const BASE_PARAMS = {
   v: 2,
   sort: "date_started",
+  shelf: "currently_reading",
 };
 
 function parseDate(dateStr?: string) {
