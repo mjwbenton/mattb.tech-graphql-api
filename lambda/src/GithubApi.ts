@@ -22,6 +22,7 @@ const QUERY = (first: number, after?: string) => `{
       }
       edges {
         node {
+          id
           name
           createdAt
           description
@@ -83,6 +84,7 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
         .map((edge) => edge.node)
         .map(
           ({
+            id,
             name,
             createdAt,
             description,
@@ -92,6 +94,7 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
             url,
             readme,
           }) => ({
+            id,
             name,
             url,
             createdAt,

@@ -6,6 +6,7 @@ import doAndCache from "./doAndCache";
 import { getAuthorizationHeader } from "./spotifyAuth";
 
 export type Playlist = {
+  id: string;
   name: string;
   description: string;
   tracks: Array<Track>;
@@ -13,16 +14,19 @@ export type Playlist = {
 };
 
 export type Track = {
+  id: string;
   name: string;
   artists: Array<Artist>;
   album: Album;
 };
 
 export type Artist = {
+  id: string;
   name: string;
 };
 
 export type Album = {
+  id: string;
   name: string;
   images: Array<Image>;
 };
@@ -51,21 +55,24 @@ export class SpotifyDataSource<TContext = any> extends DataSource {
           },
         })
       ).data;
-      const { name, description } = response;
+      const { id, name, description } = response;
       const link = response.external_urls.spotify;
       const tracks: Array<Track> = response.tracks.items.map((t: any) => {
         return {
+          id: t.track.id,
           name: t.track.name,
           album: {
+            id: t.track.album.id,
             name: t.track.album.name,
             images: t.track.album.images,
           },
           artists: t.track.artists.map((a: any) => ({
+            id: a.id,
             name: a.name,
           })),
         };
       });
-      return { name, description, tracks, link };
+      return { id, name, description, tracks, link };
     });
   }
 }

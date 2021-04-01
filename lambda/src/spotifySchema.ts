@@ -8,6 +8,7 @@ const typeDefs = gql`
   }
 
   type Playlist {
+    id: ID!
     name: String!
     description: String!
     tracks: [Track!]!
@@ -15,16 +16,19 @@ const typeDefs = gql`
   }
 
   type Track {
+    id: ID!
     name: String!
     artists: [Artist!]!
     album: Album!
   }
 
   type Artist {
+    id: ID!
     name: String!
   }
 
   type Album {
+    id: ID!
     name: String!
     images: [AlbumArt!]!
   }

@@ -15,6 +15,7 @@ const typeDefs = gql`
   }
 
   type Repository {
+    id: ID!
     name: String!
     url: String!
     createdAt: String!
