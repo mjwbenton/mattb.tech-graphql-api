@@ -22,7 +22,6 @@ const WANTED_IMAGE_SIZES = new Set([
 
 type PhotoPage = {
   total: number;
-  pages: number;
   photos: Photo[];
 };
 
@@ -72,7 +71,6 @@ export class FlickrDataSource<TContext = any> extends DataSource {
       return {
         photos,
         total: photosResponse.photoset.total,
-        pages: photosResponse.photoset.pages,
       };
     });
   }
@@ -109,7 +107,6 @@ export class FlickrDataSource<TContext = any> extends DataSource {
       }));
       return {
         total: response.photos.total,
-        pages: response.photos.pages,
         photos,
       };
     });
@@ -143,7 +140,6 @@ export class FlickrDataSource<TContext = any> extends DataSource {
       }));
       return {
         total: response.photos.total,
-        pages: response.photos.pages,
         photos,
       };
     });

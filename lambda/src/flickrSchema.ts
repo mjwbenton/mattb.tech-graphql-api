@@ -1,6 +1,7 @@
 import { gql, makeExecutableSchema } from "apollo-server-lambda";
 import { DataSourcesContext } from "./dataSources";
 import { Resolvers } from "./generated/graphql";
+import { decodeCursor, buildPage } from "./pagination";
 
 const typeDefs = gql`
   type Query {
@@ -34,42 +35,6 @@ const typeDefs = gql`
 
 const DEFAULT_PAGE_SIZE = 50;
 
-// Uses the format ${perPage}.${page} for the cursor encoded base64
-function decodeCursor({
-  first,
-  after,
-}: {
-  first: number;
-  after?: string;
-}): { perPage: number; page: number } {
-  if (!after) {
-    return { perPage: first, page: 1 };
-  }
-  const cursor = Buffer.from(after, "base64").toString("ascii").split(".");
-  if (cursor.length !== 2) {
-    throw new Error(`Invalid cursor ${after}`);
-  }
-  if (cursor[0] !== first.toString()) {
-    throw new Error(
-      `Changing page size between calls unsupported. Was ${cursor[0]}, requested ${first}.`
-    );
-  }
-  return {
-    perPage: first,
-    page: parseInt(cursor[1]),
-  };
-}
-
-function encodeCursor({
-  perPage,
-  page,
-}: {
-  perPage: number;
-  page: number;
-}): string {
-  return Buffer.from(`${perPage}.${page}`).toString("base64");
-}
-
 const resolvers: Resolvers<DataSourcesContext> = {
   Query: {
     recentPhotos: async (
@@ -78,17 +43,16 @@ const resolvers: Resolvers<DataSourcesContext> = {
       { dataSources: { flickr } }
     ) => {
       const { perPage, page } = decodeCursor({ first, after });
-      const { photos, pages, total } = await flickr.getRecentPhotos({
+      const { photos, total } = await flickr.getRecentPhotos({
         perPage,
         page,
       });
-      return {
+      return buildPage({
         items: photos,
         total,
-        hasNextPage: page < pages,
-        nextPageCursor:
-          page < pages ? encodeCursor({ perPage, page: page + 1 }) : null,
-      };
+        perPage,
+        page,
+      });
     },
     photoSet: async (
       _: never,
@@ -96,18 +60,17 @@ const resolvers: Resolvers<DataSourcesContext> = {
       { dataSources: { flickr } }
     ) => {
       const { perPage, page } = decodeCursor({ first, after });
-      const { photos, pages, total } = await flickr.getPhotoSet({
+      const { photos, total } = await flickr.getPhotoSet({
         photosetId,
         perPage,
         page,
       });
-      return {
+      return buildPage({
         items: photos,
         total,
-        hasNextPage: page < pages,
-        nextPageCursor:
-          page < pages ? encodeCursor({ perPage, page: page + 1 }) : null,
-      };
+        perPage,
+        page,
+      });
     },
     photosWithTag: async (
       _: never,
@@ -115,18 +78,17 @@ const resolvers: Resolvers<DataSourcesContext> = {
       { dataSources: { flickr } }
     ) => {
       const { perPage, page } = decodeCursor({ first, after });
-      const { photos, pages, total } = await flickr.getPhotosWithTag({
+      const { photos, total } = await flickr.getPhotosWithTag({
         tag,
         perPage,
         page,
       });
-      return {
+      return buildPage({
         items: photos,
         total,
-        hasNextPage: page < pages,
-        nextPageCursor:
-          page < pages ? encodeCursor({ perPage, page: page + 1 }) : null,
-      };
+        perPage,
+        page,
+      });
     },
     photo: (_: never, { photoId }, { dataSources: { flickr } }) =>
       flickr.getPhoto(photoId),
