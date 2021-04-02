@@ -5,8 +5,8 @@ import axios from "axios";
 import { Photo, PhotoSource } from "./generated/graphql";
 
 const USER_ID = "83914470@N00";
-const DEFAULT_PAGE_SIZE = 50;
 
+const API_KEY = process.env.FLICKR_API_KEY;
 const FLICKR_URL_BASE = "https://www.flickr.com/photos/";
 const FLICKR_API_BASE_URL = "https://api.flickr.com/services/rest/";
 const FLICKR_BASE_PARAMETERS = "?format=json&nojsoncallback=1";
@@ -20,7 +20,163 @@ const WANTED_IMAGE_SIZES = new Set([
   "Large 2048",
 ]);
 
-const API_KEY = process.env.FLICKR_API_KEY;
+type PhotoPage = {
+  total: number;
+  pages: number;
+  photos: Photo[];
+};
+
+export class FlickrDataSource<TContext = any> extends DataSource {
+  private cache!: KeyValueCache;
+
+  initialize(config: DataSourceConfig<TContext>): void {
+    this.cache = config.cache;
+  }
+
+  public async getPhotoSet({
+    photosetId,
+    perPage,
+    page = 1,
+  }: {
+    photosetId: string;
+    perPage: number;
+    page?: number;
+  }): Promise<PhotoPage> {
+    const cacheKey = `getPhotoSet-${photosetId}-${perPage}p${page}`;
+    return doAndCache(this.cache, cacheKey, async () => {
+      const photosResponse = await callFlickr("flickr.photosets.getPhotos", {
+        photoset_id: photosetId,
+        per_page: perPage,
+        page: page,
+      });
+      const owner = photosResponse.photoset.owner;
+      if (owner !== USER_ID) {
+        throw new Error(`Cannot return photo set not owned by ${USER_ID}`);
+      }
+      const photos: Photo[] = await Promise.all(
+        photosResponse.photoset.photo.map(async (p: any) => {
+          const sizes = await callFlickr("flickr.photos.getSizes", {
+            photo_id: p.id,
+          });
+          const photoSources = buildSizesSources(sizes);
+          const mainSource = photoSources[photoSources.length - 1];
+          return {
+            id: p.id,
+            title: p.title,
+            pageUrl: `${FLICKR_URL_BASE}${USER_ID}/${p.id}/`,
+            sources: photoSources,
+            mainSource: mainSource,
+          };
+        })
+      );
+      return {
+        photos,
+        total: photosResponse.photoset.total,
+        pages: photosResponse.photoset.pages,
+      };
+    });
+  }
+
+  public async getPhotosWithTag({
+    tag,
+    perPage,
+    page = 1,
+  }: {
+    tag: string;
+    perPage: number;
+    page?: number;
+  }): Promise<PhotoPage> {
+    const cacheKey = `getPhotosWithTag-${tag}-${perPage}p${page}`;
+    return doAndCache(this.cache, cacheKey, async () => {
+      const response = await callFlickr("flickr.photos.search", {
+        user_id: USER_ID,
+        tags: tag,
+        extras: "url_z, url_c, url_l, url_k",
+        sort: "date-posted-desc",
+        per_page: perPage,
+        page,
+      });
+      const photos = response.photos.photo.map((p: any) => ({
+        id: p.id,
+        pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
+        title: p.title,
+        mainSource: {
+          url: p.url_c,
+          height: p.height_c,
+          width: p.width_c,
+        },
+        sources: buildRecentSources(p),
+      }));
+      return {
+        total: response.photos.total,
+        pages: response.photos.pages,
+        photos,
+      };
+    });
+  }
+
+  public async getRecentPhotos({
+    perPage,
+    page = 1,
+  }: {
+    perPage: number;
+    page?: number;
+  }): Promise<PhotoPage> {
+    const cacheKey = `getRecentPhotos-${perPage}p${page}`;
+    return doAndCache(this.cache, cacheKey, async () => {
+      const response = await callFlickr("flickr.people.getPublicPhotos", {
+        user_id: USER_ID,
+        extras: "url_z, url_c, url_l, url_k",
+        per_page: perPage,
+        page,
+      });
+      const photos = response.photos.photo.map((p: any) => ({
+        id: p.id,
+        pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
+        title: p.title,
+        mainSource: {
+          url: p.url_c,
+          height: p.height_c,
+          width: p.width_c,
+        },
+        sources: buildRecentSources(p),
+      }));
+      return {
+        total: response.photos.total,
+        pages: response.photos.pages,
+        photos,
+      };
+    });
+  }
+
+  public async getPhoto(photoId: string): Promise<Photo> {
+    const cacheKey = `getPhoto-${photoId}`;
+    return doAndCache(this.cache, cacheKey, async () => {
+      const [infoResponse, sizesResponse] = await Promise.all([
+        callFlickr("flickr.photos.getInfo", {
+          photo_id: photoId,
+        }),
+        callFlickr("flickr.photos.getSizes", {
+          photo_id: photoId,
+        }),
+      ]);
+      const sources = buildSizesSources(sizesResponse);
+      const mainSource = sources[sources.length - 1];
+      if (infoResponse.photo.owner.nsid !== USER_ID) {
+        throw new Error(`Cannot return photo not owned by ${USER_ID}`);
+      }
+      return {
+        id: photoId,
+        title: infoResponse.photo.title._content,
+        pageUrl: infoResponse.photo.urls.url.filter(
+          (url: any) => url.type === "photopage"
+        )[0]._content,
+        sources,
+        mainSource,
+      };
+    });
+  }
+}
 
 async function callFlickr(
   methodName: string,
@@ -71,141 +227,4 @@ function buildRecentSources(photoResponse: any): PhotoSource[] {
     }
   });
   return result;
-}
-
-export class FlickrDataSource<TContext = any> extends DataSource {
-  private cache!: KeyValueCache;
-
-  initialize(config: DataSourceConfig<TContext>): void {
-    this.cache = config.cache;
-  }
-
-  public async getPhotoSet({
-    photosetId,
-    perPage = DEFAULT_PAGE_SIZE,
-    page = 1,
-  }: {
-    photosetId: string;
-    perPage?: number;
-    page?: number;
-  }): Promise<Photo[]> {
-    const cacheKey = `getPhotoSet-${photosetId}-${perPage}p${page}`;
-    return doAndCache(this.cache, cacheKey, async () => {
-      const photosResponse = await callFlickr("flickr.photosets.getPhotos", {
-        photoset_id: photosetId,
-        per_page: perPage,
-        page: page,
-      });
-      const owner = photosResponse.photoset.owner;
-      if (owner !== USER_ID) {
-        throw new Error(`Cannot return photo set not owned by ${USER_ID}`);
-      }
-      const promises: Promise<Photo>[] = photosResponse.photoset.photo.map(
-        async (p: any) => {
-          const sizes = await callFlickr("flickr.photos.getSizes", {
-            photo_id: p.id,
-          });
-          const photoSources = buildSizesSources(sizes);
-          const mainSource = photoSources[photoSources.length - 1];
-          return {
-            id: p.id,
-            title: p.title,
-            pageUrl: `${FLICKR_URL_BASE}${USER_ID}/${p.id}/`,
-            sources: photoSources,
-            mainSource: mainSource,
-          };
-        }
-      );
-      return await Promise.all(promises);
-    });
-  }
-
-  public async getPhotosWithTag({
-    tag,
-    perPage = DEFAULT_PAGE_SIZE,
-    page = 1,
-  }: {
-    tag: string;
-    perPage?: number;
-    page?: number;
-  }): Promise<Photo[]> {
-    const cacheKey = `getPhotosWithTag-${tag}-${perPage}p${page}`;
-    return doAndCache(this.cache, cacheKey, async () => {
-      const response = await callFlickr("flickr.photos.search", {
-        user_id: USER_ID,
-        tags: tag,
-        extras: "url_z, url_c, url_l, url_k",
-        per_page: perPage,
-        page,
-      });
-      return response.photos.photo.map((p: any) => ({
-        id: p.id,
-        pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
-        title: p.title,
-        mainSource: {
-          url: p.url_c,
-          height: p.height_c,
-          width: p.width_c,
-        },
-        sources: buildRecentSources(p),
-      }));
-    });
-  }
-
-  public async getRecentPhotos({
-    perPage = DEFAULT_PAGE_SIZE,
-    page = 1,
-  }: {
-    perPage?: number;
-    page?: number;
-  }): Promise<Photo[]> {
-    const cacheKey = `getRecentPhotos-${perPage}p${page}`;
-    return doAndCache(this.cache, cacheKey, async () => {
-      const response = await callFlickr("flickr.people.getPublicPhotos", {
-        user_id: USER_ID,
-        extras: "url_z, url_c, url_l, url_k",
-        per_page: perPage,
-        page,
-      });
-      return response.photos.photo.map((p: any) => ({
-        id: p.id,
-        pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
-        title: p.title,
-        mainSource: {
-          url: p.url_c,
-          height: p.height_c,
-          width: p.width_c,
-        },
-        sources: buildRecentSources(p),
-      }));
-    });
-  }
-
-  public async getPhoto(photoId: string): Promise<Photo> {
-    const cacheKey = `getPhoto-${photoId}`;
-    return doAndCache(this.cache, cacheKey, async () => {
-      const [infoResponse, sizesResponse] = await Promise.all([
-        callFlickr("flickr.photos.getInfo", {
-          photo_id: photoId,
-        }),
-        callFlickr("flickr.photos.getSizes", {
-          photo_id: photoId,
-        }),
-      ]);
-      const sources = buildSizesSources(sizesResponse);
-      const mainSource = sources[sources.length - 1];
-      if (infoResponse.photo.owner.nsid !== USER_ID) {
-        throw new Error(`Cannot return photo not owned by ${USER_ID}`);
-      }
-      return {
-        id: photoId,
-        title: infoResponse.photo.title._content,
-        pageUrl: infoResponse.photo.urls.url.filter(
-          (url: any) => url.type === "photopage"
-        )[0]._content,
-        sources,
-        mainSource,
-      };
-    });
-  }
 }
