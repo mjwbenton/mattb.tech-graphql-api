@@ -28,14 +28,6 @@ const BASE_PARAMS = {
   shelf: "currently_reading",
 };
 
-function parseDate(dateStr?: string) {
-  if (dateStr == null) {
-    return dateStr;
-  }
-  const parsed = moment(dateStr, "ddd MMM DD HH:mm:ss Z YYYY");
-  return parsed.format("YYYY-MM-DD");
-}
-
 export class GoodreadsDataSource<TContext = any> extends DataSource {
   private cache!: KeyValueCache;
   private oauth: GoodreadsOauth;
@@ -69,7 +61,7 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
   }
 
   public async getRecentBooks({
-    perPage = 20,
+    perPage,
     page = 1,
   }: {
     perPage: number;
@@ -82,14 +74,15 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
       page,
     })}`;
 
-    return doAndCache<Book[]>(this.cache, cacheKey, async () => {
+    return doAndCache(this.cache, cacheKey, async () => {
       const response = await postPromise({
         url,
         oauth: this.oauth,
       });
       const parsed = await parseStringPromise(response.body);
-      const result = parsed.GoodreadsResponse.reviews[0].review.map(
-        (r: any) => {
+      const total = parsed.GoodreadsResponse.reviews[0]["$"].total;
+      const books = parsed.GoodreadsResponse.reviews[0].review
+        .map((r: any) => {
           const read = r.rating[0] !== "0";
           const book: Book = {
             id: r.book[0].id[0]["_"],
@@ -110,14 +103,25 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
             ),
           };
           return book;
-        }
-      );
-      result.sort((x: Book, y: Book) => {
-        const xDate: string = x.started_at || x.read_at;
-        const yDate: string = y.started_at || y.read_at;
+        })
+        .filter(({ started_at, read_at }) => started_at || read_at);
+      books.sort((x: Book, y: Book) => {
+        const xDate: string = x.started_at || x.read_at || "ZZZ";
+        const yDate: string = y.started_at || y.read_at || "ZZZ";
         return yDate.localeCompare(xDate);
       });
-      return result;
+      return {
+        total,
+        books,
+      };
     });
   }
+}
+
+function parseDate(dateStr?: string) {
+  if (dateStr == null) {
+    return dateStr;
+  }
+  const parsed = moment(dateStr, "ddd MMM DD HH:mm:ss Z YYYY");
+  return parsed.format("YYYY-MM-DD");
 }

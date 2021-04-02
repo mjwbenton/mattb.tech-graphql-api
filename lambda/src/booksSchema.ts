@@ -1,10 +1,20 @@
 import { gql, makeExecutableSchema } from "apollo-server-lambda";
 import { DataSourcesContext } from "./dataSources";
 import { Resolvers } from "./generated/graphql";
+import { buildPage, decodeCursor } from "./pagination";
+
+const DEFAULT_PAGE_SIZE = 20;
 
 const typeDefs = gql`
   type Query {
-    recentBooks(perPage: Int, page: Int): [Book!]!
+    recentBooks(first: Int, after: ID): PaginatedBooks
+  }
+
+  type PaginatedBooks {
+    total: Int!
+    items: [Book!]!
+    hasNextPage: Boolean!
+    nextPageCursor: ID
   }
 
   type Book {
@@ -24,12 +34,16 @@ const resolvers: Resolvers<DataSourcesContext> = {
   Query: {
     recentBooks: async (
       _: never,
-      { perPage, page },
+      { first, after },
       { dataSources: { goodreads, googleBooks } }
     ) => {
-      const result = await goodreads.getRecentBooks({ perPage, page });
-      return Promise.all(
-        result.map(async (book) => {
+      const { perPage, page } = decodeCursor({ first, after });
+      const { books, total } = await goodreads.getRecentBooks({
+        perPage,
+        page,
+      });
+      const items = await Promise.all(
+        books.map(async (book) => {
           const gbResult = await googleBooks.search({
             id: book.id,
             title: book.title,
@@ -41,6 +55,12 @@ const resolvers: Resolvers<DataSourcesContext> = {
           return book;
         })
       );
+      return buildPage({
+        items,
+        total,
+        perPage,
+        page,
+      });
     },
   },
 };
