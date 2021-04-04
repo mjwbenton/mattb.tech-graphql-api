@@ -40,7 +40,7 @@ export class FlickrDataSource<TContext = any> extends DataSource {
     photosetId: string;
     perPage: number;
     page?: number;
-  }): Promise<PhotoPage> {
+  }): Promise<PhotoPage | null> {
     const cacheKey = `getPhotoSet-${photosetId}-${perPage}p${page}`;
     return doAndCache(this.cache, cacheKey, async () => {
       const photosResponse = await callFlickr("flickr.photosets.getPhotos", {
@@ -48,6 +48,9 @@ export class FlickrDataSource<TContext = any> extends DataSource {
         per_page: perPage,
         page: page,
       });
+      if (!photosResponse.photoset) {
+        return null;
+      }
       const owner = photosResponse.photoset.owner;
       if (owner !== USER_ID) {
         throw new Error(`Cannot return photo set not owned by ${USER_ID}`);
@@ -145,7 +148,7 @@ export class FlickrDataSource<TContext = any> extends DataSource {
     });
   }
 
-  public async getPhoto(photoId: string): Promise<Photo> {
+  public async getPhoto(photoId: string): Promise<Photo | null> {
     const cacheKey = `getPhoto-${photoId}`;
     return doAndCache(this.cache, cacheKey, async () => {
       const [infoResponse, sizesResponse] = await Promise.all([
@@ -156,6 +159,9 @@ export class FlickrDataSource<TContext = any> extends DataSource {
           photo_id: photoId,
         }),
       ]);
+      if (!infoResponse.photo || !sizesResponse.photo) {
+        return null;
+      }
       const sources = buildSizesSources(sizesResponse);
       const mainSource = sources[sources.length - 1];
       if (infoResponse.photo.owner.nsid !== USER_ID) {

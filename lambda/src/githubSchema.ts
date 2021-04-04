@@ -4,7 +4,7 @@ import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
   type Query {
-    githubRepositories(first: Int, after: ID): PaginatedRepositories
+    githubRepositories(first: Int, after: ID): PaginatedRepositories!
   }
 
   type PaginatedRepositories {

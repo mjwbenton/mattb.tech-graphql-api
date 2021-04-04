@@ -7,7 +7,7 @@ const DEFAULT_PAGE_SIZE = 20;
 
 const typeDefs = gql`
   type Query {
-    recentBooks(first: Int, after: ID): PaginatedBooks
+    recentBooks(first: Int, after: ID): PaginatedBooks!
   }
 
   type PaginatedBooks {

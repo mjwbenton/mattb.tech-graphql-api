@@ -6,7 +6,7 @@ import { decodeCursor, buildPage } from "./pagination";
 const typeDefs = gql`
   type Query {
     recentPhotos(first: Int, after: ID): PaginatedPhotos!
-    photoSet(photosetId: ID!, first: Int, after: ID): PaginatedPhotos!
+    photoSet(photosetId: ID!, first: Int, after: ID): PaginatedPhotos
     photo(photoId: ID!): Photo
     photosWithTag(tag: ID!, first: Int, after: ID): PaginatedPhotos!
   }
@@ -60,14 +60,17 @@ const resolvers: Resolvers<DataSourcesContext> = {
       { dataSources: { flickr } }
     ) => {
       const { perPage, page } = decodeCursor({ first, after });
-      const { photos, total } = await flickr.getPhotoSet({
+      const result = await flickr.getPhotoSet({
         photosetId,
         perPage,
         page,
       });
+      if (!result) {
+        return null;
+      }
       return buildPage({
-        items: photos,
-        total,
+        items: result.photos,
+        total: result.total,
         perPage,
         page,
       });
