@@ -159,7 +159,7 @@ export class FlickrDataSource<TContext = any> extends DataSource {
           photo_id: photoId,
         }),
       ]);
-      if (!infoResponse.photo || !sizesResponse.photo) {
+      if (!infoResponse.photo || !sizesResponse.sizes) {
         return null;
       }
       const sources = buildSizesSources(sizesResponse);
