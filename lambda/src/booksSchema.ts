@@ -3,21 +3,19 @@ import { DataSourcesContext } from "./dataSources";
 import { Resolvers } from "./generated/graphql";
 import { buildPage, decodeCursor } from "./pagination";
 
-const DEFAULT_PAGE_SIZE = 20;
-
 const typeDefs = gql`
   type Query {
-    recentBooks(first: Int, after: ID): PaginatedBooks!
+    recentGoodreadsBooks(first: Int, after: ID): PaginatedGoodreadsBook!
   }
 
-  type PaginatedBooks {
+  type PaginatedGoodreadsBook {
     total: Int!
-    items: [Book!]!
+    items: [GoodreadsBook!]!
     hasNextPage: Boolean!
     nextPageCursor: ID
   }
 
-  type Book {
+  type GoodreadsBook {
     id: ID!
     title: String!
     link: String!
@@ -32,7 +30,7 @@ const typeDefs = gql`
 
 const resolvers: Resolvers<DataSourcesContext> = {
   Query: {
-    recentBooks: async (
+    recentGoodreadsBooks: async (
       _: never,
       { first, after },
       { dataSources: { goodreads, googleBooks } }

@@ -10,7 +10,7 @@ const postPromise = promisify(request.post);
 import qs from "querystring";
 import doAndCache from "./doAndCache";
 import moment from "moment";
-import { Book } from "./generated/graphql";
+import { GoodreadsBook } from "./generated/graphql";
 
 const USER_ID = "10445595";
 
@@ -84,7 +84,7 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
       const books = parsed.GoodreadsResponse.reviews[0].review
         .map((r: any) => {
           const read = r.rating[0] !== "0";
-          const book: Book = {
+          const book: GoodreadsBook = {
             id: r.book[0].id[0]["_"],
             title: r.book[0].title[0],
             link: r.book[0].link[0],
@@ -105,7 +105,7 @@ export class GoodreadsDataSource<TContext = any> extends DataSource {
           return book;
         })
         .filter(({ started_at, read_at }) => started_at || read_at);
-      books.sort((x: Book, y: Book) => {
+      books.sort((x: GoodreadsBook, y: GoodreadsBook) => {
         const xDate: string = x.started_at || x.read_at || "ZZZ";
         const yDate: string = y.started_at || y.read_at || "ZZZ";
         return yDate.localeCompare(xDate);
