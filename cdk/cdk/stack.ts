@@ -9,7 +9,10 @@ import * as route53targets from "@aws-cdk/aws-route53-targets";
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as acm from "@aws-cdk/aws-certificatemanager";
 import { Runtime } from "@aws-cdk/aws-lambda";
-import { HttpMethod, PayloadFormatVersion } from "@aws-cdk/aws-apigatewayv2";
+import {
+  CorsHttpMethod,
+  PayloadFormatVersion,
+} from "@aws-cdk/aws-apigatewayv2";
 import { CloudFrontAllowedCachedMethods } from "@aws-cdk/aws-cloudfront";
 
 const HOSTED_ZONE = "mattb.tech";
@@ -61,7 +64,11 @@ export class MattbTechGraphQlApi extends cdk.Stack {
       corsPreflight: {
         allowCredentials: false,
         allowOrigins: ["*"],
-        allowMethods: [HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS],
+        allowMethods: [
+          CorsHttpMethod.GET,
+          CorsHttpMethod.POST,
+          CorsHttpMethod.OPTIONS,
+        ],
         allowHeaders: ["Content-Type"],
       },
     });
