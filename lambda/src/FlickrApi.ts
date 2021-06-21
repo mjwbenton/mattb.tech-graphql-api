@@ -4,7 +4,8 @@ import doAndCache from "./doAndCache";
 import axios from "axios";
 import { Photo, PhotoSource } from "./generated/graphql";
 
-const USER_ID = "83914470@N00";
+const MAIN_USER_ID = "83914470@N00";
+const USERS = [MAIN_USER_ID, "193257165@N05"];
 
 const API_KEY = process.env.FLICKR_API_KEY;
 const FLICKR_URL_BASE = "https://www.flickr.com/photos/";
@@ -52,8 +53,8 @@ export class FlickrDataSource<TContext = any> extends DataSource {
         return null;
       }
       const owner = photosResponse.photoset.owner;
-      if (owner !== USER_ID) {
-        throw new Error(`Cannot return photo set not owned by ${USER_ID}`);
+      if (!USERS.includes(owner)) {
+        throw new Error(`Cannot return photo set not owned by supported user`);
       }
       const photos: Photo[] = await Promise.all(
         photosResponse.photoset.photo.map(async (p: any) => {
@@ -65,7 +66,7 @@ export class FlickrDataSource<TContext = any> extends DataSource {
           return {
             id: p.id,
             title: p.title,
-            pageUrl: `${FLICKR_URL_BASE}${USER_ID}/${p.id}/`,
+            pageUrl: `${FLICKR_URL_BASE}${owner}/${p.id}/`,
             sources: photoSources,
             mainSource: mainSource,
           };
@@ -90,7 +91,7 @@ export class FlickrDataSource<TContext = any> extends DataSource {
     const cacheKey = `getPhotosWithTag-${tag}-${perPage}p${page}`;
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await callFlickr("flickr.photos.search", {
-        user_id: USER_ID,
+        user_id: MAIN_USER_ID,
         tags: tag,
         extras: "url_z, url_c, url_l, url_k",
         sort: "date-posted-desc",
@@ -125,7 +126,7 @@ export class FlickrDataSource<TContext = any> extends DataSource {
     const cacheKey = `getRecentPhotos-${perPage}p${page}`;
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await callFlickr("flickr.people.getPublicPhotos", {
-        user_id: USER_ID,
+        user_id: MAIN_USER_ID,
         extras: "url_z, url_c, url_l, url_k",
         per_page: perPage,
         page,
@@ -164,8 +165,8 @@ export class FlickrDataSource<TContext = any> extends DataSource {
       }
       const sources = buildSizesSources(sizesResponse);
       const mainSource = sources[sources.length - 1];
-      if (infoResponse.photo.owner.nsid !== USER_ID) {
-        throw new Error(`Cannot return photo not owned by ${USER_ID}`);
+      if (!USERS.includes(infoResponse.photo.owner.nsid)) {
+        throw new Error(`Cannot return photo not owned by supported user`);
       }
       return {
         id: photoId,
