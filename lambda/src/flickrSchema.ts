@@ -22,6 +22,7 @@ const typeDefs = gql`
     id: ID!
     pageUrl: String!
     title: String
+    description: String
     mainSource: PhotoSource!
     sources: [PhotoSource!]!
   }
@@ -95,6 +96,15 @@ const resolvers: Resolvers<DataSourcesContext> = {
     },
     photo: (_: never, { photoId }, { dataSources: { flickr } }) =>
       flickr.getPhoto(photoId),
+  },
+  Photo: {
+    description: async (
+      { id }: { id: string },
+      _: never,
+      { dataSources: { flickr } }
+    ) => {
+      return await flickr.getDescription(id);
+    },
   },
 };
 

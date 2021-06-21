@@ -171,12 +171,29 @@ export class FlickrDataSource<TContext = any> extends DataSource {
       return {
         id: photoId,
         title: infoResponse.photo.title._content,
+        description: infoResponse.photo.description._content,
         pageUrl: infoResponse.photo.urls.url.filter(
           (url: any) => url.type === "photopage"
         )[0]._content,
         sources,
         mainSource,
       };
+    });
+  }
+
+  public async getDescription(photoId: string): Promise<string | null> {
+    const cacheKey = `getDescription-${photoId}`;
+    return doAndCache(this.cache, cacheKey, async () => {
+      const response = await callFlickr("flickr.photos.getInfo", {
+        photo_id: photoId,
+      });
+      if (!response) {
+        return null;
+      }
+      if (!USERS.includes(response.photo.owner.nsid)) {
+        throw new Error(`Cannot return photo not owned by supported user`);
+      }
+      return response?.photo?.description?._content ?? null;
     });
   }
 }
