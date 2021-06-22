@@ -14,6 +14,7 @@ import {
   PayloadFormatVersion,
 } from "@aws-cdk/aws-apigatewayv2";
 import { CloudFrontAllowedCachedMethods } from "@aws-cdk/aws-cloudfront";
+import { Duration } from "@aws-cdk/core";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
@@ -51,6 +52,7 @@ export class MattbTechGraphQlApi extends cdk.Stack {
       },
       runtime: Runtime.NODEJS_14_X,
       memorySize: 1024,
+      timeout: Duration.seconds(20),
     });
 
     lambdaFunction.addEnvironment("CACHE_TABLE", cacheTable.tableName);
