@@ -17,6 +17,7 @@ const typeDefs = gql`
 
   type GoodreadsBook {
     id: ID!
+    googleBooksId: ID
     title: String!
     link: String!
     rating: Int
@@ -48,7 +49,11 @@ const resolvers: Resolvers<DataSourcesContext> = {
             author: book.authors[0],
           });
           if (gbResult !== null) {
-            return { ...book, image: gbResult.image };
+            return {
+              ...book,
+              googleBooksId: gbResult.id,
+              image: gbResult.image,
+            };
           }
           return book;
         })

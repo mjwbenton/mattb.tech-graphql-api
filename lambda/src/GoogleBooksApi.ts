@@ -4,7 +4,8 @@ import axios from "axios";
 import doAndCache from "./doAndCache";
 
 interface GoogleBook {
-  readonly image: string;
+  readonly id: string;
+  readonly image: string | null;
 }
 
 const BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=";
@@ -36,9 +37,10 @@ export class GoogleBooksDataSource extends DataSource {
         )}%22+inauthor:%22${encodeURIComponent(author)}%22`
       );
       const result = (await axios.get(url)).data;
+      const id = result?.items?.[0]?.id;
       const image =
         result?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail ?? null;
-      return image ? { image } : null;
+      return id ? { id, image } : null;
     });
   }
 }
