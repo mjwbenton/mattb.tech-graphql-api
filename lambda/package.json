@@ -45,7 +45,7 @@
     "apollo-server-lambda": "^2.19.2",
     "aws-lambda": "^1.0.6",
     "aws-sdk": "^2.858.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "dotenv": "^8.2.0",
     "graphql": "^15.5.0",
     "moment": "^2.29.1",
