@@ -59,10 +59,13 @@ export class MattbTechGraphQlApi extends cdk.Stack {
     cacheTable.grantFullAccess(lambdaFunction);
 
     const api = new apigateway.HttpApi(this, "GraphQLApi", {
-      defaultIntegration: new apigatewayIntegrations.LambdaProxyIntegration({
-        handler: lambdaFunction,
-        payloadFormatVersion: PayloadFormatVersion.VERSION_1_0,
-      }),
+      defaultIntegration: new apigatewayIntegrations.HttpLambdaIntegration(
+        "GraphQLApiIntegration",
+        lambdaFunction,
+        {
+          payloadFormatVersion: PayloadFormatVersion.VERSION_1_0,
+        }
+      ),
       corsPreflight: {
         allowCredentials: false,
         allowOrigins: ["*"],
