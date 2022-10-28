@@ -75,11 +75,8 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
       if (response.errors) {
         throw new Error(JSON.stringify(response.errors));
       }
-      const {
-        edges,
-        totalCount,
-        pageInfo,
-      } = response.data.repositoryOwner.repositories;
+      const { edges, totalCount, pageInfo } =
+        response.data.repositoryOwner.repositories;
       const items = edges
         .map((edge) => edge.node)
         .map(

@@ -25,7 +25,7 @@ app.use((request, response) => {
       headers: request.headers as { [name: string]: string },
       body: JSON.stringify(request.body),
     } as APIGatewayProxyEvent,
-    ({ callbackWaitsForEmptyEventLoop: () => {} } as unknown) as Context,
+    { callbackWaitsForEmptyEventLoop: () => {} } as unknown as Context,
     callback
   );
 });

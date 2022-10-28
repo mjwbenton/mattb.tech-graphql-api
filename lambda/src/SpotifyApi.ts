@@ -75,4 +75,31 @@ export class SpotifyDataSource<TContext = any> extends DataSource {
       return { id, name, description, tracks, link };
     });
   }
+
+  public async getLikedTracks(): Promise<Array<Track>> {
+    const authHeader = await getAuthorizationHeader();
+    const response = (
+      await axios.get("https://api.spotify.com/v1/me/tracks", {
+        headers: {
+          Authorization: authHeader,
+        },
+      })
+    ).data;
+    const tracks: Array<Track> = response.tracks.items.map((t: any) => {
+      return {
+        id: t.track.id,
+        name: t.track.name,
+        album: {
+          id: t.track.album.id,
+          name: t.track.album.name,
+          images: t.track.album.images,
+        },
+        artists: t.track.artists.map((a: any) => ({
+          id: a.id,
+          name: a.name,
+        })),
+      };
+    });
+    return tracks;
+  }
 }
