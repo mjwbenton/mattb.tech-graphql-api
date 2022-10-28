@@ -12,6 +12,7 @@
   },
   "workspaces": [
     "lambda",
+    "oauth",
     "cdk"
   ],
   "repository": {

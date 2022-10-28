@@ -1,0 +1,21 @@
+{
+  "name": "@mattb.tech/graphql-api-oauth",
+  "version": "1.0.0",
+  "description": "Lambda functions powering Oauth functionality",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "npm run typescript",
+    "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
+    "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
+    "start": "npm run typescript:watch & nodemon ./dist/devServer.js",
+    "typescript": "tsc",
+    "typescript:watch": "tsc --watch"
+  },
+  "author": "Matt Benton <m@mattb.tech>",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {}
+}
