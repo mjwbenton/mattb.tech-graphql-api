@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true
-  },
-  "exclude": ["cdk.out"]
+    "noEmit": true,
+    "rootDir": "./src"
+  }
 }

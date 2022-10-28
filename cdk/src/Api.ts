@@ -20,7 +20,7 @@ const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
 const DOMAIN_NAME = "api.mattb.tech";
 
-export class MattbTechGraphQlApi extends cdk.Stack {
+export class Api extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
