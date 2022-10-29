@@ -6,7 +6,7 @@
     "build": "tsc",
     "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
     "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
-    "deploy": "npm run build && cdk deploy --profile mattb.tech-deploy --require-approval never",
+    "deploy": "npm run build && cdk deploy --profile mattb.tech-deploy --all --require-approval never",
     "diff": "npm run build && cdk diff --profile mattb.tech-deploy"
   },
   "author": "Matt Benton <m@mattb.tech>",
