@@ -1,28 +1,38 @@
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda-nodejs";
+import * as cdk from "aws-cdk-lib";
+import { Construct } from "constructs";
+import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
 import path from "path";
-import * as dynamodb from "@aws-cdk/aws-dynamodb";
-import * as apigateway from "@aws-cdk/aws-apigatewayv2";
-import * as apigatewayIntegrations from "@aws-cdk/aws-apigatewayv2-integrations";
-import * as route53 from "@aws-cdk/aws-route53";
-import * as route53targets from "@aws-cdk/aws-route53-targets";
-import * as cloudfront from "@aws-cdk/aws-cloudfront";
-import * as acm from "@aws-cdk/aws-certificatemanager";
-import { Runtime } from "@aws-cdk/aws-lambda";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as apigateway from "@aws-cdk/aws-apigatewayv2-alpha";
+import * as apigatewayIntegrations from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as route53targets from "aws-cdk-lib/aws-route53-targets";
+import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import { Runtime } from "aws-cdk-lib/aws-lambda";
 import {
   CorsHttpMethod,
   PayloadFormatVersion,
-} from "@aws-cdk/aws-apigatewayv2";
-import { CloudFrontAllowedCachedMethods } from "@aws-cdk/aws-cloudfront";
-import { Duration } from "@aws-cdk/core";
+} from "@aws-cdk/aws-apigatewayv2-alpha";
+import { CloudFrontAllowedCachedMethods } from "aws-cdk-lib/aws-cloudfront";
+import { Duration } from "aws-cdk-lib";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
 const DOMAIN_NAME = "api.mattb.tech";
 
 export class Api extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    const hostedZone = route53.HostedZone.fromHostedZoneAttributes(
+      this,
+      "Zone",
+      {
+        hostedZoneId: HOSTED_ZONE_ID,
+        zoneName: HOSTED_ZONE,
+      }
+    );
 
     const cacheTable = new dynamodb.Table(this, "CacheTable", {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
@@ -78,9 +88,9 @@ export class Api extends cdk.Stack {
       },
     });
 
-    const certificate = new acm.Certificate(this, "Certificate", {
+    const certificate = new acm.DnsValidatedCertificate(this, "Certificate", {
       domainName: DOMAIN_NAME,
-      validationMethod: acm.ValidationMethod.DNS,
+      hostedZone,
     });
 
     const distribution = new cloudfront.CloudFrontWebDistribution(
@@ -120,10 +130,7 @@ export class Api extends cdk.Stack {
     );
 
     new route53.ARecord(this, "DomainRecord", {
-      zone: route53.HostedZone.fromHostedZoneAttributes(this, "Zone", {
-        hostedZoneId: HOSTED_ZONE_ID,
-        zoneName: HOSTED_ZONE,
-      }),
+      zone: hostedZone,
       recordName: DOMAIN_NAME,
       ttl: cdk.Duration.minutes(5),
       target: route53.RecordTarget.fromAlias(
