@@ -47,6 +47,13 @@ export class Oauth extends cdk.Stack {
         environment: {
           NODE_ENV: "production",
         },
+        commandHooks: {
+          beforeBundling: () => [],
+          beforeInstall: () => [],
+          afterBundling(inputDir: string, outputDir: string): string[] {
+            return [`cp ${inputDir}/oauth/.env ${outputDir}`];
+          },
+        },
       },
       runtime: Runtime.NODEJS_14_X,
       memorySize: 1024,
@@ -78,6 +85,7 @@ export class Oauth extends cdk.Stack {
             protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
           }
         ),
+        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
       },
       certificate,
       domainNames: [DOMAIN_NAME],
