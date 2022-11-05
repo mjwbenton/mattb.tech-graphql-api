@@ -85,6 +85,14 @@ export class Oauth extends cdk.Stack {
             protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
           }
         ),
+        originRequestPolicy: new cloudfront.OriginRequestPolicy(
+          this,
+          "OriginRequestPolicy",
+          {
+            queryStringBehavior:
+              cloudfront.OriginRequestQueryStringBehavior.all(),
+          }
+        ),
         cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
       },
       certificate,
