@@ -30,11 +30,11 @@ export class Oauth extends cdk.Stack {
       }
     );
 
-    const tokenTable = new dynamodb.Table(this, "TokenTable", {
+    const oauthTable = new dynamodb.Table(this, "OauthTable", {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       partitionKey: {
-        name: "Source",
+        name: "service",
         type: dynamodb.AttributeType.STRING,
       },
     });
@@ -63,8 +63,8 @@ export class Oauth extends cdk.Stack {
       },
     });
 
-    lambdaFunction.addEnvironment("TOKEN_TABLE", tokenTable.tableName);
-    tokenTable.grantFullAccess(lambdaFunction);
+    lambdaFunction.addEnvironment("TABLE", oauthTable.tableName);
+    oauthTable.grantFullAccess(lambdaFunction);
 
     const api = new apigateway.HttpApi(this, "Api", {
       defaultIntegration: new apigatewayIntegrations.HttpLambdaIntegration(
