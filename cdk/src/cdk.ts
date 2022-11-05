@@ -3,5 +3,5 @@ import { Api } from "./Api";
 import { Oauth } from "./Oauth";
 
 const app = new cdk.App();
-new Api(app, "Api");
-new Oauth(app, "ApiOauth");
+const oauthStack = new Oauth(app, "ApiOauth");
+new Api(app, "Api", { oauthTable: oauthStack.table });

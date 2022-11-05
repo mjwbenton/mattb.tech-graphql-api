@@ -12,12 +12,14 @@ import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { PayloadFormatVersion } from "@aws-cdk/aws-apigatewayv2-alpha";
+import { ITable } from "aws-cdk-lib/aws-dynamodb";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
 const DOMAIN_NAME = "oauth.api.mattb.tech";
 
 export class Oauth extends cdk.Stack {
+  public readonly table: ITable;
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -30,7 +32,7 @@ export class Oauth extends cdk.Stack {
       }
     );
 
-    const oauthTable = new dynamodb.Table(this, "OauthTable", {
+    this.table = new dynamodb.Table(this, "OauthTable", {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       partitionKey: {
@@ -60,11 +62,11 @@ export class Oauth extends cdk.Stack {
       timeout: cdk.Duration.seconds(20),
       environment: {
         DOMAIN: DOMAIN_NAME,
+        TABLE: this.table.tableName,
       },
     });
 
-    lambdaFunction.addEnvironment("TABLE", oauthTable.tableName);
-    oauthTable.grantFullAccess(lambdaFunction);
+    this.table.grantFullAccess(lambdaFunction);
 
     const api = new apigateway.HttpApi(this, "Api", {
       defaultIntegration: new apigatewayIntegrations.HttpLambdaIntegration(

@@ -16,13 +16,18 @@ import {
 } from "@aws-cdk/aws-apigatewayv2-alpha";
 import { CloudFrontAllowedCachedMethods } from "aws-cdk-lib/aws-cloudfront";
 import { Duration } from "aws-cdk-lib";
+import { ITable } from "aws-cdk-lib/aws-dynamodb";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
 const DOMAIN_NAME = "api.mattb.tech";
 
+interface ApiProps extends cdk.StackProps {
+  oauthTable: ITable;
+}
+
 export class Api extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: ApiProps) {
     super(scope, id, props);
 
     const hostedZone = route53.HostedZone.fromHostedZoneAttributes(
@@ -67,6 +72,9 @@ export class Api extends cdk.Stack {
 
     lambdaFunction.addEnvironment("CACHE_TABLE", cacheTable.tableName);
     cacheTable.grantFullAccess(lambdaFunction);
+
+    lambdaFunction.addEnvironment("OAUTH_TABLE", props.oauthTable.tableName);
+    props.oauthTable.grantReadData(lambdaFunction);
 
     const api = new apigateway.HttpApi(this, "GraphQLApi", {
       defaultIntegration: new apigatewayIntegrations.HttpLambdaIntegration(
