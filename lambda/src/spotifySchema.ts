@@ -5,7 +5,7 @@ import { Resolvers } from "./generated/graphql";
 const typeDefs = gql`
   type Query {
     playlist(playlistId: ID!): Playlist
-    likedTracks: [Track!]!
+    likedTracks(limit: Int): [Track!]!
   }
 
   type Playlist {
@@ -45,8 +45,8 @@ const resolvers: Resolvers<DataSourcesContext> = {
   Query: {
     playlist: async (_: never, { playlistId }, context) =>
       context.dataSources.spotify.getPlaylist(playlistId),
-    likedTracks: async (_: never, __: never, context) =>
-      context.dataSources.spotify.getLikedTracks(),
+    likedTracks: async (_: never, { limit }, context) =>
+      context.dataSources.spotify.getLikedTracks(limit),
   },
 };
 
