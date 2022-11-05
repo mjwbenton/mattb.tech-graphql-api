@@ -59,10 +59,7 @@ export class Oauth extends cdk.Stack {
     const api = new apigateway.HttpApi(this, "Api", {
       defaultIntegration: new apigatewayIntegrations.HttpLambdaIntegration(
         "GraphQLApiIntegration",
-        lambdaFunction,
-        {
-          payloadFormatVersion: PayloadFormatVersion.VERSION_1_0,
-        }
+        lambdaFunction
       ),
     });
 
