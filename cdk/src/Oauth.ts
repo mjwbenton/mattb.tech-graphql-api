@@ -58,6 +58,9 @@ export class Oauth extends cdk.Stack {
       runtime: Runtime.NODEJS_14_X,
       memorySize: 1024,
       timeout: cdk.Duration.seconds(20),
+      environment: {
+        DOMAIN: DOMAIN_NAME,
+      },
     });
 
     lambdaFunction.addEnvironment("TOKEN_TABLE", tokenTable.tableName);
