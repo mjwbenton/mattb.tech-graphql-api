@@ -11,8 +11,8 @@
     "diff": "npm run build && yarn workspace @mattb.tech/graphql-api-cdk run diff"
   },
   "workspaces": [
-    "lambda",
-    "oauth",
+    "api-lambda",
+    "oauth-lambda",
     "cdk"
   ],
   "repository": {

@@ -50,7 +50,7 @@ export class Api extends cdk.Stack {
     });
 
     const lambdaFunction = new lambda.NodejsFunction(this, "LambdaFunction", {
-      entry: path.join(__dirname, "../../lambda/dist/index.js"),
+      entry: path.join(__dirname, "../../api-lambda/dist/index.js"),
       handler: "handler",
       bundling: {
         target: "es2020",
@@ -61,7 +61,7 @@ export class Api extends cdk.Stack {
           beforeBundling: () => [],
           beforeInstall: () => [],
           afterBundling(inputDir: string, outputDir: string): string[] {
-            return [`cp ${inputDir}/lambda/.env ${outputDir}`];
+            return [`cp ${inputDir}/api-lambda/.env ${outputDir}`];
           },
         },
       },

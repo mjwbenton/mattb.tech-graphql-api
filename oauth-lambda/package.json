@@ -1,5 +1,5 @@
 {
-  "name": "@mattb.tech/graphql-api-oauth",
+  "name": "@mattb.tech/graphql-api-oauth-lambda",
   "version": "1.0.0",
   "description": "Lambda functions powering Oauth functionality",
   "main": "src/index.js",

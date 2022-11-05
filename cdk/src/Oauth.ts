@@ -42,7 +42,7 @@ export class Oauth extends cdk.Stack {
     });
 
     const lambdaFunction = new lambda.NodejsFunction(this, "LambdaFunction", {
-      entry: path.join(__dirname, "../../oauth/dist/index.js"),
+      entry: path.join(__dirname, "../../oauth-lambda/dist/index.js"),
       handler: "handler",
       bundling: {
         target: "es2020",
@@ -53,7 +53,7 @@ export class Oauth extends cdk.Stack {
           beforeBundling: () => [],
           beforeInstall: () => [],
           afterBundling(inputDir: string, outputDir: string): string[] {
-            return [`cp ${inputDir}/oauth/.env ${outputDir}`];
+            return [`cp ${inputDir}/oauth-lambda/.env ${outputDir}`];
           },
         },
       },
