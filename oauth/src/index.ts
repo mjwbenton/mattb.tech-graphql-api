@@ -27,7 +27,7 @@ const REDIRECT_URI = `https://${DOMAIN}/authorized`;
 const SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize";
 const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
 const SPOTIFY_SERVICE = "spotify";
-const SPOTIFY_SCOPE = "user-read-private user-read-email";
+const SPOTIFY_SCOPE = "user-library-read";
 
 const dbClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
