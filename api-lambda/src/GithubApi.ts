@@ -3,6 +3,7 @@ import { KeyValueCache } from "apollo-server-core";
 import fetch from "node-fetch";
 import doAndCache from "./doAndCache";
 import { PaginatedRepositories } from "./generated/graphql";
+import env from "./env";
 
 const LOGIN = "mjwbenton";
 
@@ -51,7 +52,7 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
 
   constructor() {
     super();
-    const { GITHUB_TOKEN } = process.env;
+    const { GITHUB_TOKEN } = env;
     if (!GITHUB_TOKEN) {
       throw new Error("Missing github token");
     }

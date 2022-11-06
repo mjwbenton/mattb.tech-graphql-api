@@ -3,11 +3,12 @@ import { KeyValueCache } from "apollo-server-core";
 import doAndCache from "./doAndCache";
 import axios from "axios";
 import { Photo, PhotoSource } from "./generated/graphql";
+import env from "./env";
 
 const MAIN_USER_ID = "83914470@N00";
 const USERS = [MAIN_USER_ID, "193257165@N05"];
 
-const API_KEY = process.env.FLICKR_API_KEY;
+const API_KEY = env.FLICKR_API_KEY;
 const FLICKR_URL_BASE = "https://www.flickr.com/photos/";
 const FLICKR_API_BASE_URL = "https://api.flickr.com/services/rest/";
 const FLICKR_BASE_PARAMETERS = "?format=json&nojsoncallback=1";
