@@ -2,8 +2,7 @@ import { DataSource, DataSourceConfig } from "apollo-datasource";
 import { KeyValueCache } from "apollo-server-core";
 import axios from "axios";
 import doAndCache from "./doAndCache";
-
-import { getAuthorizationHeader } from "./spotifyAuth";
+import { getAccessToken } from "@mattb.tech/graphql-api-oauth-lib";
 
 export type Playlist = {
   id: string;
@@ -47,11 +46,11 @@ export class SpotifyDataSource<TContext = any> extends DataSource {
   public async getPlaylist(playlist: string): Promise<Playlist> {
     const cacheKey = `playlist-${playlist}`;
     return doAndCache(this.cache, cacheKey, async () => {
-      const authHeader = await getAuthorizationHeader();
+      const accessToken = await getAccessToken("spotify");
       const response = (
         await axios.get(`https://api.spotify.com/v1/playlists/${playlist}`, {
           headers: {
-            Authorization: authHeader,
+            Authorization: `Bearer ${accessToken}`,
           },
         })
       ).data;
@@ -79,11 +78,11 @@ export class SpotifyDataSource<TContext = any> extends DataSource {
   public async getLikedTracks(limit: number = 3): Promise<Array<Track>> {
     const cacheKey = `likedTracks-${limit}`;
     return doAndCache(this.cache, cacheKey, async () => {
-      const authHeader = await getAuthorizationHeader();
+      const accessToken = await getAccessToken("spotify");
       const response = (
         await axios.get(`https://api.spotify.com/v1/me/tracks?limit=${limit}`, {
           headers: {
-            Authorization: authHeader,
+            Authorization: `Bearer ${accessToken}`,
           },
         })
       ).data;

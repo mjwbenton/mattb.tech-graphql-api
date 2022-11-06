@@ -17,6 +17,7 @@ import {
 import { CloudFrontAllowedCachedMethods } from "aws-cdk-lib/aws-cloudfront";
 import { Duration } from "aws-cdk-lib";
 import { ITable } from "aws-cdk-lib/aws-dynamodb";
+import { OAUTH_DOMAIN } from "./Oauth";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
@@ -68,13 +69,16 @@ export class Api extends cdk.Stack {
       runtime: Runtime.NODEJS_14_X,
       memorySize: 1024,
       timeout: Duration.seconds(20),
+      environment: {
+        OAUTH_DOMAIN,
+      },
     });
 
     lambdaFunction.addEnvironment("CACHE_TABLE", cacheTable.tableName);
     cacheTable.grantFullAccess(lambdaFunction);
 
     lambdaFunction.addEnvironment("OAUTH_TABLE", props.oauthTable.tableName);
-    props.oauthTable.grantReadData(lambdaFunction);
+    props.oauthTable.grantFullAccess(lambdaFunction);
 
     const api = new apigateway.HttpApi(this, "GraphQLApi", {
       defaultIntegration: new apigatewayIntegrations.HttpLambdaIntegration(

@@ -37,6 +37,7 @@
   "dependencies": {
     "@graphql-tools/delegate": "^7.1.4",
     "@graphql-tools/wrap": "^7.0.6",
+    "@mattb.tech/graphql-api-oauth-lib": "1.0.0",
     "apollo-datasource": "^0.7.3",
     "apollo-server-cache-dynamodb": "^2.0.1",
     "apollo-server-lambda": "^2.19.2",
