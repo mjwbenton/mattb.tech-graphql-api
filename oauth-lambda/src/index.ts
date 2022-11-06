@@ -12,15 +12,13 @@ import {
 import axios from "axios";
 
 dotenv.config();
-const { DOMAIN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, TABLE } = cleanEnv(
-  process.env,
-  {
+const { DOMAIN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, OAUTH_TABLE } =
+  cleanEnv(process.env, {
     SPOTIFY_CLIENT_ID: str(),
     SPOTIFY_CLIENT_SECRET: str(),
     DOMAIN: str(),
-    TABLE: str(),
-  }
-);
+    OAUTH_TABLE: str(),
+  });
 
 const REDIRECT_URI = `https://${DOMAIN}/authorized`;
 
@@ -41,7 +39,7 @@ app.get("/start", async (req, res) => {
   const state = crypto.randomBytes(8).toString("hex");
   await dbClient.send(
     new PutCommand({
-      TableName: TABLE,
+      TableName: OAUTH_TABLE,
       Item: {
         service: SPOTIFY_SERVICE,
         state,
@@ -67,7 +65,7 @@ app.get("/authorized", async (req, res) => {
 
   const { Item: item } = await dbClient.send(
     new GetCommand({
-      TableName: TABLE,
+      TableName: OAUTH_TABLE,
       Key: {
         service: SPOTIFY_SERVICE,
       },
@@ -95,7 +93,7 @@ app.get("/authorized", async (req, res) => {
 
   await dbClient.send(
     new PutCommand({
-      TableName: TABLE,
+      TableName: OAUTH_TABLE,
       Item: {
         service: SPOTIFY_SERVICE,
         ...response.data,
