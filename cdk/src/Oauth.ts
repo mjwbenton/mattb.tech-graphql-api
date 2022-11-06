@@ -11,12 +11,11 @@ import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
-import { PayloadFormatVersion } from "@aws-cdk/aws-apigatewayv2-alpha";
 import { ITable } from "aws-cdk-lib/aws-dynamodb";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
-const DOMAIN_NAME = "oauth.api.mattb.tech";
+export const OAUTH_DOMAIN = "oauth.api.mattb.tech";
 
 export class Oauth extends cdk.Stack {
   public readonly table: ITable;
@@ -61,7 +60,7 @@ export class Oauth extends cdk.Stack {
       memorySize: 1024,
       timeout: cdk.Duration.seconds(20),
       environment: {
-        OAUTH_DOMAIN: DOMAIN_NAME,
+        OAUTH_DOMAIN,
         OAUTH_TABLE: this.table.tableName,
       },
     });
@@ -76,7 +75,7 @@ export class Oauth extends cdk.Stack {
     });
 
     const certificate = new acm.DnsValidatedCertificate(this, "Certificate", {
-      domainName: DOMAIN_NAME,
+      domainName: OAUTH_DOMAIN,
       hostedZone,
     });
 
@@ -101,12 +100,12 @@ export class Oauth extends cdk.Stack {
         cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
       },
       certificate,
-      domainNames: [DOMAIN_NAME],
+      domainNames: [OAUTH_DOMAIN],
     });
 
     new route53.ARecord(this, "DomainRecord", {
       zone: hostedZone,
-      recordName: DOMAIN_NAME,
+      recordName: OAUTH_DOMAIN,
       ttl: cdk.Duration.minutes(5),
       target: route53.RecordTarget.fromAlias(
         new route53targets.CloudFrontTarget(distribution)

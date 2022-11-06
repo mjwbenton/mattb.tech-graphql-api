@@ -1,13 +1,12 @@
 {
-  "name": "@mattb.tech/graphql-api-oauth-lambda",
+  "name": "@mattb.tech/graphql-api-oauth-lib",
   "version": "1.0.0",
-  "description": "Lambda functions powering Oauth functionality",
-  "main": "src/index.js",
+  "description": "Lib for working with oauth table",
+  "main": "dist/index.js",
   "scripts": {
     "build": "npm run typescript",
     "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
     "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
-    "start": "npm run typescript:watch & nodemon ./dist/devServer.js",
     "typescript": "tsc",
     "typescript:watch": "tsc --watch"
   },
@@ -20,11 +19,8 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.204.0",
     "@aws-sdk/lib-dynamodb": "^3.204.0",
-    "@fastify/aws-lambda": "^3.1.3",
-    "@mattb.tech/graphql-api-oauth-lib": "1.0.0",
     "axios": "^1.1.3",
-    "dotenv": "^16.0.3",
-    "envalid": "^7.3.1",
-    "fastify": "^4.9.2"
+    "date-fns": "^2.29.3",
+    "envalid": "^7.3.1"
   }
 }
