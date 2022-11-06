@@ -12,15 +12,15 @@ import {
 import axios from "axios";
 
 dotenv.config();
-const { DOMAIN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, OAUTH_TABLE } =
+const { OAUTH_DOMAIN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, OAUTH_TABLE } =
   cleanEnv(process.env, {
     SPOTIFY_CLIENT_ID: str(),
     SPOTIFY_CLIENT_SECRET: str(),
-    DOMAIN: str(),
+    OAUTH_DOMAIN: str(),
     OAUTH_TABLE: str(),
   });
 
-const REDIRECT_URI = `https://${DOMAIN}/authorized`;
+const REDIRECT_URI = `https://${OAUTH_DOMAIN}/authorized`;
 
 const SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize";
 const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";

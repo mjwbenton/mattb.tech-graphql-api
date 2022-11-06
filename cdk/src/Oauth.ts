@@ -61,7 +61,7 @@ export class Oauth extends cdk.Stack {
       memorySize: 1024,
       timeout: cdk.Duration.seconds(20),
       environment: {
-        DOMAIN: DOMAIN_NAME,
+        OAUTH_DOMAIN: DOMAIN_NAME,
         OAUTH_TABLE: this.table.tableName,
       },
     });
