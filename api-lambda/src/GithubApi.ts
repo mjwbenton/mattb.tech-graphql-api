@@ -2,12 +2,15 @@ import { DataSource, DataSourceConfig } from "apollo-datasource";
 import { KeyValueCache } from "apollo-server-core";
 import fetch from "node-fetch";
 import doAndCache from "./doAndCache";
-import { PaginatedRepositories } from "./generated/graphql";
+import {
+  GithubContributions,
+  PaginatedRepositories,
+} from "./generated/graphql";
 import env from "./env";
 
 const LOGIN = "mjwbenton";
 
-const QUERY = (first: number, after?: string) => `{
+const REPOSITORIES_QUERY = (first: number, after?: string) => `{
   repositoryOwner(login: "${LOGIN}") {
     repositories(
       first: ${first}
@@ -46,6 +49,17 @@ const QUERY = (first: number, after?: string) => `{
   }
 }`;
 
+const CONTRIBUTIONS_QUERY = `
+{
+  user(login:"${LOGIN}") {
+    contributionsCollection {
+      totalCommitContributions
+      totalRepositoriesWithContributedCommits
+    }
+  }
+}
+`;
+
 export class GithubDataSourcce<TContext = any> extends DataSource {
   private cache!: KeyValueCache;
   private githubToken: string;
@@ -63,6 +77,24 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
     this.cache = config.cache;
   }
 
+  public async getContributions(): Promise<GithubContributions> {
+    const cacheKey = `contributions`;
+    return doAndCache(this.cache, cacheKey, async () => {
+      const response = await this.fetch(CONTRIBUTIONS_QUERY);
+      if (response.errors) {
+        throw new Error(JSON.stringify(response.errors));
+      }
+      console.log(response);
+      return {
+        commits:
+          response.data.user.contributionsCollection.totalCommitContributions,
+        repositoriesCommittedTo:
+          response.data.user.contributionsCollection
+            .totalRepositoriesWithContributedCommits,
+      };
+    });
+  }
+
   public async getRepositories({
     first = 20,
     after = null,
@@ -72,7 +104,7 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
   }): Promise<PaginatedRepositories> {
     const cacheKey = `recentRepositories-first-${first}-after-${after}`;
     return doAndCache(this.cache, cacheKey, async () => {
-      const response = await this.fetch(QUERY(first, after));
+      const response = await this.fetch(REPOSITORIES_QUERY(first, after));
       if (response.errors) {
         throw new Error(JSON.stringify(response.errors));
       }
