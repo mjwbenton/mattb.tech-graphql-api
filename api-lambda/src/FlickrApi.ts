@@ -6,7 +6,13 @@ import { Photo, PhotoSource } from "./generated/graphql";
 import env from "./env";
 
 const MAIN_USER_ID = "83914470@N00";
-const USERS = [MAIN_USER_ID, "193257165@N05"];
+const USERS = [
+  MAIN_USER_ID,
+  "193257165@N05",
+  "15016495@N00", // "nialloswald"
+  "54232610@N08", // "alicethewhale"
+  "22998020@N06", //"shlyn401"
+];
 
 const API_KEY = env.FLICKR_API_KEY;
 const FLICKR_URL_BASE = "https://www.flickr.com/photos/";
@@ -166,6 +172,7 @@ export class FlickrDataSource<TContext = any> extends DataSource {
       }
       const sources = buildSizesSources(sizesResponse);
       const mainSource = sources[sources.length - 1];
+      console.log(infoResponse.photo.owner.nsid);
       if (!USERS.includes(infoResponse.photo.owner.nsid)) {
         throw new Error(`Cannot return photo not owned by supported user`);
       }
