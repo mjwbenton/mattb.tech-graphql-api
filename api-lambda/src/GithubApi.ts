@@ -2,10 +2,7 @@ import { DataSource, DataSourceConfig } from "apollo-datasource";
 import { KeyValueCache } from "apollo-server-core";
 import fetch from "node-fetch";
 import doAndCache from "./doAndCache";
-import {
-  GithubContributions,
-  PaginatedRepositories,
-} from "./generated/graphql";
+import { CommitStats, PaginatedRepositories } from "./generated/graphql";
 import env from "./env";
 
 const LOGIN = "mjwbenton";
@@ -77,8 +74,8 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
     this.cache = config.cache;
   }
 
-  public async getContributions(): Promise<GithubContributions> {
-    const cacheKey = `contributions`;
+  public async getCommitStats(): Promise<CommitStats> {
+    const cacheKey = `commitStats`;
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await this.fetch(CONTRIBUTIONS_QUERY);
       if (response.errors) {

@@ -4,11 +4,11 @@ import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
   type Query {
-    githubRepositories(first: Int, after: ID): PaginatedRepositories!
-    githubContributions: GithubContributions!
+    repositories(first: Int, after: ID): PaginatedRepositories!
+    commitStats: CommitStats!
   }
 
-  type GithubContributions {
+  type CommitStats {
     commits: Int!
     repositoriesCommittedTo: Int!
   }
@@ -35,16 +35,13 @@ const typeDefs = gql`
 
 const resolvers: Resolvers<DataSourcesContext> = {
   Query: {
-    githubRepositories: async (
+    repositories: async (
       _: never,
       { first, after },
       { dataSources: { github } }
     ) => github.getRepositories({ first, after }),
-    githubContributions: async (
-      _: never,
-      __: never,
-      { dataSources: { github } }
-    ) => github.getContributions(),
+    commitStats: async (_: never, __: never, { dataSources: { github } }) =>
+      github.getCommitStats(),
   },
 };
 
