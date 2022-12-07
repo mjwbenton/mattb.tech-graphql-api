@@ -4,6 +4,9 @@ import fetch from "node-fetch";
 import doAndCache from "./doAndCache";
 import { CommitStats, PaginatedRepositories } from "./generated/graphql";
 import env from "./env";
+import startOfYear from "date-fns/startOfYear";
+import formatISO from "date-fns/formatISO";
+import endOfYear from "date-fns/endOfYear";
 
 const LOGIN = "mjwbenton";
 
@@ -46,10 +49,10 @@ const REPOSITORIES_QUERY = (first: number, after?: string) => `{
   }
 }`;
 
-const CONTRIBUTIONS_QUERY = `
+const CONTRIBUTIONS_QUERY = (from: string, to: string) => `
 {
   user(login:"${LOGIN}") {
-    contributionsCollection {
+    contributionsCollection(from: "${from}", to: "${to}") {
       totalCommitContributions
       totalRepositoriesWithContributedCommits
     }
@@ -75,9 +78,12 @@ export class GithubDataSourcce<TContext = any> extends DataSource {
   }
 
   public async getCommitStats(): Promise<CommitStats> {
-    const cacheKey = `commitStats`;
+    const now = new Date();
+    const from = formatISO(startOfYear(now));
+    const to = formatISO(endOfYear(now));
+    const cacheKey = `commitStats-${from}-${to}`;
     return doAndCache(this.cache, cacheKey, async () => {
-      const response = await this.fetch(CONTRIBUTIONS_QUERY);
+      const response = await this.fetch(CONTRIBUTIONS_QUERY(from, to));
       if (response.errors) {
         throw new Error(JSON.stringify(response.errors));
       }
