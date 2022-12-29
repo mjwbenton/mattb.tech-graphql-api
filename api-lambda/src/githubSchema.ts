@@ -1,11 +1,14 @@
 import { gql, makeExecutableSchema } from "apollo-server-lambda";
 import { DataSourcesContext } from "./dataSources";
 import { Resolvers } from "./generated/graphql";
+import { DateTimeResolver as DateTime } from "graphql-scalars";
 
 const typeDefs = gql`
+  scalar DateTime
+
   type Query {
     repositories(first: Int, after: ID): PaginatedRepositories!
-    commitStats: CommitStats!
+    commitStats(startDate: DateTime!, endDate: DateTime!): CommitStats!
   }
 
   type CommitStats {
@@ -34,14 +37,15 @@ const typeDefs = gql`
 `;
 
 const resolvers: Resolvers<DataSourcesContext> = {
+  DateTime,
   Query: {
-    repositories: async (
-      _: never,
-      { first, after },
+    repositories: async (_, { first, after }, { dataSources: { github } }) =>
+      github.getRepositories({ first, after }),
+    commitStats: async (
+      _,
+      { startDate, endDate },
       { dataSources: { github } }
-    ) => github.getRepositories({ first, after }),
-    commitStats: async (_: never, __: never, { dataSources: { github } }) =>
-      github.getCommitStats(),
+    ) => github.getCommitStats(startDate, endDate),
   },
 };
 
