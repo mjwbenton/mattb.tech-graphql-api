@@ -9,6 +9,7 @@ import billioSchema from "./billioRemote";
 import cache from "./cache";
 import dataSources from "./dataSources";
 import ecologiSchema from "./ecologiSchema";
+import testSchema from "./testSchema";
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
@@ -20,6 +21,7 @@ const server = new ApolloServer({
       spotifySchema,
       billioSchema,
       ecologiSchema,
+      testSchema,
     ],
   }),
   dataSources,
