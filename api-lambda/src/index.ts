@@ -10,6 +10,7 @@ import cache from "./cache";
 import dataSources from "./dataSources";
 import ecologiSchema from "./ecologiSchema";
 import testSchema from "./testSchema";
+import healthioSchema from "./healthioRemote";
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
@@ -22,6 +23,7 @@ const server = new ApolloServer({
       billioSchema,
       ecologiSchema,
       testSchema,
+      healthioSchema,
     ],
   }),
   dataSources,

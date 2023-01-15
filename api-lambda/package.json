@@ -4,13 +4,15 @@
   "description": "Lambda function Graphql API for mattb.tech",
   "main": "src/index.js",
   "scripts": {
-    "build": "npm run billio-schema && npm run codegen && npm run typescript",
+    "build": "npm run external-schemas && npm run codegen && npm run typescript",
     "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
     "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
     "start": "npm run codegen:watch & npm run typescript:watch & nodemon ./dist/devServer.js",
     "codegen": "graphql-codegen --config codegen.yml",
     "codegen:watch": "graphql-codegen --config codegen.yml --watch",
-    "billio-schema": "node ./dist/bin/fetchSchemaForBillio.js",
+    "external-schemas": "npm run billio-schema && npm run healthio-schema",
+    "billio-schema": "node ./dist/bin/fetchSchemaExternal.js https://api-readonly.billio.mattb.tech ./src/generated/billio/schema.json",
+    "healthio-schema": "node ./dist/bin/fetchSchemaExternal.js https://graphql.healthio.mattb.tech ./src/generated/healthio/schema.json",
     "typescript": "tsc",
     "typescript:watch": "tsc --watch"
   },
