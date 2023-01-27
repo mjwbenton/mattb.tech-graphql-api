@@ -12,6 +12,7 @@ const USERS = [
   "15016495@N00", // "nialloswald"
   "54232610@N08", // "alicethewhale"
   "22998020@N06", //"shlyn401"
+  "195604247@N08", // "tammytrashbags"
 ];
 
 const API_KEY = env.FLICKR_API_KEY;
