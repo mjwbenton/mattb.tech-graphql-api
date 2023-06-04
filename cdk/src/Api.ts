@@ -9,6 +9,7 @@ import * as route53 from "aws-cdk-lib/aws-route53";
 import * as route53targets from "aws-cdk-lib/aws-route53-targets";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import {
   CorsHttpMethod,
@@ -50,6 +51,10 @@ export class Api extends cdk.Stack {
       timeToLiveAttribute: "CacheTTL",
     });
 
+    const localDevelopmentRole = new iam.Role(this, "LocalDevelopmentRole", {
+      assumedBy: new iam.AccountPrincipal(this.account),
+    });
+
     const lambdaFunction = new lambda.NodejsFunction(this, "LambdaFunction", {
       entry: path.join(__dirname, "../../api-lambda/dist/index.js"),
       handler: "handler",
@@ -76,9 +81,11 @@ export class Api extends cdk.Stack {
 
     lambdaFunction.addEnvironment("CACHE_TABLE", cacheTable.tableName);
     cacheTable.grantFullAccess(lambdaFunction);
+    cacheTable.grantFullAccess(localDevelopmentRole);
 
     lambdaFunction.addEnvironment("OAUTH_TABLE", props.oauthTable.tableName);
     props.oauthTable.grantFullAccess(lambdaFunction);
+    props.oauthTable.grantFullAccess(localDevelopmentRole);
 
     const api = new apigateway.HttpApi(this, "GraphQLApi", {
       defaultIntegration: new apigatewayIntegrations.HttpLambdaIntegration(
