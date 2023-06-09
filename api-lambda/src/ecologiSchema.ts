@@ -1,6 +1,7 @@
-import { gql, makeExecutableSchema } from "apollo-server-lambda";
-import { DataSourcesContext } from "./dataSources";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { Context } from "./dataSources";
 import { Resolvers } from "./generated/graphql";
+import gql from "graphql-tag";
 
 const typeDefs = gql`
   type Query {
@@ -13,7 +14,7 @@ const typeDefs = gql`
   }
 `;
 
-const resolvers: Resolvers<DataSourcesContext> = {
+const resolvers: Resolvers<Context> = {
   Query: {
     climateImpact: async (
       _: never,

@@ -8,3 +8,4 @@ generates:
     config:
       scalars:
         DateTime: Date
+        ID: string

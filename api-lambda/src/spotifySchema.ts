@@ -1,6 +1,7 @@
-import { gql, makeExecutableSchema } from "apollo-server-lambda";
-import { DataSourcesContext } from "./dataSources";
+import gql from "graphql-tag";
 import { Resolvers } from "./generated/graphql";
+import { Context } from "./dataSources";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 
 const typeDefs = gql`
   type Query {
@@ -41,7 +42,7 @@ const typeDefs = gql`
   }
 `;
 
-const resolvers: Resolvers<DataSourcesContext> = {
+const resolvers: Resolvers<Context> = {
   Query: {
     playlist: async (_: never, { playlistId }, context) =>
       context.dataSources.spotify.getPlaylist(playlistId),

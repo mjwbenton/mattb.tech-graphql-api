@@ -1,4 +1,4 @@
-import { KeyValueCache } from "apollo-server-core";
+import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 
 export default async function doAndCache<T>(
   cache: KeyValueCache,

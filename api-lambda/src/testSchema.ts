@@ -1,5 +1,6 @@
-import { gql, makeExecutableSchema } from "apollo-server-lambda";
+import gql from "graphql-tag";
 import { Resolvers } from "./generated/graphql";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 
 const typeDefs = gql`
   type Query {

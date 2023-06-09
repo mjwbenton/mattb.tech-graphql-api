@@ -1,8 +1,6 @@
-import { DataSource, DataSourceConfig } from "apollo-datasource";
-import { KeyValueCache } from "apollo-server-core";
 import axios from "axios";
-import dataSources from "./dataSources";
 import doAndCache from "./doAndCache";
+import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 
 const CACHE_KEY = "climate-impact";
 
@@ -11,12 +9,8 @@ export type ClimateImpact = {
   carbonOffsetTonnes: number;
 };
 
-export class EcologiDataSource<TContext = any> extends DataSource {
-  private cache!: KeyValueCache;
-
-  initialize(config: DataSourceConfig<TContext>): void {
-    this.cache = config.cache;
-  }
+export class EcologiDataSource {
+  constructor(private readonly cache: KeyValueCache) {}
 
   public async getClimateImpact(): Promise<ClimateImpact> {
     return doAndCache(this.cache, CACHE_KEY, async () => {

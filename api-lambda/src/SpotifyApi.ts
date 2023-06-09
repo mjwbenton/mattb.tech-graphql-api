@@ -1,8 +1,7 @@
-import { DataSource, DataSourceConfig } from "apollo-datasource";
-import { KeyValueCache } from "apollo-server-core";
 import axios from "axios";
 import doAndCache from "./doAndCache";
 import { getAccessToken } from "@mattb.tech/graphql-api-oauth-lib";
+import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 
 export type Playlist = {
   id: string;
@@ -36,12 +35,8 @@ export type Image = {
   height: number;
 };
 
-export class SpotifyDataSource<TContext = any> extends DataSource {
-  private cache!: KeyValueCache;
-
-  initialize(config: DataSourceConfig<TContext>): void {
-    this.cache = config.cache;
-  }
+export class SpotifyDataSource {
+  constructor(private readonly cache: KeyValueCache) {}
 
   public async getPlaylist(playlist: string): Promise<Playlist> {
     const cacheKey = `playlist-${playlist}`;

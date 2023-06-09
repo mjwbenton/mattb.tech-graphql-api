@@ -1,17 +1,18 @@
+import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 import { EcologiDataSource } from "./EcologiApi";
 import { FlickrDataSource } from "./FlickrApi";
 import { GithubDataSourcce } from "./GithubApi";
 import { SpotifyDataSource } from "./SpotifyApi";
 
-const dataSources = {
-  spotify: new SpotifyDataSource(),
-  flickr: new FlickrDataSource(),
-  github: new GithubDataSourcce(),
-  ecologi: new EcologiDataSource(),
-};
+export default function dataSources(cache: KeyValueCache) {
+  return {
+    spotify: new SpotifyDataSource(cache),
+    flickr: new FlickrDataSource(cache),
+    github: new GithubDataSourcce(cache),
+    ecologi: new EcologiDataSource(cache),
+  };
+}
 
-export default () => dataSources;
-
-export type DataSourcesContext = {
-  dataSources: typeof dataSources;
+export type Context = {
+  dataSources: ReturnType<typeof dataSources>;
 };

@@ -1,7 +1,8 @@
-import { gql, makeExecutableSchema } from "apollo-server-lambda";
-import { DataSourcesContext } from "./dataSources";
+import gql from "graphql-tag";
+import { Context } from "./dataSources";
 import { Resolvers } from "./generated/graphql";
 import { DateTimeResolver as DateTime } from "graphql-scalars";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 
 const typeDefs = gql`
   scalar DateTime
@@ -36,7 +37,7 @@ const typeDefs = gql`
   }
 `;
 
-const resolvers: Resolvers<DataSourcesContext> = {
+const resolvers: Resolvers<Context> = {
   DateTime,
   Query: {
     repositories: async (_, { first, after }, { dataSources: { github } }) =>

@@ -1,9 +1,8 @@
-import { DataSource, DataSourceConfig } from "apollo-datasource";
-import { KeyValueCache } from "apollo-server-core";
 import doAndCache from "./doAndCache";
 import axios from "axios";
 import { Photo, PhotoSource, PhotoTag } from "./generated/graphql";
 import env from "./env";
+import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 
 const MAIN_USER_ID = "83914470@N00";
 const USERS = [
@@ -34,12 +33,8 @@ type PhotoPage = {
   photos: Photo[];
 };
 
-export class FlickrDataSource<TContext = any> extends DataSource {
-  private cache!: KeyValueCache;
-
-  initialize(config: DataSourceConfig<TContext>): void {
-    this.cache = config.cache;
-  }
+export class FlickrDataSource {
+  constructor(private readonly cache: KeyValueCache) {}
 
   public async getPhotoSet({
     photosetId,

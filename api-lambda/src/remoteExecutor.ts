@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { print } from "graphql";
-import { Executor } from "@graphql-tools/delegate";
+import { Executor } from "@graphql-tools/utils";
 
 const buildExecutor: (endpoint: string) => Executor =
   (endpoint) =>

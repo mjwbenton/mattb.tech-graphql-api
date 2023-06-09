@@ -1,4 +1,4 @@
-import { parse, getIntrospectionQuery } from "graphql";
+import { parse, getIntrospectionQuery, ExecutionResult } from "graphql";
 import { writeFile } from "fs/promises";
 import buildExecutor from "../remoteExecutor";
 import mkdirp from "mkdirp";
@@ -14,6 +14,6 @@ async function main() {
   const result = await executor({
     document: parse(getIntrospectionQuery()),
   });
-  await writeFile(outputPath, JSON.stringify(result.data));
+  await writeFile(outputPath, JSON.stringify((result as ExecutionResult).data));
 }
 main();

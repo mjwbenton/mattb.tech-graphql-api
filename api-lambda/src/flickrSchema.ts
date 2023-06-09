@@ -1,7 +1,8 @@
-import { gql, makeExecutableSchema } from "apollo-server-lambda";
-import { DataSourcesContext } from "./dataSources";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import { Resolvers } from "./generated/graphql";
 import { decodeCursor, buildPage } from "./pagination";
+import gql from "graphql-tag";
+import { Context } from "./dataSources";
 
 const typeDefs = gql`
   type Query {
@@ -42,7 +43,7 @@ const typeDefs = gql`
 
 const DEFAULT_PAGE_SIZE = 50;
 
-const resolvers: Resolvers<DataSourcesContext> = {
+const resolvers: Resolvers<Context> = {
   Query: {
     recentPhotos: async (
       _: never,

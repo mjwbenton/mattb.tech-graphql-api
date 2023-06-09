@@ -1,10 +1,9 @@
-import { DataSource, DataSourceConfig } from "apollo-datasource";
-import { KeyValueCache } from "apollo-server-core";
 import fetch from "node-fetch";
 import doAndCache from "./doAndCache";
 import { CommitStats, PaginatedRepositories } from "./generated/graphql";
 import env from "./env";
 import formatISO from "date-fns/formatISO";
+import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 
 const LOGIN = "mjwbenton";
 
@@ -58,21 +57,15 @@ const CONTRIBUTIONS_QUERY = (from: string, to: string) => `
 }
 `;
 
-export class GithubDataSourcce<TContext = any> extends DataSource {
-  private cache!: KeyValueCache;
+export class GithubDataSourcce {
   private githubToken: string;
 
-  constructor() {
-    super();
+  constructor(private readonly cache: KeyValueCache) {
     const { GITHUB_TOKEN } = env;
     if (!GITHUB_TOKEN) {
       throw new Error("Missing github token");
     }
     this.githubToken = GITHUB_TOKEN;
-  }
-
-  initialize(config: DataSourceConfig<TContext>): void {
-    this.cache = config.cache;
   }
 
   public async getCommitStats(from: Date, to: Date): Promise<CommitStats> {
