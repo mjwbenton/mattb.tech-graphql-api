@@ -2,7 +2,7 @@ import { DataSource, DataSourceConfig } from "apollo-datasource";
 import { KeyValueCache } from "apollo-server-core";
 import doAndCache from "./doAndCache";
 import axios from "axios";
-import { Photo, PhotoSource } from "./generated/graphql";
+import { Photo, PhotoSource, PhotoTag } from "./generated/graphql";
 import env from "./env";
 
 const MAIN_USER_ID = "83914470@N00";
@@ -135,7 +135,7 @@ export class FlickrDataSource<TContext = any> extends DataSource {
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await callFlickr("flickr.people.getPublicPhotos", {
         user_id: MAIN_USER_ID,
-        extras: "url_z, url_c, url_l, url_k",
+        extras: "url_z, url_c, url_l, url_k, tags",
         per_page: perPage,
         page,
       });
@@ -187,6 +187,27 @@ export class FlickrDataSource<TContext = any> extends DataSource {
         sources,
         mainSource,
       };
+    });
+  }
+
+  public async getTags(photoId: string): Promise<PhotoTag[]> {
+    const cacheKey = `getTags-${photoId}`;
+    return doAndCache(this.cache, cacheKey, async () => {
+      const response = await callFlickr("flickr.photos.getInfo", {
+        photo_id: photoId,
+      });
+      if (!response) {
+        return [];
+      }
+      if (!USERS.includes(response.photo.owner.nsid)) {
+        throw new Error(`Cannot return photo not owned by supported user`);
+      }
+      return (
+        response?.photo?.tags?.tag?.map(({ _content, raw }) => ({
+          id: _content,
+          text: raw,
+        })) ?? []
+      );
     });
   }
 
