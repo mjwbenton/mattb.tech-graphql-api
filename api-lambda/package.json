@@ -7,7 +7,7 @@
     "build": "npm run external-schemas && npm run codegen && npm run typescript",
     "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
     "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
-    "start": "npm run codegen:watch & npm run typescript:watch & nodemon ./dist/devServer.js",
+    "start": "npm run codegen:watch & npm run typescript:watch & AWS_PROFILE=api-development nodemon ./dist/devServer.js",
     "codegen": "graphql-codegen --config codegen.yml",
     "codegen:watch": "graphql-codegen --config codegen.yml --watch",
     "external-schemas": "npm run billio-schema && npm run healthio-schema",
