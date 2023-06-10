@@ -11,8 +11,8 @@
     "codegen": "graphql-codegen --config codegen.yml",
     "codegen:watch": "graphql-codegen --config codegen.yml --watch",
     "external-schemas": "npm run billio-schema && npm run healthio-schema",
-    "billio-schema": "node ./dist/bin/fetchSchemaExternal.js https://api-readonly.billio.mattb.tech ./src/generated/billio/schema.json",
-    "healthio-schema": "node ./dist/bin/fetchSchemaExternal.js https://graphql.healthio.mattb.tech ./src/generated/healthio/schema.json",
+    "billio-schema": "ts-node ./src/bin/fetchSchemaExternal.ts https://api-readonly.billio.mattb.tech ./src/generated/billio/schema.json",
+    "healthio-schema": "ts-node ./src/bin/fetchSchemaExternal.ts https://graphql.healthio.mattb.tech ./src/generated/healthio/schema.json",
     "typescript": "tsc",
     "typescript:watch": "tsc --watch"
   },
@@ -34,6 +34,7 @@
     "mkdirp": "^1.0.4",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
+    "ts-node": "^10.9.1",
     "typescript": "^4.2.3"
   },
   "dependencies": {
