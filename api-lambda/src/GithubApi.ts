@@ -61,11 +61,11 @@ export class GithubDataSourcce {
   private githubToken: string;
 
   constructor(private readonly cache: KeyValueCache) {
-    const { GITHUB_TOKEN } = env;
-    if (!GITHUB_TOKEN) {
+    const { GH_TOKEN } = env;
+    if (!GH_TOKEN) {
       throw new Error("Missing github token");
     }
-    this.githubToken = GITHUB_TOKEN;
+    this.githubToken = GH_TOKEN;
   }
 
   public async getCommitStats(from: Date, to: Date): Promise<CommitStats> {
