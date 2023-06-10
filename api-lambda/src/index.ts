@@ -37,7 +37,6 @@ const server = new ApolloServer({
   },
 });
 
-// TODO: CORS?
 export const handler = startServerAndCreateLambdaHandler(
   server,
   handlers.createAPIGatewayProxyEventRequestHandler(),

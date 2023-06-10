@@ -88,23 +88,24 @@ export class Api extends cdk.Stack {
     props.oauthTable.grantFullAccess(localDevelopmentRole);
 
     const api = new apigateway.HttpApi(this, "GraphQLApi", {
-      defaultIntegration: new apigatewayIntegrations.HttpLambdaIntegration(
+      corsPreflight: {
+        allowCredentials: false,
+        allowOrigins: ["*"],
+        allowMethods: [CorsHttpMethod.ANY],
+        allowHeaders: ["Content-Type"],
+      },
+    });
+
+    api.addRoutes({
+      integration: new apigatewayIntegrations.HttpLambdaIntegration(
         "GraphQLApiIntegration",
         lambdaFunction,
         {
           payloadFormatVersion: PayloadFormatVersion.VERSION_1_0,
         }
       ),
-      corsPreflight: {
-        allowCredentials: false,
-        allowOrigins: ["*"],
-        allowMethods: [
-          CorsHttpMethod.GET,
-          CorsHttpMethod.POST,
-          CorsHttpMethod.OPTIONS,
-        ],
-        allowHeaders: ["Content-Type"],
-      },
+      path: "/{proxy+}",
+      methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST],
     });
 
     const certificate = new acm.DnsValidatedCertificate(this, "Certificate", {
