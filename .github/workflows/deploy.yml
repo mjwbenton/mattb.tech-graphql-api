@@ -22,6 +22,12 @@ jobs:
           role-to-assume: arn:aws:iam::858777967843:role/github-actions-cdk
           aws-region: us-east-1
 
+      - name: create api-lambda .env
+        run: printf "FLICKR_API_KEY=${{ secrets.FLICKR_API_KEY }}\nGH_TOKEN=${{ secrets.GH_TOKEN }}\nSPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}\nSPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}\n" > api-lambda/.env
+
+      - name: create oauth-lambda .env
+        run: printf "SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}\nSPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}\n" > oauth-lambda/.env
+
       - run: yarn install --frozen-lockfile
       - run: yarn build
       - run: yarn run check
