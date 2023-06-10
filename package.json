@@ -8,6 +8,7 @@
     "check": "yarn workspaces run check",
     "fix": "yarn workspaces run fix",
     "deploy": "npm run build && yarn workspace @mattb.tech/graphql-api-cdk run deploy",
+    "bootstrap": "npm run build && yarn workspace @mattb.tech/graphql-api-cdk run bootstrap",
     "diff": "npm run build && yarn workspace @mattb.tech/graphql-api-cdk run diff"
   },
   "workspaces": [
