@@ -3,6 +3,7 @@ import axios from "axios";
 import { Photo, PhotoSource, PhotoTag } from "./generated/graphql";
 import env from "./env";
 import { KeyValueCache } from "@apollo/utils.keyvaluecache";
+import { CAMERA, LENS } from "./cameraLensTags";
 
 const MAIN_USER_ID = "83914470@N00";
 const USERS = [
@@ -51,6 +52,7 @@ export class FlickrDataSource {
         photoset_id: photosetId,
         per_page: perPage,
         page: page,
+        extras: "url_z, url_c, url_l, url_k, tags, description",
       });
       if (!photosResponse.photoset) {
         return null;
@@ -59,22 +61,20 @@ export class FlickrDataSource {
       if (!USERS.includes(owner)) {
         throw new Error(`Cannot return photo set not owned by supported user`);
       }
-      const photos: Photo[] = await Promise.all(
-        photosResponse.photoset.photo.map(async (p: any) => {
-          const sizes = await callFlickr("flickr.photos.getSizes", {
-            photo_id: p.id,
-          });
-          const photoSources = buildSizesSources(sizes);
-          const mainSource = photoSources[photoSources.length - 1];
-          return {
-            id: p.id,
-            title: p.title,
-            pageUrl: `${FLICKR_URL_BASE}${owner}/${p.id}/`,
-            sources: photoSources,
-            mainSource: mainSource,
-          };
-        })
-      );
+      const photos: Photo[] = photosResponse.photoset.photo.map((p: any) => ({
+        id: p.id,
+        pageUrl: `${FLICKR_URL_BASE}${owner}/${p.id}/`,
+        title: p.title,
+        mainSource: {
+          url: p.url_c,
+          height: p.height_c,
+          width: p.width_c,
+        },
+        sources: buildRecentSources(p),
+        camera: findCamera(p.tags.split(" ")),
+        lens: findLens(p.tags.split(" ")),
+        description: p.description._content,
+      }));
       return {
         photos,
         total: photosResponse.photoset.total,
@@ -96,7 +96,7 @@ export class FlickrDataSource {
       const response = await callFlickr("flickr.photos.search", {
         user_id: MAIN_USER_ID,
         tags: tag,
-        extras: "url_z, url_c, url_l, url_k",
+        extras: "url_z, url_c, url_l, url_k, tags, description",
         sort: "date-posted-desc",
         per_page: perPage,
         page,
@@ -111,6 +111,9 @@ export class FlickrDataSource {
           width: p.width_c,
         },
         sources: buildRecentSources(p),
+        camera: findCamera(p.tags.split(" ")),
+        lens: findLens(p.tags.split(" ")),
+        description: p.description._content,
       }));
       return {
         total: response.photos.total,
@@ -130,7 +133,7 @@ export class FlickrDataSource {
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await callFlickr("flickr.people.getPublicPhotos", {
         user_id: MAIN_USER_ID,
-        extras: "url_z, url_c, url_l, url_k, tags",
+        extras: "url_z, url_c, url_l, url_k, tags, description",
         per_page: perPage,
         page,
       });
@@ -144,6 +147,9 @@ export class FlickrDataSource {
           width: p.width_c,
         },
         sources: buildRecentSources(p),
+        camera: findCamera(p.tags.split(" ")),
+        lens: findLens(p.tags.split(" ")),
+        description: p.description._content,
       }));
       return {
         total: response.photos.total,
@@ -181,44 +187,13 @@ export class FlickrDataSource {
         )[0]._content,
         sources,
         mainSource,
+        camera: findCamera(
+          infoResponse.photo.tags.tag.map(({ _content }) => _content)
+        ),
+        lens: findLens(
+          infoResponse.photo.tags.tag.map(({ _content }) => _content)
+        ),
       };
-    });
-  }
-
-  public async getTags(photoId: string): Promise<PhotoTag[]> {
-    const cacheKey = `getTags-${photoId}`;
-    return doAndCache(this.cache, cacheKey, async () => {
-      const response = await callFlickr("flickr.photos.getInfo", {
-        photo_id: photoId,
-      });
-      if (!response) {
-        return [];
-      }
-      if (!USERS.includes(response.photo.owner.nsid)) {
-        throw new Error(`Cannot return photo not owned by supported user`);
-      }
-      return (
-        response?.photo?.tags?.tag?.map(({ _content, raw }) => ({
-          id: _content,
-          text: raw,
-        })) ?? []
-      );
-    });
-  }
-
-  public async getDescription(photoId: string): Promise<string | null> {
-    const cacheKey = `getDescription-${photoId}`;
-    return doAndCache(this.cache, cacheKey, async () => {
-      const response = await callFlickr("flickr.photos.getInfo", {
-        photo_id: photoId,
-      });
-      if (!response) {
-        return null;
-      }
-      if (!USERS.includes(response.photo.owner.nsid)) {
-        throw new Error(`Cannot return photo not owned by supported user`);
-      }
-      return response?.photo?.description?._content ?? null;
     });
   }
 }
@@ -272,4 +247,28 @@ function buildRecentSources(photoResponse: any): PhotoSource[] {
     }
   });
   return result;
+}
+
+function findCamera(tags: string[]): PhotoTag | undefined {
+  const camera = tags.find((tag) => tag in CAMERA);
+  if (!camera) {
+    return undefined;
+  }
+  const { name } = CAMERA[camera];
+  return {
+    tag: camera,
+    name,
+  };
+}
+
+function findLens(tags: string[]): PhotoTag | undefined {
+  const lens = tags.find((tag) => tag in LENS);
+  if (!lens) {
+    return undefined;
+  }
+  const { name } = LENS[lens];
+  return {
+    tag: lens,
+    name,
+  };
 }

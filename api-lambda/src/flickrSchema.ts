@@ -26,7 +26,7 @@ const typeDefs = gql`
     description: String
     mainSource: PhotoSource!
     sources: [PhotoSource!]!
-    tags: [PhotoTag!]
+    camera: PhotoTag
   }
 
   type PhotoSource {
@@ -36,8 +36,8 @@ const typeDefs = gql`
   }
 
   type PhotoTag {
-    id: ID!
-    text: String!
+    tag: ID!
+    name: String!
   }
 `;
 
@@ -103,22 +103,6 @@ const resolvers: Resolvers<Context> = {
     },
     photo: (_: never, { photoId }, { dataSources: { flickr } }) =>
       flickr.getPhoto(photoId),
-  },
-  Photo: {
-    description: async (
-      { id }: { id: string },
-      _: never,
-      { dataSources: { flickr } }
-    ) => {
-      return await flickr.getDescription(id);
-    },
-    tags: async (
-      { id }: { id: string },
-      _: never,
-      { dataSources: { flickr } }
-    ) => {
-      return await flickr.getTags(id);
-    },
   },
 };
 
