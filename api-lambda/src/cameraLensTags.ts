@@ -49,7 +49,7 @@ export const LENS = {
   ["leicasuperelmar21mmf3.4"]: {
     name: "Leica Super-Elmar-M 21mm f3.4",
   },
-  ["leicaelmarit90mmf2.8"]: {
+  ["leica90mmelmaritmf28"]: {
     name: "Leica Elmarit-M 90mm f2.8",
   },
   ["leicasummicron35mmf2"]: {
