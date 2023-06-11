@@ -3,6 +3,7 @@ import { Context } from "./dataSources";
 import { Resolvers } from "./generated/graphql";
 import { DateTimeResolver as DateTime } from "graphql-scalars";
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import parseISO from "date-fns/parseISO";
 
 const typeDefs = gql`
   scalar DateTime
@@ -46,7 +47,12 @@ const resolvers: Resolvers<Context> = {
       _,
       { startDate, endDate },
       { dataSources: { github } }
-    ) => github.getCommitStats(startDate, endDate),
+    ) =>
+      // TODO: Fix Date not deserializing properly
+      github.getCommitStats(
+        parseISO(startDate as any as string),
+        parseISO(endDate as any as string)
+      ),
   },
 };
 
