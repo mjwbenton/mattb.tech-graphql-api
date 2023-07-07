@@ -61,6 +61,10 @@ export const CAMERA = {
     name: "Wirgin 6x9 folder",
     fixedLens: true,
   },
+  hasselblad500cm: {
+    name: "Hasselblad 500CM",
+    fixedLens: false,
+  },
   // Instant
   polaroidlandcamera355: {
     name: "Polaroid Land Camera 355",
@@ -260,5 +264,8 @@ export const LENS = {
   },
   mamiya80mmf19: {
     name: "Mamiya 80mm f1.9",
+  },
+  carlzeissplanar80mmf28t: {
+    name: "Carl Zeiss Planar 80mm f2.8 T*",
   },
 };
