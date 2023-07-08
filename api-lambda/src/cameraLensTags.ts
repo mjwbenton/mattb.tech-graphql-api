@@ -268,4 +268,7 @@ export const LENS = {
   carlzeissplanar80mmf28t: {
     name: "Carl Zeiss Planar 80mm f2.8 T*",
   },
+  bronica75mmf28zenzanonpe: {
+    name: "Bronica 75mm f2.8 Zenzanon PE",
+  },
 };
