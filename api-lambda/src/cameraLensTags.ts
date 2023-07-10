@@ -161,6 +161,19 @@ export const CAMERA = {
     name: "Panasonic Lumix GF-1",
     fixedLens: false,
   },
+  //Phones
+  sonyericssonk750i: {
+    name: "Sony Ericsson K750i",
+    fixedLens: true,
+  },
+  iphone6s: {
+    name: "iPhone 6s",
+    fixedLens: true,
+  },
+  pixel2: {
+    name: "Google Pixel 2",
+    fixedLens: true,
+  },
 };
 
 export const LENS = {
