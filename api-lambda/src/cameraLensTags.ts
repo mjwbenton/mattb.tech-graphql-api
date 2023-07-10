@@ -209,6 +209,9 @@ export const LENS = {
   voigtlandernokton40mmf12: {
     name: "Voigtlander Nokton 40mm f1.2",
   },
+  voigtlanderultron35mmf2: {
+    name: "Voigtlander Ultron 35mm f2",
+  },
   // Bronica
   bronica80mmf28zenzanonps: {
     name: "Bronica Zenzanon-PS 80mm f2.8",
@@ -241,12 +244,27 @@ export const LENS = {
   cosina20mmf38: {
     name: "Cosina 20mm f3.8",
   },
+  vivitar19mmf38: {
+    name: "Vivitar 19mm f3.8",
+  },
+  pentaxm12050mm: {
+    name: "Pentax-M 1:2.0 50mm",
+  },
   // Canon
   canonef50mmf18ii: {
     name: "Canon EF 50mm f1.8 II",
   },
   sigma30mmf14exdchsm: {
     name: "Sigma 30mm f1.4 EX DC HSM",
+  },
+  canon70200mmf4l: {
+    name: "Canon 70-200mm f4 L",
+  },
+  canonef85mmf18: {
+    name: "Canon EF 85mm f1.8",
+  },
+  sigma1850f28exdc: {
+    name: "Sigma 18-50 f/2.8 EX DC",
   },
   // Panasonic
   panasonic20mmf17: {
