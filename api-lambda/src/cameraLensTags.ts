@@ -161,6 +161,10 @@ export const CAMERA = {
     name: "Panasonic Lumix GF-1",
     fixedLens: false,
   },
+  leicaq2monochrom: {
+    name: "Leica Q2 Monochrom",
+    fixedLens: true,
+  },
   //Phones
   sonyericssonk750i: {
     name: "Sony Ericsson K750i",
