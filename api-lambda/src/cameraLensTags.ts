@@ -235,6 +235,9 @@ export const LENS = {
   voigtlanderultron75mmf19: {
     name: "Voigtlander Ultron 75mm f1.9",
   },
+  leica90mmmacroelmarm: {
+    name: "Leica Macro-Elmar-M 90mm f4",
+  },
   // Bronica
   bronica80mmf28zenzanonps: {
     name: "Bronica Zenzanon-PS 80mm f2.8",
