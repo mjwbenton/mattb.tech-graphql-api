@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Lambda function Graphql Gateway for api.mattb.tech",
   "main": "src/index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "exit 0"
+  },
   "author": "Matt Benton <m@mattb.tech>",
   "license": "UNLICENSED",
   "devDependencies": {
