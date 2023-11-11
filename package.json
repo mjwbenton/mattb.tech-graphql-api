@@ -15,6 +15,7 @@
     "oauth-lib",
     "oauth-lambda",
     "api-lambda",
+    "gateway",
     "cdk"
   ],
   "repository": {

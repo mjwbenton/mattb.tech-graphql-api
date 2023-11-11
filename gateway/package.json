@@ -1,0 +1,20 @@
+{
+  "name": "@mattb.tech/graphql-gateway-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function Graphql Gateway for api.mattb.tech",
+  "main": "src/index.js",
+  "scripts": {},
+  "author": "Matt Benton <m@mattb.tech>",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@apollo/rover": "^0.21.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@apollo/gateway": "^2.5.6",
+    "@apollo/server": "^4.9.5",
+    "@as-integrations/aws-lambda": "^3.1.0",
+    "graphql": "^16.8.1"
+  }
+}
