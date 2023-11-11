@@ -72,7 +72,7 @@ export class GithubDataSourcce {
     const cacheKey = `commitStats-${formatISO(from)}-${formatISO(to)}`;
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await this.fetch(
-        CONTRIBUTIONS_QUERY(formatISO(from), formatISO(to))
+        CONTRIBUTIONS_QUERY(formatISO(from), formatISO(to)),
       );
       if (response.errors) {
         throw new Error(JSON.stringify(response.errors));
@@ -125,7 +125,7 @@ export class GithubDataSourcce {
             license: (licenseInfo || {}).name || null,
             primaryLanguage: (primaryLanguage || {}).name || null,
             readme: (readme || {}).text || null,
-          })
+          }),
         );
 
       return {

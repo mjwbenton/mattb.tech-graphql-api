@@ -41,7 +41,7 @@ export async function startAuthorization(service: string): Promise<string> {
         service: SPOTIFY_SERVICE,
         state,
       },
-    })
+    }),
   );
   return `${SPOTIFY_AUTH_URL}?${new URLSearchParams({
     response_type: "code",
@@ -54,7 +54,7 @@ export async function startAuthorization(service: string): Promise<string> {
 
 export async function handleAuthorized(
   service: string,
-  query: unknown
+  query: unknown,
 ): Promise<void> {
   assertServiceIsSpotify(service);
   if (!isValidAuthorizedQuery(query)) {
@@ -68,7 +68,7 @@ export async function handleAuthorized(
       Key: {
         service: SPOTIFY_SERVICE,
       },
-    })
+    }),
   );
 
   if (item.state !== state) {
@@ -87,7 +87,7 @@ export async function handleAuthorized(
     }>(SPOTIFY_TOKEN_URL, null, {
       headers: {
         Authorization: `Basic ${Buffer.from(
-          `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`
+          `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`,
         ).toString("base64")}`,
       },
       params: {
@@ -100,7 +100,7 @@ export async function handleAuthorized(
 
   const expiresAt = subSeconds(
     addSeconds(new Date(), expiresIn),
-    EXPIRY_LEEWAY
+    EXPIRY_LEEWAY,
   ).toISOString();
 
   await DB_CLIENT.send(
@@ -112,7 +112,7 @@ export async function handleAuthorized(
         refreshToken,
         expiresAt,
       },
-    })
+    }),
   );
 }
 
@@ -123,7 +123,7 @@ export async function getAccessToken(service: string) {
       Key: {
         service,
       },
-    })
+    }),
   );
   if (!item) {
     throw new Error(`No token stored for service: ${service}`);
@@ -140,7 +140,7 @@ export async function getAccessToken(service: string) {
     }>(SPOTIFY_TOKEN_URL, null, {
       headers: {
         Authorization: `Basic ${Buffer.from(
-          `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`
+          `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`,
         ).toString("base64")}`,
       },
       params: {
@@ -153,7 +153,7 @@ export async function getAccessToken(service: string) {
 
   const expiresAt = subSeconds(
     addSeconds(new Date(), expiresIn),
-    EXPIRY_LEEWAY
+    EXPIRY_LEEWAY,
   ).toISOString();
 
   await DB_CLIENT.send(
@@ -167,7 +167,7 @@ export async function getAccessToken(service: string) {
         ":a": accessToken,
         ":e": expiresAt,
       },
-    })
+    }),
   );
 
   return accessToken;
@@ -180,7 +180,7 @@ function assertServiceIsSpotify(service: string) {
 }
 
 function isValidAuthorizedQuery(
-  query: unknown
+  query: unknown,
 ): query is { code: string; state: string } {
   return typeof query === "object" && "code" in query && "state" in query;
 }

@@ -19,7 +19,7 @@ app.use(async (request, response) => {
         body: JSON.stringify(request.body),
       } as APIGatewayProxyEvent,
       { callbackWaitsForEmptyEventLoop: () => {} } as unknown as Context,
-      () => {}
+      () => {},
     )) as APIGatewayProxyResult;
     response.status(200).set(val.headers).send(val.body);
   } catch (error) {

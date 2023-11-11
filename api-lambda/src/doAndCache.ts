@@ -3,7 +3,7 @@ import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 export default async function doAndCache<T>(
   cache: KeyValueCache,
   cacheKey: string,
-  method: () => Promise<T>
+  method: () => Promise<T>,
 ): Promise<T> {
   const cacheResult = await cache.get(cacheKey);
   if (cacheResult) {

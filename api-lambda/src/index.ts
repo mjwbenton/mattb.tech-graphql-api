@@ -44,5 +44,5 @@ export const handler = startServerAndCreateLambdaHandler(
     context: async () => ({
       dataSources: dataSources(server.cache),
     }),
-  }
+  },
 );

@@ -16,7 +16,7 @@ export function decodeCursor({
   }
   if (cursor[0] !== first.toString()) {
     throw new Error(
-      `Changing page size between calls unsupported. Was ${cursor[0]}, requested ${first}.`
+      `Changing page size between calls unsupported. Was ${cursor[0]}, requested ${first}.`,
     );
   }
   return {

@@ -19,7 +19,7 @@ const resolvers: Resolvers<Context> = {
     climateImpact: async (
       _: never,
       __: never,
-      { dataSources: { ecologi } }
+      { dataSources: { ecologi } },
     ) => {
       return ecologi.getClimateImpact();
     },
