@@ -7,7 +7,7 @@
     "build": "yarn build-schema && tsc",
     "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
     "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
-    "build-schema": "rover supergraph compose --config supergraph.yaml --output supergraph.graphql"
+    "build-schema": "rover supergraph compose --config supergraph.yaml --output supergraph.graphql --elv2-license=accept"
   },
   "author": "Matt Benton <m@mattb.tech>",
   "license": "UNLICENSED",
