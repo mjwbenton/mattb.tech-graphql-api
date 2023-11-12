@@ -23,5 +23,5 @@ const server = new ApolloServer({
 
 export const handler = startServerAndCreateLambdaHandler(
   server,
-  handlers.createAPIGatewayProxyEventRequestHandler()
+  handlers.createAPIGatewayProxyEventRequestHandler(),
 );
