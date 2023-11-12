@@ -1,5 +1,8 @@
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
+import {
+  startServerAndCreateLambdaHandler,
+  handlers,
+} from "@as-integrations/aws-lambda";
 import { ApolloGateway } from "@apollo/gateway";
 import { readFileSync } from "fs";
 
@@ -18,6 +21,7 @@ const server = new ApolloServer({
   gateway,
 });
 
-// Note the top-level `await`!
-const { url } = await startStandaloneServer(server);
-console.log(`🚀  Server ready at ${url}`);
+export const handler = startServerAndCreateLambdaHandler(
+  server,
+  handlers.createAPIGatewayProxyEventRequestHandler()
+);
