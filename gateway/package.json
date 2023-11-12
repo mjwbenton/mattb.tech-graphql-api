@@ -4,7 +4,7 @@
   "description": "Lambda function Graphql Gateway for api.mattb.tech",
   "main": "src/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "yarn build-schema && tsc",
     "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
     "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
     "build-schema": "rover supergraph compose --config supergraph.yaml --output supergraph.graphql"
