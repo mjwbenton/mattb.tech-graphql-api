@@ -31,7 +31,7 @@ export class Gateway extends cdk.Stack {
       {
         hostedZoneId: HOSTED_ZONE_ID,
         zoneName: HOSTED_ZONE,
-      },
+      }
     );
 
     const lambdaFunction = new lambda.NodejsFunction(this, "LambdaFunction", {
@@ -41,6 +41,13 @@ export class Gateway extends cdk.Stack {
         target: "es2020",
         environment: {
           NODE_ENV: "production",
+        },
+        commandHooks: {
+          beforeBundling: () => [],
+          beforeInstall: () => [],
+          afterBundling(inputDir: string, outputDir: string): string[] {
+            return [`cp ${inputDir}/gateway/supergraph.graphql ${outputDir}`];
+          },
         },
       },
       runtime: Runtime.NODEJS_18_X,
@@ -66,7 +73,7 @@ export class Gateway extends cdk.Stack {
         lambdaFunction,
         {
           payloadFormatVersion: PayloadFormatVersion.VERSION_1_0,
-        },
+        }
       ),
       path: "/{proxy+}",
       methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST],
@@ -107,10 +114,10 @@ export class Gateway extends cdk.Stack {
           certificate,
           {
             aliases: [DOMAIN_NAME],
-          },
+          }
         ),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      },
+      }
     );
 
     new route53.ARecord(this, "DomainRecord", {
@@ -118,7 +125,7 @@ export class Gateway extends cdk.Stack {
       recordName: DOMAIN_NAME,
       ttl: cdk.Duration.minutes(5),
       target: route53.RecordTarget.fromAlias(
-        new route53targets.CloudFrontTarget(distribution),
+        new route53targets.CloudFrontTarget(distribution)
       ),
     });
   }
