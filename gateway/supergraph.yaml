@@ -3,3 +3,6 @@ subgraphs:
   healthio:
     schema:
       subgraph_url: https://graphql.healthio.mattb.tech
+  billio:
+    schema:
+      subgraph_url: https://api-readonly.billio.mattb.tech
