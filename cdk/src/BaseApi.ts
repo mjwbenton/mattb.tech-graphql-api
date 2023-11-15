@@ -22,13 +22,13 @@ import { OAUTH_DOMAIN } from "./Oauth";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
-const DOMAIN_NAME = "api.mattb.tech";
 
 interface ApiProps extends cdk.StackProps {
   oauthTable: ITable;
+  domainName: string;
 }
 
-export class Api extends cdk.Stack {
+export class BaseApi extends cdk.Stack {
   constructor(scope: Construct, id: string, props: ApiProps) {
     super(scope, id, props);
 
@@ -38,7 +38,7 @@ export class Api extends cdk.Stack {
       {
         hostedZoneId: HOSTED_ZONE_ID,
         zoneName: HOSTED_ZONE,
-      },
+      }
     );
 
     const cacheTable = new dynamodb.Table(this, "CacheTable", {
@@ -102,14 +102,14 @@ export class Api extends cdk.Stack {
         lambdaFunction,
         {
           payloadFormatVersion: PayloadFormatVersion.VERSION_1_0,
-        },
+        }
       ),
       path: "/{proxy+}",
       methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST],
     });
 
     const certificate = new acm.DnsValidatedCertificate(this, "Certificate", {
-      domainName: DOMAIN_NAME,
+      domainName: props.domainName,
       hostedZone,
     });
 
@@ -142,19 +142,19 @@ export class Api extends cdk.Stack {
         viewerCertificate: cloudfront.ViewerCertificate.fromAcmCertificate(
           certificate,
           {
-            aliases: [DOMAIN_NAME],
-          },
+            aliases: [props.domainName],
+          }
         ),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      },
+      }
     );
 
     new route53.ARecord(this, "DomainRecord", {
       zone: hostedZone,
-      recordName: DOMAIN_NAME,
+      recordName: props.domainName,
       ttl: cdk.Duration.minutes(5),
       target: route53.RecordTarget.fromAlias(
-        new route53targets.CloudFrontTarget(distribution),
+        new route53targets.CloudFrontTarget(distribution)
       ),
     });
   }
