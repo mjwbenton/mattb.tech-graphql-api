@@ -45,12 +45,12 @@ const resolvers: Resolvers<Context> = {
     commitStats: async (
       _,
       { startDate, endDate },
-      { dataSources: { github } }
+      { dataSources: { github } },
     ) =>
       // TODO: Fix Date not deserializing properly
       github.getCommitStats(
         parseISO(startDate as any as string),
-        parseISO(endDate as any as string)
+        parseISO(endDate as any as string),
       ),
   },
 };
