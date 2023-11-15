@@ -5,12 +5,5 @@ import { Gateway } from "./Gateway";
 
 const app = new cdk.App();
 const oauthStack = new Oauth(app, "ApiOauth");
-new BaseApi(app, "Api", {
-  oauthTable: oauthStack.table,
-  domainName: "api.mattb.tech",
-});
-new BaseApi(app, "BaseApi", {
-  oauthTable: oauthStack.table,
-  domainName: "base.api.mattb.tech",
-});
+new BaseApi(app, "BaseApi", { oauthTable: oauthStack.table });
 new Gateway(app, "Gateway");

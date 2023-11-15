@@ -22,10 +22,10 @@ import { OAUTH_DOMAIN } from "./Oauth";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
+const DOMAIN_NAME = "base.api.mattb.tech";
 
 interface ApiProps extends cdk.StackProps {
   oauthTable: ITable;
-  domainName: string;
 }
 
 export class BaseApi extends cdk.Stack {
@@ -109,7 +109,7 @@ export class BaseApi extends cdk.Stack {
     });
 
     const certificate = new acm.DnsValidatedCertificate(this, "Certificate", {
-      domainName: props.domainName,
+      domainName: DOMAIN_NAME,
       hostedZone,
     });
 
@@ -142,7 +142,7 @@ export class BaseApi extends cdk.Stack {
         viewerCertificate: cloudfront.ViewerCertificate.fromAcmCertificate(
           certificate,
           {
-            aliases: [props.domainName],
+            aliases: [DOMAIN_NAME],
           },
         ),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
@@ -151,7 +151,7 @@ export class BaseApi extends cdk.Stack {
 
     new route53.ARecord(this, "DomainRecord", {
       zone: hostedZone,
-      recordName: props.domainName,
+      recordName: DOMAIN_NAME,
       ttl: cdk.Duration.minutes(5),
       target: route53.RecordTarget.fromAlias(
         new route53targets.CloudFrontTarget(distribution),
