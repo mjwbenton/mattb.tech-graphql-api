@@ -16,8 +16,6 @@ import dataSources from "./dataSources";
 import { combineModules } from "./GqlModule";
 import { buildSubgraphSchema } from "@apollo/subgraph";
 
-const THIRTY_DAYS = 60 * 60 * 24 * 30;
-
 const server = new ApolloServer({
   schema: buildSubgraphSchema(
     combineModules(
@@ -29,9 +27,6 @@ const server = new ApolloServer({
     ),
   ),
   cache,
-  persistedQueries: {
-    ttl: THIRTY_DAYS,
-  },
 });
 
 export const handler = startServerAndCreateLambdaHandler(

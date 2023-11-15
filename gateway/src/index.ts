@@ -6,6 +6,8 @@ import {
 import { ApolloGateway } from "@apollo/gateway";
 import { readFileSync } from "fs";
 
+const THIRTY_DAYS = 60 * 60 * 24 * 30;
+
 const supergraphSdl = readFileSync("./supergraph.graphql").toString();
 
 const gateway = new ApolloGateway({
@@ -14,7 +16,10 @@ const gateway = new ApolloGateway({
 
 const server = new ApolloServer({
   gateway,
-  // TODO: Add persisted queries and cache
+  // TODO: Add cache
+  persistedQueries: {
+    ttl: THIRTY_DAYS,
+  },
 });
 
 export const handler = startServerAndCreateLambdaHandler(
