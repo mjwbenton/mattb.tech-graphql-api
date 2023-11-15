@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 import { Resolvers } from "./generated/graphql";
 
 const typeDefs = gql`
-  type Query {
+  extend type Query {
     randomNumber: Float!
   }
 `;

@@ -3,7 +3,7 @@ import { Resolvers } from "./generated/graphql";
 import { Context } from "./dataSources";
 
 const typeDefs = gql`
-  type Query {
+  extend type Query {
     playlist(playlistId: ID!): Playlist
     likedTracks(limit: Int): [Track!]!
   }

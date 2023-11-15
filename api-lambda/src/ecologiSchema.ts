@@ -3,7 +3,7 @@ import { Resolvers } from "./generated/graphql";
 import gql from "graphql-tag";
 
 const typeDefs = gql`
-  type Query {
+  extend type Query {
     climateImpact: ClimateImpact!
   }
 
@@ -18,7 +18,7 @@ const resolvers: Resolvers<Context> = {
     climateImpact: async (
       _: never,
       __: never,
-      { dataSources: { ecologi } },
+      { dataSources: { ecologi } }
     ) => {
       return ecologi.getClimateImpact();
     },

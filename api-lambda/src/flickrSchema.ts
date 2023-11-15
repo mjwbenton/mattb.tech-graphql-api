@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 import { Context } from "./dataSources";
 
 const typeDefs = gql`
-  type Query {
+  extend type Query {
     recentPhotos(first: Int, after: ID): PaginatedPhotos!
     photoSet(photosetId: ID!, first: Int, after: ID): PaginatedPhotos
     photo(photoId: ID!): Photo
@@ -48,7 +48,7 @@ const resolvers: Resolvers<Context> = {
     recentPhotos: async (
       _: never,
       { first = DEFAULT_PAGE_SIZE, after },
-      { dataSources: { flickr } },
+      { dataSources: { flickr } }
     ) => {
       const { perPage, page } = decodeCursor({ first, after });
       const { photos, total } = await flickr.getRecentPhotos({
@@ -65,7 +65,7 @@ const resolvers: Resolvers<Context> = {
     photoSet: async (
       _: never,
       { photosetId, first = DEFAULT_PAGE_SIZE, after },
-      { dataSources: { flickr } },
+      { dataSources: { flickr } }
     ) => {
       const { perPage, page } = decodeCursor({ first, after });
       const result = await flickr.getPhotoSet({
@@ -86,7 +86,7 @@ const resolvers: Resolvers<Context> = {
     photosWithTag: async (
       _: never,
       { tag, first = DEFAULT_PAGE_SIZE, after },
-      { dataSources: { flickr } },
+      { dataSources: { flickr } }
     ) => {
       const { perPage, page } = decodeCursor({ first, after });
       const { photos, total } = await flickr.getPhotosWithTag({
