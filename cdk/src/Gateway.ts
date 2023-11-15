@@ -15,7 +15,7 @@ import {
 } from "@aws-cdk/aws-apigatewayv2-alpha";
 import { CloudFrontAllowedCachedMethods } from "aws-cdk-lib/aws-cloudfront";
 import { Duration } from "aws-cdk-lib";
-import { OAUTH_DOMAIN } from "./Oauth";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
@@ -33,6 +33,16 @@ export class Gateway extends cdk.Stack {
         zoneName: HOSTED_ZONE,
       },
     );
+
+    const cacheTable = new dynamodb.Table(this, "CacheTable", {
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      partitionKey: {
+        name: "CacheKey",
+        type: dynamodb.AttributeType.STRING,
+      },
+      timeToLiveAttribute: "CacheTTL",
+    });
 
     const lambdaFunction = new lambda.NodejsFunction(this, "LambdaFunction", {
       entry: path.join(__dirname, "../../gateway/dist/index.js"),
@@ -54,9 +64,11 @@ export class Gateway extends cdk.Stack {
       memorySize: 1024,
       timeout: Duration.seconds(20),
       environment: {
-        OAUTH_DOMAIN,
+        CACHE_TABLE: cacheTable.tableName,
       },
     });
+
+    cacheTable.grantFullAccess(lambdaFunction);
 
     const api = new apigateway.HttpApi(this, "GraphQLGatewayApi", {
       corsPreflight: {

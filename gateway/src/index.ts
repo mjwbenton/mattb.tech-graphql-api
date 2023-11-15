@@ -5,6 +5,7 @@ import {
 } from "@as-integrations/aws-lambda";
 import { ApolloGateway } from "@apollo/gateway";
 import { readFileSync } from "fs";
+import cache from "./cache";
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
@@ -16,10 +17,10 @@ const gateway = new ApolloGateway({
 
 const server = new ApolloServer({
   gateway,
-  // TODO: Add cache
   persistedQueries: {
     ttl: THIRTY_DAYS,
   },
+  cache,
 });
 
 export const handler = startServerAndCreateLambdaHandler(
