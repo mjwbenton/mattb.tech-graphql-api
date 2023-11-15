@@ -6,3 +6,6 @@ subgraphs:
   billio:
     schema:
       subgraph_url: https://api-readonly.billio.mattb.tech
+  api:
+    schema:
+      subgraph_url: https://api.mattb.tech
