@@ -19,7 +19,7 @@ import { OAUTH_DOMAIN } from "./Oauth";
 
 const HOSTED_ZONE = "mattb.tech";
 const HOSTED_ZONE_ID = "Z2GPSB1CDK86DH";
-const DOMAIN_NAME = "gateway.api.mattb.tech";
+const DOMAIN_NAME = "api.mattb.tech";
 
 export class Gateway extends cdk.Stack {
   constructor(scope: Construct, id: string) {
