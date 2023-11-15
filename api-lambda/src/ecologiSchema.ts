@@ -1,4 +1,3 @@
-import { makeExecutableSchema } from "@graphql-tools/schema";
 import { Context } from "./dataSources";
 import { Resolvers } from "./generated/graphql";
 import gql from "graphql-tag";
@@ -26,7 +25,7 @@ const resolvers: Resolvers<Context> = {
   },
 };
 
-export default makeExecutableSchema({
+export default {
   typeDefs,
   resolvers,
-});
+};

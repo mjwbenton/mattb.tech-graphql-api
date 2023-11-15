@@ -1,7 +1,6 @@
 import gql from "graphql-tag";
 import { Resolvers } from "./generated/graphql";
 import { Context } from "./dataSources";
-import { makeExecutableSchema } from "@graphql-tools/schema";
 
 const typeDefs = gql`
   type Query {
@@ -51,7 +50,7 @@ const resolvers: Resolvers<Context> = {
   },
 };
 
-export default makeExecutableSchema({
+export default {
   typeDefs,
   resolvers,
-});
+};

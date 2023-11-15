@@ -2,7 +2,6 @@ import gql from "graphql-tag";
 import { Context } from "./dataSources";
 import { Resolvers } from "./generated/graphql";
 import { DateTimeResolver as DateTime } from "graphql-scalars";
-import { makeExecutableSchema } from "@graphql-tools/schema";
 import parseISO from "date-fns/parseISO";
 
 const typeDefs = gql`
@@ -56,7 +55,7 @@ const resolvers: Resolvers<Context> = {
   },
 };
 
-export default makeExecutableSchema({
+export default {
   typeDefs,
   resolvers,
-});
+};

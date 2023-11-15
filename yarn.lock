@@ -1739,16 +1739,6 @@
     tslib "^2.4.0"
     value-or-promise "^1.0.12"
 
-"@graphql-tools/batch-execute@^9.0.1":
-  version "9.0.2"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/batch-execute/-/batch-execute-9.0.2.tgz#5ac3257501e7941fad40661bb5e1110d6312f58b"
-  integrity sha512-Y2uwdZI6ZnatopD/SYfZ1eGuQFI7OU2KGZ2/B/7G9ISmgMl5K+ZZWz/PfIEXeiHirIDhyk54s4uka5rj2xwKqQ==
-  dependencies:
-    "@graphql-tools/utils" "^10.0.5"
-    dataloader "^2.2.2"
-    tslib "^2.4.0"
-    value-or-promise "^1.0.12"
-
 "@graphql-tools/code-file-loader@^8.0.0":
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-8.0.1.tgz#86ab699cc8ed76010b2f0401e8a4a149338b759e"
@@ -1772,18 +1762,6 @@
     dataloader "^2.2.2"
     tslib "^2.5.0"
     value-or-promise "^1.0.12"
-
-"@graphql-tools/delegate@^10.0.3":
-  version "10.0.3"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/delegate/-/delegate-10.0.3.tgz#2d0e133da94ca92c24e0c7360414e5592321cf2d"
-  integrity sha512-Jor9oazZ07zuWkykD3OOhT/2XD74Zm6Ar0ENZMk75MDD51wB2UWUIMljtHxbJhV5A6UBC2v8x6iY0xdCGiIlyw==
-  dependencies:
-    "@graphql-tools/batch-execute" "^9.0.1"
-    "@graphql-tools/executor" "^1.0.0"
-    "@graphql-tools/schema" "^10.0.0"
-    "@graphql-tools/utils" "^10.0.5"
-    dataloader "^2.2.2"
-    tslib "^2.5.0"
 
 "@graphql-tools/executor-graphql-ws@^1.0.0":
   version "1.0.0"
@@ -2014,16 +1992,6 @@
     "@graphql-typed-document-node/core" "^3.1.1"
     tslib "^2.4.0"
 
-"@graphql-tools/utils@^10.0.5":
-  version "10.0.8"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-10.0.8.tgz#c7b84275ec83dc42ad9f3d4ffc424ff682075759"
-  integrity sha512-yjyA8ycSa1WRlJqyX/aLqXeE5DvF/H02+zXMUFnCzIDrj0UvLMUrxhmVFnMK0Q2n3bh4uuTeY3621m5za9ovXw==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.1.1"
-    cross-inspect "1.0.0"
-    dset "^3.1.2"
-    tslib "^2.4.0"
-
 "@graphql-tools/utils@^9.2.1":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-9.2.1.tgz#1b3df0ef166cfa3eae706e3518b17d5922721c57"
@@ -2038,17 +2006,6 @@
   integrity sha512-HDOeUUh6UhpiH0WPJUQl44ODt1x5pnMUbOJZ7GjTdGQ7LK0AgVt3ftaAQ9duxLkiAtYJmu5YkULirfZGj4HzDg==
   dependencies:
     "@graphql-tools/delegate" "^10.0.0"
-    "@graphql-tools/schema" "^10.0.0"
-    "@graphql-tools/utils" "^10.0.0"
-    tslib "^2.4.0"
-    value-or-promise "^1.0.12"
-
-"@graphql-tools/wrap@^10.0.1":
-  version "10.0.1"
-  resolved "https://registry.yarnpkg.com/@graphql-tools/wrap/-/wrap-10.0.1.tgz#9e3d27d2723962c26c4377d5d7ab0d3038bf728c"
-  integrity sha512-Cw6hVrKGM2OKBXeuAGltgy4tzuqQE0Nt7t/uAqnuokSXZhMHXJUb124Bnvxc2gPZn5chfJSDafDe4Cp8ZAVJgg==
-  dependencies:
-    "@graphql-tools/delegate" "^10.0.3"
     "@graphql-tools/schema" "^10.0.0"
     "@graphql-tools/utils" "^10.0.0"
     tslib "^2.4.0"
@@ -2716,6 +2673,18 @@
   version "1.0.32"
   resolved "https://registry.yarnpkg.com/@types/json-stable-stringify/-/json-stable-stringify-1.0.32.tgz#121f6917c4389db3923640b2e68de5fa64dda88e"
   integrity sha512-q9Q6+eUEGwQkv4Sbst3J4PNgDOvpuVuKj79Hl/qnmBMEIPzB5QoFRUtjcgcg2xNUZyYUGXBk5wYIBKHt0A+Mxw==
+
+"@types/lodash.merge@^4.6.9":
+  version "4.6.9"
+  resolved "https://registry.yarnpkg.com/@types/lodash.merge/-/lodash.merge-4.6.9.tgz#93e94796997ed9a3ebe9ccf071ccaec4c6bc8fb8"
+  integrity sha512-23sHDPmzd59kUgWyKGiOMO2Qb9YtqRO/x4IhkgNUiPQ1+5MUVqi6bCZeq9nBJ17msjIMbEIO5u+XW4Kz6aGUhQ==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*":
+  version "4.14.201"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.201.tgz#76f47cb63124e806824b6c18463daf3e1d480239"
+  integrity sha512-y9euML0cim1JrykNxADLfaG0FgD1g/yTHwUs/Jg9ZIU7WKj2/4IW9Lbb1WZbvck78W/lfGXFfe+u2EGfIJXdLQ==
 
 "@types/long@^4.0.0":
   version "4.0.2"
@@ -3666,13 +3635,6 @@ cross-fetch@^3.0.4, cross-fetch@^3.1.5:
   integrity sha512-riRvo06crlE8HiqOwIpQhxwdOk4fOeR7FVM/wXoxchFEqMNUjvbs3bfo4OTgMEMHzppd4DxFBDbyySj8Cv781g==
   dependencies:
     node-fetch "^2.6.11"
-
-cross-inspect@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/cross-inspect/-/cross-inspect-1.0.0.tgz#5fda1af759a148594d2d58394a9e21364f6849af"
-  integrity sha512-4PFfn4b5ZN6FMNGSZlyb7wUhuN8wvj8t/VQHZdM4JsDcruGJ8L2kf9zao98QIrBPFCpdk27qst/AGTl7pL3ypQ==
-  dependencies:
-    tslib "^2.4.0"
 
 cross-spawn@^7.0.0:
   version "7.0.3"
@@ -5042,6 +5004,11 @@ locate-path@^5.0.0:
   integrity sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==
   dependencies:
     p-locate "^4.1.0"
+
+lodash.merge@^4.6.2:
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
+  integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
 
 lodash.sortby@^4.7.0:
   version "4.7.0"

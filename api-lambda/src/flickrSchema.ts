@@ -1,4 +1,3 @@
-import { makeExecutableSchema } from "@graphql-tools/schema";
 import { Resolvers } from "./generated/graphql";
 import { decodeCursor, buildPage } from "./pagination";
 import gql from "graphql-tag";
@@ -107,7 +106,7 @@ const resolvers: Resolvers<Context> = {
   },
 };
 
-export default makeExecutableSchema({
+export default {
   typeDefs,
   resolvers,
-});
+};

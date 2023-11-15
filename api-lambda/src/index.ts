@@ -9,28 +9,25 @@ import {
 import githubSchema from "./githubSchema";
 import flickrSchema from "./flickrSchema";
 import spotifySchema from "./spotifySchema";
-import billioSchema from "./billioRemote";
 import cache from "./cache";
 import ecologiSchema from "./ecologiSchema";
 import testSchema from "./testSchema";
-import healthioSchema from "./healthioRemote";
-import { mergeSchemas } from "@graphql-tools/schema";
 import dataSources from "./dataSources";
+import { combineModules } from "./GqlModule";
+import { buildSubgraphSchema } from "@apollo/subgraph";
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
 const server = new ApolloServer({
-  schema: mergeSchemas({
-    schemas: [
+  schema: buildSubgraphSchema(
+    combineModules(
       flickrSchema,
       githubSchema,
       spotifySchema,
-      billioSchema,
       ecologiSchema,
       testSchema,
-      healthioSchema,
-    ],
-  }),
+    ),
+  ),
   cache,
   persistedQueries: {
     ttl: THIRTY_DAYS,
