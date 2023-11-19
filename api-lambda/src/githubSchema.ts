@@ -45,7 +45,7 @@ const resolvers: Resolvers<Context> = {
     commitStats: async (
       _,
       { startDate, endDate },
-      { dataSources: { github } }
+      { dataSources: { github } },
     ) => github.getCommitStats(startDate, endDate),
   },
 };
