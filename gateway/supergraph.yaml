@@ -9,6 +9,9 @@ subgraphs:
   stablio:
     schema:
       subgraph_url: https://api.stablio.mattb.tech
+  medio:
+    schema:
+      subgraph_url: https://graphql.medio.mattb.tech
   baseApi:
     schema:
       subgraph_url: https://base.api.mattb.tech
