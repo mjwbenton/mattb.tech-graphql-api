@@ -4,6 +4,10 @@ export const CAMERA = {
     name: "Leica M10",
     fixedLens: false,
   },
+  leicam10monochrom: {
+    name: "Leica M10 Monochrom",
+    fixedLens: false,
+  },
   leicam9: {
     name: "Leica M9",
     fixedLens: false,
