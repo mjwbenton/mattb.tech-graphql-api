@@ -2,7 +2,6 @@ import gql from "graphql-tag";
 import { Context } from "./dataSources";
 import { Resolvers } from "./generated/graphql";
 import { DateTimeResolver as DateTime } from "graphql-scalars";
-import parseISO from "date-fns/parseISO";
 
 const typeDefs = gql`
   scalar DateTime

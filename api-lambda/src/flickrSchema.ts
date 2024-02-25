@@ -6,6 +6,12 @@ import { Context } from "./dataSources";
 const typeDefs = gql`
   extend type Query {
     recentPhotos(first: Int, after: ID): PaginatedPhotos!
+    photos(
+      startDate: DateTime!
+      endDate: DateTime!
+      first: Int
+      after: ID
+    ): PaginatedPhotos!
     photoSet(photosetId: ID!, first: Int, after: ID): PaginatedPhotos
     photo(photoId: ID!): Photo
     photosWithTag(tag: ID!, first: Int, after: ID): PaginatedPhotos!
@@ -54,6 +60,25 @@ const resolvers: Resolvers<Context> = {
       const { photos, total } = await flickr.getRecentPhotos({
         perPage,
         page,
+      });
+      return buildPage({
+        items: photos,
+        total,
+        perPage,
+        page,
+      });
+    },
+    photos: async (
+      _: never,
+      { first = DEFAULT_PAGE_SIZE, after, startDate, endDate },
+      { dataSources: { flickr } },
+    ) => {
+      const { perPage, page } = decodeCursor({ first, after });
+      const { photos, total } = await flickr.getPhotos({
+        perPage,
+        page,
+        startDate,
+        endDate,
       });
       return buildPage({
         items: photos,

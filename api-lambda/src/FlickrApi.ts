@@ -122,6 +122,48 @@ export class FlickrDataSource {
     });
   }
 
+  public async getPhotos({
+    perPage,
+    page = 1,
+    startDate,
+    endDate,
+  }: {
+    perPage: number;
+    page?: number;
+    startDate?: Date;
+    endDate?: Date;
+  }): Promise<PhotoPage> {
+    const cacheKey = `getPhotos-${perPage}p${page}`;
+    return doAndCache(this.cache, cacheKey, async () => {
+      const response = await callFlickr("flickr.photos.search", {
+        user_id: MAIN_USER_ID,
+        ...(startDate ? { min_upload_date: startDate.getTime() / 1000 } : {}),
+        ...(endDate ? { max_upload_date: endDate.getTime() / 1000 } : {}),
+        extras: "url_z, url_c, url_l, url_k, tags, description",
+        per_page: perPage,
+        page,
+      });
+      const photos = response.photos.photo.map((p: any) => ({
+        id: p.id,
+        pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
+        title: p.title,
+        mainSource: {
+          url: p.url_c,
+          height: p.height_c,
+          width: p.width_c,
+        },
+        sources: buildRecentSources(p),
+        camera: findCamera(p.tags.split(" ")),
+        lens: findLens(p.tags.split(" ")),
+        description: p.description._content,
+      }));
+      return {
+        total: response.photos.total,
+        photos,
+      };
+    });
+  }
+
   public async getRecentPhotos({
     perPage,
     page = 1,
