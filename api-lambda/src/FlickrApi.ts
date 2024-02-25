@@ -225,15 +225,15 @@ export class FlickrDataSource {
         title: infoResponse.photo.title._content,
         description: infoResponse.photo.description._content,
         pageUrl: infoResponse.photo.urls.url.filter(
-          (url: any) => url.type === "photopage"
+          (url: any) => url.type === "photopage",
         )[0]._content,
         sources,
         mainSource,
         camera: findCamera(
-          infoResponse.photo.tags.tag.map(({ _content }) => _content)
+          infoResponse.photo.tags.tag.map(({ _content }) => _content),
         ),
         lens: findLens(
-          infoResponse.photo.tags.tag.map(({ _content }) => _content)
+          infoResponse.photo.tags.tag.map(({ _content }) => _content),
         ),
       };
     });
@@ -243,7 +243,7 @@ export class FlickrDataSource {
 async function callFlickr(
   methodName: string,
   params: { [key: string]: string | number },
-  retryNumber: number = 0
+  retryNumber: number = 0,
 ): Promise<any> {
   let url =
     FLICKR_API_BASE_URL + FLICKR_BASE_PARAMETERS + `&api_key=${API_KEY}&`;
