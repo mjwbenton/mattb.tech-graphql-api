@@ -386,6 +386,10 @@ export const FILM = {
   tmax100: {
     name: "Kodak T-Max 100",
   },
+  kodaktmax400: {
+    name: "Kodak T-Max 400",
+  },
+  // Duplicate
   tmax400: {
     name: "Kodak T-Max 400",
   },
