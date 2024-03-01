@@ -1,186 +1,237 @@
+export enum Format {
+  Digital = "Digital",
+  Film120 = "Film120",
+  Film35mm = "Film35mm",
+  Instant = "Instant",
+}
+
 export const CAMERA = {
   // M-Mount
   leicam10: {
     name: "Leica M10",
     fixedLens: false,
+    format: Format.Digital,
   },
   leicam10monochrom: {
     name: "Leica M10 Monochrom",
     fixedLens: false,
+    format: Format.Digital,
   },
   leicam9: {
     name: "Leica M9",
     fixedLens: false,
+    format: Format.Digital,
   },
   leicammonochrom: {
     name: "Leica M Monochrom",
     fixedLens: false,
+    format: Format.Digital,
   },
   leicame: {
     name: "Leica M-E",
     fixedLens: false,
+    format: Format.Digital,
   },
   minoltacle: {
     name: "Minolta CLE",
     fixedLens: false,
+    format: Format.Film35mm,
   },
   zeissikon: {
     name: "Zeiss Ikon",
     fixedLens: false,
+    format: Format.Film35mm,
   },
   voigtlanderbessar3m: {
     name: "Voigtlander Bessa R3M",
     fixedLens: false,
+    format: Format.Film35mm,
   },
   // 120
   gf670: {
     name: "Fuji GF670",
     fixedLens: true,
+    format: Format.Film120,
   },
   rolleiflex35e: {
     name: "Rolleiflex 3.5E",
     fixedLens: true,
+    format: Format.Film120,
   },
   rolleiflex28c: {
     name: "Rolleiflex 2.8C",
     fixedLens: true,
+    format: Format.Film120,
   },
   bronicasqa: {
     name: "Bronica SQ-A",
     fixedLens: false,
+    format: Format.Film120,
   },
   yashicamat: {
     name: "Yashica Mat",
     fixedLens: true,
+    format: Format.Film120,
   },
   bronicaetrsi: {
     name: "Bronica ETRSi",
     fixedLens: false,
+    format: Format.Film120,
   },
   mamiya645e: {
     name: "Mamiya 645E",
     fixedLens: false,
+    format: Format.Film120,
   },
   wirgin6x9folder: {
     name: "Wirgin 6x9 folder",
     fixedLens: true,
+    format: Format.Film120,
   },
   hasselblad500cm: {
     name: "Hasselblad 500CM",
     fixedLens: false,
+    format: Format.Film120,
   },
   // Instant
   polaroidlandcamera355: {
     name: "Polaroid Land Camera 355",
     fixedLens: true,
+    format: Format.Instant,
   },
   polaroidlandcamera340: {
     name: "Polaroid Land Camera 340",
     fixedLens: true,
+    format: Format.Instant,
   },
   mamiyauniversalpress: {
     name: "Mamiya Universal Press",
     fixedLens: false,
+    format: Format.Instant,
   },
   fujiinstaxwide: {
     name: "Fuji Instax Wide",
     fixedLens: true,
+    format: Format.Instant,
   },
   // Pentax
   pentaxmx: {
     name: "Pentax MX",
     fixedLens: false,
+    format: Format.Film35mm,
   },
   pentaxmesuper: {
     name: "Pentax ME Super",
     fixedLens: false,
+    format: Format.Film35mm,
   },
   pentaxk1000: {
     name: "Pentax K1000",
     fixedLens: false,
+    format: Format.Film35mm,
   },
   pentaxkm: {
     name: "Pentax K-m",
     fixedLens: false,
+    format: Format.Film35mm,
   },
   // 35mm
   olympustrip35: {
     name: "Olympus Trip 35",
     fixedLens: true,
+    format: Format.Film35mm,
   },
   olympus35ecr: {
     name: "Olympus 35 ECR",
     fixedLens: true,
+    format: Format.Film35mm,
   },
   olympusxa: {
     name: "Olympus XA",
     fixedLens: true,
+    format: Format.Film35mm,
   },
   actionsampler: {
     name: "Action Sampler",
     fixedLens: true,
+    format: Format.Film35mm,
   },
   kodakpop: {
     name: "Kodak Pop",
     fixedLens: true,
+    format: Format.Film35mm,
   },
   canoneos300: {
     name: "Canon EOS 300",
     fixedLens: false,
+    format: Format.Film35mm,
   },
   // Other Digital
   ricohgr: {
     name: "Ricoh GR",
     fixedLens: true,
+    format: Format.Digital,
   },
   ricohgriii: {
     name: "Ricoh GR III",
     fixedLens: true,
+    format: Format.Digital,
   },
   ricohgriiix: {
     name: "Ricoh GR IIIx",
     fixedLens: true,
+    format: Format.Digital,
   },
   sonyalpha7: {
     name: "Sony Alpha 7",
     fixedLens: false,
+    format: Format.Digital,
   },
   x100: {
     name: "Fuji X100",
     fixedLens: true,
+    format: Format.Digital,
   },
   x100t: {
     name: "Fuji X100T",
     fixedLens: true,
+    format: Format.Digital,
   },
   fujifilmfinepixf30: {
     name: "Fujifilm FinePix F30",
     fixedLens: true,
+    format: Format.Digital,
   },
   canon40d: {
     name: "Canon 40D",
     fixedLens: false,
+    format: Format.Digital,
   },
   panasoniclumixgf1: {
     name: "Panasonic Lumix GF-1",
     fixedLens: false,
+    format: Format.Digital,
   },
   leicaq2monochrom: {
     name: "Leica Q2 Monochrom",
     fixedLens: true,
+    format: Format.Digital,
   },
   //Phones
   sonyericssonk750i: {
     name: "Sony Ericsson K750i",
     fixedLens: true,
+    format: Format.Digital,
   },
   iphone6s: {
     name: "iPhone 6s",
     fixedLens: true,
+    format: Format.Digital,
   },
   pixel2: {
     name: "Google Pixel 2",
     fixedLens: true,
+    format: Format.Digital,
   },
 };
 
@@ -321,5 +372,101 @@ export const LENS = {
   },
   bronica75mmf28zenzanonpe: {
     name: "Bronica 75mm f2.8 Zenzanon PE",
+  },
+};
+
+export const FILM = {
+  fujineopan100acros: {
+    name: "Fuji Neopan 100 Acros",
+  },
+  // Duplicate
+  neopan100acros: {
+    name: "Fuji Neopan 100 Acros",
+  },
+  tmax100: {
+    name: "Kodak T-Max 100",
+  },
+  tmax400: {
+    name: "Kodak T-Max 400",
+  },
+  reala: {
+    name: "Fuji Superia Reala 100",
+  },
+  legacypro100: {
+    name: "Legacy Pro 100",
+  },
+  rolleicr200: {
+    name: "Rollei CR200",
+  },
+  kodaktrix400: {
+    name: "Kodak Tri-X 400",
+  },
+  ilfordpanf50: {
+    name: "Ilford PanF+ 50",
+  },
+  ilforddelta3200: {
+    name: "Ilford Delta 3200",
+  },
+  provia400x: {
+    name: "Fuji Provia 400X",
+  },
+  fujivelvia100: {
+    name: "Fuji Velvia 100",
+  },
+  // Duplicate
+  velvia100: {
+    name: "Fuji Velvia 100",
+  },
+  ektar100: {
+    name: "Kodak Ektar 100",
+  },
+  fujisuperia1600: {
+    name: "Fuji Superia 1600",
+  },
+  fujifilmpro800z: {
+    name: "Fuji Pro800Z",
+  },
+  kodakektachromeeliteii: {
+    name: "Kodak Ektachrome Elite II",
+  },
+  ilfordhp5: {
+    name: "Ilford HP5+",
+  },
+  ilforddelta100: {
+    name: "Ilford Delta 100",
+  },
+  kodake100vs: {
+    name: "Kodak E100VS",
+  },
+  // Duplicate
+  e100vs: {
+    name: "Kodak E100VS",
+  },
+  fujisensia400: {
+    name: "Fuji Sensia 400",
+  },
+  fujivelvia50: {
+    name: "Fuji Velvia 50",
+  },
+  fujineopan400: {
+    name: "Fuji Neopan 400",
+  },
+  fujiprovia100f: {
+    name: "Fuji Provia 100F",
+  },
+  rolleirpx400: {
+    name: "Rollei RPX 400",
+  },
+  fujipro160ns: {
+    name: "Fuji Pro 160NS",
+  },
+  rolleiretro400s: {
+    name: "Rollei Retro 400S",
+  },
+  astia: {
+    name: "Fuji Astia 100F",
+  },
+  fp4: {
+    name: "Ilford FP4+",
   },
 };

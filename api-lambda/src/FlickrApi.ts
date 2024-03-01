@@ -3,7 +3,7 @@ import axios from "axios";
 import { Photo, PhotoSource, PhotoTag } from "./generated/graphql";
 import env from "./env";
 import { KeyValueCache } from "@apollo/utils.keyvaluecache";
-import { CAMERA, LENS } from "./cameraLensTags";
+import { CAMERA, FILM, LENS } from "./cameraLensTags";
 
 const MAIN_USER_ID = "83914470@N00";
 const USERS = [
@@ -155,6 +155,7 @@ export class FlickrDataSource {
         sources: buildRecentSources(p),
         camera: findCamera(p.tags.split(" ")),
         lens: findLens(p.tags.split(" ")),
+        film: findFilm(p.tags.split(" ")),
         description: p.description._content,
       }));
       return {
@@ -311,6 +312,18 @@ function findLens(tags: string[]): PhotoTag | undefined {
   const { name } = LENS[lens];
   return {
     tag: lens,
+    name,
+  };
+}
+
+function findFilm(tags: string[]): PhotoTag | undefined {
+  const film = tags.find((tag) => tag in FILM);
+  if (!film) {
+    return undefined;
+  }
+  const { name } = FILM[film];
+  return {
+    tag: film,
     name,
   };
 }
