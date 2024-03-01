@@ -73,6 +73,7 @@ export class FlickrDataSource {
         sources: buildRecentSources(p),
         camera: findCamera(p.tags.split(" ")),
         lens: findLens(p.tags.split(" ")),
+        film: findFilm(p.tags.split(" ")),
         description: p.description._content,
       }));
       return {
@@ -113,6 +114,7 @@ export class FlickrDataSource {
         sources: buildRecentSources(p),
         camera: findCamera(p.tags.split(" ")),
         lens: findLens(p.tags.split(" ")),
+        film: findFilm(p.tags.split(" ")),
         description: p.description._content,
       }));
       return {
@@ -192,6 +194,7 @@ export class FlickrDataSource {
         sources: buildRecentSources(p),
         camera: findCamera(p.tags.split(" ")),
         lens: findLens(p.tags.split(" ")),
+        film: findFilm(p.tags.split(" ")),
         description: p.description._content,
       }));
       return {
@@ -234,6 +237,9 @@ export class FlickrDataSource {
           infoResponse.photo.tags.tag.map(({ _content }) => _content),
         ),
         lens: findLens(
+          infoResponse.photo.tags.tag.map(({ _content }) => _content),
+        ),
+        film: findFilm(
           infoResponse.photo.tags.tag.map(({ _content }) => _content),
         ),
       };
