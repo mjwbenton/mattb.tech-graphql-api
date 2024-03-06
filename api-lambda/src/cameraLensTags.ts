@@ -433,6 +433,9 @@ export const FILM = {
   kodakektachromeeliteii: {
     name: "Kodak Ektachrome Elite II",
   },
+  kodakektachromee200: {
+    name: "Kodak Ektachrome E200",
+  },
   ilfordhp5: {
     name: "Ilford HP5+",
   },
