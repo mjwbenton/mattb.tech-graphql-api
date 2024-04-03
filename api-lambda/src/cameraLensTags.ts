@@ -476,4 +476,10 @@ export const FILM = {
   fp4: {
     name: "Ilford FP4+",
   },
+  fomapan100: {
+    name: "Fomapan 100",
+  },
+  fomapan400: {
+    name: "Fomapan 400",
+  },
 };
