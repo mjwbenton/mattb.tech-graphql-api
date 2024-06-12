@@ -5,6 +5,7 @@ import env from "./env";
 import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 import { CAMERA, FILM, LENS } from "./cameraLensTags";
 
+const USER_AGENT = "mattb.tech/1.0";
 const MAIN_USER_ID = "83914470@N00";
 const USERS = [
   MAIN_USER_ID,
@@ -178,7 +179,7 @@ export class FlickrDataSource {
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await callFlickr("flickr.people.getPublicPhotos", {
         user_id: MAIN_USER_ID,
-        extras: "url_z, url_c, url_l, url_k, tags, description",
+        extras: "url_z,%20url_c,%20url_l,%20url_k,%20tags,%20description",
         per_page: perPage,
         page,
       });
@@ -261,7 +262,9 @@ async function callFlickr(
   });
   url += paramsStr;
   try {
-    const result = await axios.get(url);
+    const result = await axios.get(url, {
+      headers: { "User-Agent": USER_AGENT },
+    });
     return result.data;
   } catch (err) {
     if (retryNumber < 2) {

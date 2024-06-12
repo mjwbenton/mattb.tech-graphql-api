@@ -5,13 +5,13 @@ export default async function doAndCache<T>(
   cacheKey: string,
   method: () => Promise<T>,
 ): Promise<T> {
-  const cacheResult = await cache.get(cacheKey);
+  /*const cacheResult = await cache.get(cacheKey);
   if (cacheResult) {
     console.log(`Cache hit on ${cacheKey}`);
     return JSON.parse(cacheResult) as T;
   }
-  console.log(`Cache miss on ${cacheKey}`);
+  console.log(`Cache miss on ${cacheKey}`);*/
   const realResult = await method();
-  cache.set(cacheKey, JSON.stringify(realResult));
+  //cache.set(cacheKey, JSON.stringify(realResult));
   return realResult;
 }
