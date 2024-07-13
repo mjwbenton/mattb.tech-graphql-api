@@ -166,6 +166,11 @@ export const CAMERA = {
     fixedLens: false,
     format: Format.Film35mm,
   },
+  contaxt: {
+    name: "Contax T",
+    fixedLens: true,
+    format: Format.Film35mm,
+  },
   // Other Digital
   ricohgr: {
     name: "Ricoh GR",
@@ -481,5 +486,11 @@ export const FILM = {
   },
   fomapan400: {
     name: "Fomapan 400",
+  },
+  kodakgold200: {
+    name: "Kodak Gold 200",
+  },
+  ilfordpan100: {
+    name: "Ilford Pan 100",
   },
 };
