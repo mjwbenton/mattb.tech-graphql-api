@@ -496,4 +496,7 @@ export const FILM = {
   ilfordpan100: {
     name: "Ilford Pan 100",
   },
+  kodakultramax400: {
+    name: "Kodak UltraMax 400",
+  },
 };
