@@ -484,6 +484,9 @@ export const FILM = {
   fomapan100: {
     name: "Fomapan 100",
   },
+  fomapan200: {
+    name: "Fomapan 200",
+  },
   fomapan400: {
     name: "Fomapan 400",
   },
