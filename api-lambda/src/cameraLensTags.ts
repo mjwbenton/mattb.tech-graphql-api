@@ -388,6 +388,10 @@ export const FILM = {
   neopan100acros: {
     name: "Fuji Neopan 100 Acros",
   },
+  kodaktmax100: {
+    name: "Kodak T-Max 100",
+  },
+  // Duplicate
   tmax100: {
     name: "Kodak T-Max 100",
   },
