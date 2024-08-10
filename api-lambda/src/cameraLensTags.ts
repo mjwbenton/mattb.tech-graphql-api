@@ -503,4 +503,7 @@ export const FILM = {
   kodakultramax400: {
     name: "Kodak UltraMax 400",
   },
+  fujicolorc200: {
+    name: "Fuji C200",
+  },
 };
