@@ -506,4 +506,7 @@ export const FILM = {
   fujicolorc200: {
     name: "Fuji C200",
   },
+  ilfordxp2400: {
+    name: "Ilford XP2 400",
+  },
 };
