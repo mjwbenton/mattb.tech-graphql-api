@@ -509,4 +509,10 @@ export const FILM = {
   ilfordxp2400: {
     name: "Ilford XP2 400",
   },
+  kodakportra160: {
+    name: "Kodak Portra 160",
+  },
+  kodakportra400: {
+    name: "Kodak Portra 400",
+  },
 };
