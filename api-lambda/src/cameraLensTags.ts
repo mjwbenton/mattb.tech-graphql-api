@@ -515,4 +515,7 @@ export const FILM = {
   kodakportra400: {
     name: "Kodak Portra 400",
   },
+  rolleiretro80s: {
+    name: "Rollei Retro 80S",
+  },
 };
