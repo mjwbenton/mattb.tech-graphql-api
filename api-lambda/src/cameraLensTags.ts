@@ -47,6 +47,11 @@ export const CAMERA = {
     fixedLens: false,
     format: Format.Film35mm,
   },
+  leicam2: {
+    name: "Leica M2",
+    fixedLens: false,
+    format: Format.Film35mm,
+  },
   // 120
   gf670: {
     name: "Fuji GF670",
