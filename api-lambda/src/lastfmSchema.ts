@@ -32,7 +32,7 @@ const resolvers: Resolvers<Context> = {
     tracks: async (
       _: never,
       { startDate, endDate, after, first = 10 },
-      context
+      context,
     ) => {
       const { perPage, page } = decodeCursor({ first, after });
       const { plays, total } = await context.dataSources.lastfm.getTracks({

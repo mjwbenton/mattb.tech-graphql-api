@@ -77,7 +77,7 @@ export class LastfmDataSource {
           };
         });
         return { total, plays };
-      }
+      },
     );
   }
 }
@@ -85,7 +85,7 @@ export class LastfmDataSource {
 async function fetchTracks({ startDate, endDate, page, perPage }) {
   return (
     await axios.get(
-      `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=z-two&api_key=${env.LASTFM_API_KEY}&format=json&limit=${perPage}&page=${page}&from=${getUnixTime(startDate)}&to=${getUnixTime(endDate)}`
+      `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=z-two&api_key=${env.LASTFM_API_KEY}&format=json&limit=${perPage}&page=${page}&from=${getUnixTime(startDate)}&to=${getUnixTime(endDate)}`,
     )
   ).data;
 }
