@@ -1,0 +1,46 @@
+import gql from "graphql-tag";
+import { Resolvers } from "./generated/graphql";
+import { Context } from "./dataSources";
+import { buildPage, decodeCursor } from "./pagination";
+
+const typeDefs = gql`
+  extend type Query {
+    tracks(
+      startDate: DateTime
+      endDate: DateTime
+      first: Int
+      after: ID
+    ): PaginatedTracks!
+  }
+
+  type PaginatedTracks {
+    items: [Track!]!
+    total: Int!
+    hasNextPage: Boolean!
+    nextPageCursor: ID
+  }
+`;
+
+const resolvers: Resolvers<Context> = {
+  Query: {
+    tracks: async (
+      _: never,
+      { startDate, endDate, after, first = 10 },
+      context,
+    ) => {
+      const { perPage, page } = decodeCursor({ first, after });
+      const { tracks, total } = await context.dataSources.lastfm.getTracks({
+        startDate,
+        endDate,
+        perPage,
+        page,
+      });
+      return buildPage({ total, perPage, page, items: tracks });
+    },
+  },
+};
+
+export default {
+  typeDefs,
+  resolvers,
+};

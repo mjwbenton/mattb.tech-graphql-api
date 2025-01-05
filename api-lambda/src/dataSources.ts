@@ -3,6 +3,7 @@ import { EcologiDataSource } from "./EcologiApi";
 import { FlickrDataSource } from "./FlickrApi";
 import { GithubDataSourcce } from "./GithubApi";
 import { SpotifyDataSource } from "./SpotifyApi";
+import { LastfmDataSource } from "./LastfmApi";
 
 export default function dataSources(cache: KeyValueCache) {
   return {
@@ -10,6 +11,7 @@ export default function dataSources(cache: KeyValueCache) {
     flickr: new FlickrDataSource(cache),
     github: new GithubDataSourcce(cache),
     ecologi: new EcologiDataSource(cache),
+    lastfm: new LastfmDataSource(cache),
   };
 }
 

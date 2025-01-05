@@ -15,6 +15,7 @@ import testSchema from "./testSchema";
 import dataSources from "./dataSources";
 import { combineModules } from "./GqlModule";
 import { buildSubgraphSchema } from "@apollo/subgraph";
+import lastfmSchema from "./lastfmSchema";
 
 const server = new ApolloServer({
   schema: buildSubgraphSchema(
@@ -23,6 +24,7 @@ const server = new ApolloServer({
       githubSchema,
       spotifySchema,
       ecologiSchema,
+      lastfmSchema,
       testSchema,
     ),
   ),
