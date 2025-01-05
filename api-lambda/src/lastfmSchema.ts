@@ -10,11 +10,17 @@ const typeDefs = gql`
       endDate: DateTime
       first: Int
       after: ID
-    ): PaginatedTracks!
+    ): PaginatedPlays!
   }
 
-  type PaginatedTracks {
-    items: [Track!]!
+  type Play {
+    id: ID!
+    track: Track!
+    playedAt: DateTime!
+  }
+
+  type PaginatedPlays {
+    items: [Play!]!
     total: Int!
     hasNextPage: Boolean!
     nextPageCursor: ID
@@ -26,16 +32,16 @@ const resolvers: Resolvers<Context> = {
     tracks: async (
       _: never,
       { startDate, endDate, after, first = 10 },
-      context,
+      context
     ) => {
       const { perPage, page } = decodeCursor({ first, after });
-      const { tracks, total } = await context.dataSources.lastfm.getTracks({
+      const { plays, total } = await context.dataSources.lastfm.getTracks({
         startDate,
         endDate,
         perPage,
         page,
       });
-      return buildPage({ total, perPage, page, items: tracks });
+      return buildPage({ total, perPage, page, items: plays });
     },
   },
 };

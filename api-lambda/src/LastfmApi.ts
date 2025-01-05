@@ -3,6 +3,7 @@ import doAndCache from "./doAndCache";
 import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 import env from "./env";
 import { getUnixTime } from "date-fns";
+import { Play } from "./generated/graphql";
 
 export type Track = {
   id: string;
@@ -41,7 +42,7 @@ export class LastfmDataSource {
     page?: number;
     startDate?: Date;
     endDate?: Date;
-  }): Promise<{ total: number; tracks: Array<Track> }> {
+  }): Promise<{ total: number; plays: Array<Play> }> {
     return await doAndCache(
       this.cache,
       `tracks-${startDate}-${endDate}-${perPage}-${page}`,
@@ -50,11 +51,17 @@ export class LastfmDataSource {
           startDate,
           endDate,
           page,
-          perPage,
+          perPage: perPage || 1, // Last.fm API requires a perPage of at least 1
         });
-        const tracks: Array<Track> = response.recenttracks.track.map(
-          (t: any) => {
-            return {
+        const total = parseInt(response.recenttracks["@attr"].total, 10);
+        if (perPage === 0) {
+          return { total, plays: [] };
+        }
+        const plays: Array<Play> = response.recenttracks.track.map((t: any) => {
+          return {
+            id: `${t.mbid}-${t.date.uts}`,
+            playedAt: new Date(parseInt(t.date.uts, 10) * 1000),
+            track: {
               id: t.mbid,
               name: t.name,
               album: {
@@ -66,11 +73,11 @@ export class LastfmDataSource {
                 })),
               },
               artists: [{ id: t.artist.mbid, name: t.artist["#text"] }],
-            };
-          },
-        );
-        return { total: response.recenttracks["@attr"].total, tracks };
-      },
+            },
+          };
+        });
+        return { total, plays };
+      }
     );
   }
 }
@@ -78,7 +85,7 @@ export class LastfmDataSource {
 async function fetchTracks({ startDate, endDate, page, perPage }) {
   return (
     await axios.get(
-      `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=z-two&api_key=${env.LASTFM_API_KEY}&format=json&limit=${perPage}&page=${page}&from=${getUnixTime(startDate)}&to=${getUnixTime(endDate)}`,
+      `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=z-two&api_key=${env.LASTFM_API_KEY}&format=json&limit=${perPage}&page=${page}&from=${getUnixTime(startDate)}&to=${getUnixTime(endDate)}`
     )
   ).data;
 }
