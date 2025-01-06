@@ -5,7 +5,7 @@ import { buildPage, decodeCursor } from "./pagination";
 
 const typeDefs = gql`
   extend type Query {
-    tracks(
+    plays(
       startDate: DateTime
       endDate: DateTime
       first: Int
@@ -29,10 +29,10 @@ const typeDefs = gql`
 
 const resolvers: Resolvers<Context> = {
   Query: {
-    tracks: async (
+    plays: async (
       _: never,
       { startDate, endDate, after, first = 10 },
-      context,
+      context
     ) => {
       const { perPage, page } = decodeCursor({ first, after });
       const { plays, total } = await context.dataSources.lastfm.getTracks({
