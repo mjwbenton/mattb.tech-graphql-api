@@ -386,6 +386,9 @@ export const LENS = {
   bronica75mmf28zenzanonpe: {
     name: "Bronica 75mm f2.8 Zenzanon PE",
   },
+  canonfd50mmf35macro: {
+    name: "Canon FD 50mm f3.5 Macro",
+  },
 };
 
 export const FILM = {
