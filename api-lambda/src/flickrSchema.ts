@@ -34,6 +34,8 @@ const typeDefs = gql`
     camera: PhotoTag
     lens: PhotoTag
     film: PhotoTag
+    format: PhotoTag
+    otherTags: [PhotoTag!]!
   }
 
   type PhotoSource {

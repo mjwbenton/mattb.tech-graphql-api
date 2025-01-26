@@ -3,7 +3,7 @@ import axios from "axios";
 import { Photo, PhotoSource, PhotoTag } from "./generated/graphql";
 import env from "./env";
 import { KeyValueCache } from "@apollo/utils.keyvaluecache";
-import { CAMERA, FILM, LENS } from "./cameraLensTags";
+import { CAMERA, FILM, FORMAT, LENS, OTHER } from "./photoTags";
 
 const USER_AGENT = "mattb.tech/1.0";
 const MAIN_USER_ID = "83914470@N00";
@@ -62,21 +62,26 @@ export class FlickrDataSource {
       if (!USERS.includes(owner)) {
         throw new Error(`Cannot return photo set not owned by supported user`);
       }
-      const photos: Photo[] = photosResponse.photoset.photo.map((p: any) => ({
-        id: p.id,
-        pageUrl: `${FLICKR_URL_BASE}${owner}/${p.id}/`,
-        title: p.title,
-        mainSource: {
-          url: p.url_c,
-          height: p.height_c,
-          width: p.width_c,
-        },
-        sources: buildRecentSources(p),
-        camera: findCamera(p.tags.split(" ")),
-        lens: findLens(p.tags.split(" ")),
-        film: findFilm(p.tags.split(" ")),
-        description: p.description._content,
-      }));
+      const photos: Photo[] = photosResponse.photoset.photo.map((p: any) => {
+        const tags = p.tags.split(" ");
+        return {
+          id: p.id,
+          pageUrl: `${FLICKR_URL_BASE}${owner}/${p.id}/`,
+          title: p.title,
+          mainSource: {
+            url: p.url_c,
+            height: p.height_c,
+            width: p.width_c,
+          },
+          sources: buildRecentSources(p),
+          camera: findCamera(tags),
+          lens: findLens(tags),
+          film: findFilm(tags),
+          format: findFormat(tags),
+          otherTags: findOtherTags(tags),
+          description: p.description._content,
+        };
+      });
       return {
         photos,
         total: photosResponse.photoset.total,
@@ -103,21 +108,26 @@ export class FlickrDataSource {
         per_page: perPage,
         page,
       });
-      const photos = response.photos.photo.map((p: any) => ({
-        id: p.id,
-        pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
-        title: p.title,
-        mainSource: {
-          url: p.url_c,
-          height: p.height_c,
-          width: p.width_c,
-        },
-        sources: buildRecentSources(p),
-        camera: findCamera(p.tags.split(" ")),
-        lens: findLens(p.tags.split(" ")),
-        film: findFilm(p.tags.split(" ")),
-        description: p.description._content,
-      }));
+      const photos = response.photos.photo.map((p: any) => {
+        const tags = p.tags.split(" ");
+        return {
+          id: p.id,
+          pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
+          title: p.title,
+          mainSource: {
+            url: p.url_c,
+            height: p.height_c,
+            width: p.width_c,
+          },
+          sources: buildRecentSources(p),
+          camera: findCamera(tags),
+          lens: findLens(tags),
+          film: findFilm(tags),
+          format: findFormat(tags),
+          otherTags: findOtherTags(tags),
+          description: p.description._content,
+        };
+      });
       return {
         total: response.photos.total,
         photos,
@@ -146,21 +156,26 @@ export class FlickrDataSource {
         per_page: perPage,
         page,
       });
-      const photos = response.photos.photo.map((p: any) => ({
-        id: p.id,
-        pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
-        title: p.title,
-        mainSource: {
-          url: p.url_c,
-          height: p.height_c,
-          width: p.width_c,
-        },
-        sources: buildRecentSources(p),
-        camera: findCamera(p.tags.split(" ")),
-        lens: findLens(p.tags.split(" ")),
-        film: findFilm(p.tags.split(" ")),
-        description: p.description._content,
-      }));
+      const photos = response.photos.photo.map((p: any) => {
+        const tags = p.tags.split(" ");
+        return {
+          id: p.id,
+          pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
+          title: p.title,
+          mainSource: {
+            url: p.url_c,
+            height: p.height_c,
+            width: p.width_c,
+          },
+          sources: buildRecentSources(p),
+          camera: findCamera(tags),
+          lens: findLens(tags),
+          film: findFilm(tags),
+          format: findFormat(tags),
+          otherTags: findOtherTags(tags),
+          description: p.description._content,
+        };
+      });
       return {
         total: response.photos.total,
         photos,
@@ -183,21 +198,26 @@ export class FlickrDataSource {
         per_page: perPage,
         page,
       });
-      const photos = response.photos.photo.map((p: any) => ({
-        id: p.id,
-        pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
-        title: p.title,
-        mainSource: {
-          url: p.url_c,
-          height: p.height_c,
-          width: p.width_c,
-        },
-        sources: buildRecentSources(p),
-        camera: findCamera(p.tags.split(" ")),
-        lens: findLens(p.tags.split(" ")),
-        film: findFilm(p.tags.split(" ")),
-        description: p.description._content,
-      }));
+      const photos = response.photos.photo.map((p: any) => {
+        const tags = p.tags.split(" ");
+        return {
+          id: p.id,
+          pageUrl: `${FLICKR_URL_BASE}${p.owner}/${p.id}/`,
+          title: p.title,
+          mainSource: {
+            url: p.url_c,
+            height: p.height_c,
+            width: p.width_c,
+          },
+          sources: buildRecentSources(p),
+          camera: findCamera(tags),
+          lens: findLens(tags),
+          film: findFilm(tags),
+          format: findFormat(tags),
+          otherTags: findOtherTags(tags),
+          description: p.description._content,
+        };
+      });
       return {
         total: response.photos.total,
         photos,
@@ -225,6 +245,7 @@ export class FlickrDataSource {
       if (!USERS.includes(infoResponse.photo.owner.nsid)) {
         throw new Error(`Cannot return photo not owned by supported user`);
       }
+      const tags = infoResponse.photo.tags.tag.map(({ _content }) => _content);
       return {
         id: photoId,
         title: infoResponse.photo.title._content,
@@ -234,15 +255,11 @@ export class FlickrDataSource {
         )[0]._content,
         sources,
         mainSource,
-        camera: findCamera(
-          infoResponse.photo.tags.tag.map(({ _content }) => _content),
-        ),
-        lens: findLens(
-          infoResponse.photo.tags.tag.map(({ _content }) => _content),
-        ),
-        film: findFilm(
-          infoResponse.photo.tags.tag.map(({ _content }) => _content),
-        ),
+        camera: findCamera(tags),
+        lens: findLens(tags),
+        film: findFilm(tags),
+        format: findFormat(tags),
+        otherTags: findOtherTags(tags),
       };
     });
   }
@@ -313,6 +330,19 @@ function findCamera(tags: string[]): PhotoTag | undefined {
   };
 }
 
+function findFormat(tags: string[]): PhotoTag | undefined {
+  const camera = tags.find((tag) => tag in CAMERA);
+  if (!camera) {
+    return undefined;
+  }
+  const { format } = CAMERA[camera];
+  const { name } = FORMAT[format];
+  return {
+    tag: format,
+    name,
+  };
+}
+
 function findLens(tags: string[]): PhotoTag | undefined {
   const lens = tags.find((tag) => tag in LENS);
   if (!lens) {
@@ -335,4 +365,13 @@ function findFilm(tags: string[]): PhotoTag | undefined {
     tag: film,
     name,
   };
+}
+
+function findOtherTags(tags: string[]): PhotoTag[] {
+  return tags
+    .filter((tag) => tag in OTHER)
+    .map((tag) => ({
+      tag,
+      name: OTHER[tag].name,
+    }));
 }

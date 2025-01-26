@@ -1,247 +1,258 @@
-export enum Format {
-  Digital = "Digital",
-  Film120 = "Film120",
-  Film35mm = "Film35mm",
-  Instant = "Instant",
-}
+export const FORMAT = {
+  digital: {
+    name: "Digital",
+  },
+  film120: {
+    name: "120 film",
+  },
+  film35mm: {
+    name: "35mm film",
+  },
+  instant: {
+    name: "Instant",
+  },
+} as const;
+type Format = keyof typeof FORMAT;
 
-export const CAMERA = {
+export const CAMERA: {
+  [tag: string]: { name: string; fixedLens: boolean; format: Format };
+} = {
   // M-Mount
   leicam10: {
     name: "Leica M10",
     fixedLens: false,
-    format: Format.Digital,
+    format: "digital",
   },
   leicam10monochrom: {
     name: "Leica M10 Monochrom",
     fixedLens: false,
-    format: Format.Digital,
+    format: "digital",
   },
   leicam9: {
     name: "Leica M9",
     fixedLens: false,
-    format: Format.Digital,
+    format: "digital",
   },
   leicammonochrom: {
     name: "Leica M Monochrom",
     fixedLens: false,
-    format: Format.Digital,
+    format: "digital",
   },
   leicame: {
     name: "Leica M-E",
     fixedLens: false,
-    format: Format.Digital,
+    format: "digital",
   },
   minoltacle: {
     name: "Minolta CLE",
     fixedLens: false,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   zeissikon: {
     name: "Zeiss Ikon",
     fixedLens: false,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   voigtlanderbessar3m: {
     name: "Voigtlander Bessa R3M",
     fixedLens: false,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   leicam2: {
     name: "Leica M2",
     fixedLens: false,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   // 120
   gf670: {
     name: "Fuji GF670",
     fixedLens: true,
-    format: Format.Film120,
+    format: "film120",
   },
   rolleiflex35e: {
     name: "Rolleiflex 3.5E",
     fixedLens: true,
-    format: Format.Film120,
+    format: "film120",
   },
   rolleiflex28c: {
     name: "Rolleiflex 2.8C",
     fixedLens: true,
-    format: Format.Film120,
+    format: "film120",
   },
   bronicasqa: {
     name: "Bronica SQ-A",
     fixedLens: false,
-    format: Format.Film120,
+    format: "film120",
   },
   yashicamat: {
     name: "Yashica Mat",
     fixedLens: true,
-    format: Format.Film120,
+    format: "film120",
   },
   bronicaetrsi: {
     name: "Bronica ETRSi",
     fixedLens: false,
-    format: Format.Film120,
+    format: "film120",
   },
   mamiya645e: {
     name: "Mamiya 645E",
     fixedLens: false,
-    format: Format.Film120,
+    format: "film120",
   },
   wirgin6x9folder: {
     name: "Wirgin 6x9 folder",
     fixedLens: true,
-    format: Format.Film120,
+    format: "film120",
   },
   hasselblad500cm: {
     name: "Hasselblad 500CM",
     fixedLens: false,
-    format: Format.Film120,
+    format: "film120",
   },
   // Instant
   polaroidlandcamera355: {
     name: "Polaroid Land Camera 355",
     fixedLens: true,
-    format: Format.Instant,
+    format: "instant",
   },
   polaroidlandcamera340: {
     name: "Polaroid Land Camera 340",
     fixedLens: true,
-    format: Format.Instant,
+    format: "instant",
   },
   mamiyauniversalpress: {
     name: "Mamiya Universal Press",
     fixedLens: false,
-    format: Format.Instant,
+    format: "instant",
   },
   fujiinstaxwide: {
     name: "Fuji Instax Wide",
     fixedLens: true,
-    format: Format.Instant,
+    format: "instant",
   },
   // Pentax
   pentaxmx: {
     name: "Pentax MX",
     fixedLens: false,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   pentaxmesuper: {
     name: "Pentax ME Super",
     fixedLens: false,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   pentaxk1000: {
     name: "Pentax K1000",
     fixedLens: false,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   pentaxkm: {
     name: "Pentax K-m",
     fixedLens: false,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   // 35mm
   olympustrip35: {
     name: "Olympus Trip 35",
     fixedLens: true,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   olympus35ecr: {
     name: "Olympus 35 ECR",
     fixedLens: true,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   olympusxa: {
     name: "Olympus XA",
     fixedLens: true,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   actionsampler: {
     name: "Action Sampler",
     fixedLens: true,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   kodakpop: {
     name: "Kodak Pop",
     fixedLens: true,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   canoneos300: {
     name: "Canon EOS 300",
     fixedLens: false,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   contaxt: {
     name: "Contax T",
     fixedLens: true,
-    format: Format.Film35mm,
+    format: "film35mm",
   },
   // Other Digital
   ricohgr: {
     name: "Ricoh GR",
     fixedLens: true,
-    format: Format.Digital,
+    format: "digital",
   },
   ricohgriii: {
     name: "Ricoh GR III",
     fixedLens: true,
-    format: Format.Digital,
+    format: "digital",
   },
   ricohgriiix: {
     name: "Ricoh GR IIIx",
     fixedLens: true,
-    format: Format.Digital,
+    format: "digital",
   },
   sonyalpha7: {
     name: "Sony Alpha 7",
     fixedLens: false,
-    format: Format.Digital,
+    format: "digital",
   },
   x100: {
     name: "Fuji X100",
     fixedLens: true,
-    format: Format.Digital,
+    format: "digital",
   },
   x100t: {
     name: "Fuji X100T",
     fixedLens: true,
-    format: Format.Digital,
+    format: "digital",
   },
   fujifilmfinepixf30: {
     name: "Fujifilm FinePix F30",
     fixedLens: true,
-    format: Format.Digital,
+    format: "digital",
   },
   canon40d: {
     name: "Canon 40D",
     fixedLens: false,
-    format: Format.Digital,
+    format: "digital",
   },
   panasoniclumixgf1: {
     name: "Panasonic Lumix GF-1",
     fixedLens: false,
-    format: Format.Digital,
+    format: "digital",
   },
   leicaq2monochrom: {
     name: "Leica Q2 Monochrom",
     fixedLens: true,
-    format: Format.Digital,
+    format: "digital",
   },
   //Phones
   sonyericssonk750i: {
     name: "Sony Ericsson K750i",
     fixedLens: true,
-    format: Format.Digital,
+    format: "digital",
   },
   iphone6s: {
     name: "iPhone 6s",
     fixedLens: true,
-    format: Format.Digital,
+    format: "digital",
   },
   pixel2: {
     name: "Google Pixel 2",
     fixedLens: true,
-    format: Format.Digital,
+    format: "digital",
   },
 };
 
@@ -389,7 +400,7 @@ export const LENS = {
   canonfd50mmf35macro: {
     name: "Canon FD 50mm f3.5 Macro",
   },
-};
+} as const;
 
 export const FILM = {
   fujineopan100acros: {
@@ -529,4 +540,22 @@ export const FILM = {
   rolleiretro80s: {
     name: "Rollei Retro 80S",
   },
-};
+} as const;
+
+export const OTHER = {
+  orangefilter: {
+    name: "Orange filter",
+  },
+  yellowfilter: {
+    name: "Yellow filter",
+  },
+  pushed1stop: {
+    name: "Pushed 1 stop",
+  },
+  pushed2stops: {
+    name: "Pushed 2 stops",
+  },
+  selfdev: {
+    name: "Self-developed",
+  },
+} as const;
