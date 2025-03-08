@@ -16,6 +16,7 @@ import dataSources from "./dataSources";
 import { combineModules } from "./GqlModule";
 import { buildSubgraphSchema } from "@apollo/subgraph";
 import lastfmSchema from "./lastfmSchema";
+import { Handler } from "aws-lambda";
 
 const server = new ApolloServer({
   schema: buildSubgraphSchema(
@@ -31,7 +32,7 @@ const server = new ApolloServer({
   cache,
 });
 
-export const handler = startServerAndCreateLambdaHandler(
+export const handler: Handler = startServerAndCreateLambdaHandler(
   server,
   handlers.createAPIGatewayProxyEventRequestHandler(),
   {
