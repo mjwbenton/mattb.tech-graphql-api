@@ -28,7 +28,7 @@ export class Oauth extends cdk.Stack {
       {
         hostedZoneId: HOSTED_ZONE_ID,
         zoneName: HOSTED_ZONE,
-      }
+      },
     );
 
     this.table = new dynamodb.Table(this, "OauthTable", {
@@ -70,7 +70,7 @@ export class Oauth extends cdk.Stack {
     const api = new apigateway.HttpApi(this, "Api", {
       defaultIntegration: new apigatewayIntegrations.HttpLambdaIntegration(
         "OauthApiIntegration",
-        lambdaFunction
+        lambdaFunction,
       ),
     });
 
@@ -87,7 +87,7 @@ export class Oauth extends cdk.Stack {
           {
             httpsPort: 443,
             protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
-          }
+          },
         ),
         originRequestPolicy: new cloudfront.OriginRequestPolicy(
           this,
@@ -95,7 +95,7 @@ export class Oauth extends cdk.Stack {
           {
             queryStringBehavior:
               cloudfront.OriginRequestQueryStringBehavior.all(),
-          }
+          },
         ),
         cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
       },
@@ -108,7 +108,7 @@ export class Oauth extends cdk.Stack {
       recordName: OAUTH_DOMAIN,
       ttl: cdk.Duration.minutes(5),
       target: route53.RecordTarget.fromAlias(
-        new route53targets.CloudFrontTarget(distribution)
+        new route53targets.CloudFrontTarget(distribution),
       ),
     });
   }

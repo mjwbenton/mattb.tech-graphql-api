@@ -31,7 +31,7 @@ export class Gateway extends cdk.Stack {
       {
         hostedZoneId: HOSTED_ZONE_ID,
         zoneName: HOSTED_ZONE,
-      }
+      },
     );
 
     const cacheTable = new dynamodb.Table(this, "CacheTable", {
@@ -85,7 +85,7 @@ export class Gateway extends cdk.Stack {
         lambdaFunction,
         {
           payloadFormatVersion: PayloadFormatVersion.VERSION_1_0,
-        }
+        },
       ),
       path: "/{proxy+}",
       methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST],
@@ -126,10 +126,10 @@ export class Gateway extends cdk.Stack {
           certificate,
           {
             aliases: [DOMAIN_NAME],
-          }
+          },
         ),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      }
+      },
     );
 
     new route53.ARecord(this, "DomainRecord", {
@@ -137,7 +137,7 @@ export class Gateway extends cdk.Stack {
       recordName: DOMAIN_NAME,
       ttl: cdk.Duration.minutes(5),
       target: route53.RecordTarget.fromAlias(
-        new route53targets.CloudFrontTarget(distribution)
+        new route53targets.CloudFrontTarget(distribution),
       ),
     });
   }
