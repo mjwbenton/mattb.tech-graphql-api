@@ -6,6 +6,7 @@ import {
 import { ApolloGateway } from "@apollo/gateway";
 import { readFileSync } from "fs";
 import cache from "./cache";
+import { Handler } from "aws-lambda";
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
@@ -23,7 +24,7 @@ const server = new ApolloServer({
   cache,
 });
 
-export const handler = startServerAndCreateLambdaHandler(
+export const handler: Handler = startServerAndCreateLambdaHandler(
   server,
   handlers.createAPIGatewayProxyEventRequestHandler(),
 );
