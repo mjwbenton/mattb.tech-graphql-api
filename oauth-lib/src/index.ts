@@ -1,16 +1,11 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import * as crypto from "crypto";
-import {
-  DynamoDBDocumentClient,
-  GetCommand,
-  PutCommand,
-  UpdateCommand,
-} from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { cleanEnv, str } from "envalid";
 import axios from "axios";
 import addSeconds from "date-fns/addSeconds";
 import subSeconds from "date-fns/subSeconds";
 import isBefore from "date-fns/isBefore";
+import { DB_CLIENT } from "./db";
 
 const { OAUTH_TABLE, OAUTH_DOMAIN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } =
   cleanEnv(process.env, {
@@ -19,7 +14,6 @@ const { OAUTH_TABLE, OAUTH_DOMAIN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } =
     SPOTIFY_CLIENT_ID: str(),
     SPOTIFY_CLIENT_SECRET: str(),
   });
-const DB_CLIENT = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 const SPOTIFY_SERVICE = "spotify";
 const SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize";
