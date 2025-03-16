@@ -68,7 +68,7 @@ export class OAuth1Strategy implements OAuthStrategy {
     );
 
     // Step 2: Redirect to authorization URL
-    return `${this.config.authorizeUrl}?oauth_token=${requestToken.oauth_token}`;
+    return `${this.config.authorizeUrl}?oauth_token=${requestToken.oauth_token}&perms=read`;
   }
 
   async handleAuthorized(query: unknown): Promise<void> {
