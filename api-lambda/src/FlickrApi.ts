@@ -4,6 +4,8 @@ import { Photo, PhotoSource, PhotoTag } from "./generated/graphql";
 import env from "./env";
 import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 import { CAMERA, FILM, FORMAT, LENS, OTHER } from "./photoTags";
+import { getAccessToken } from "@mattb.tech/graphql-api-oauth-lib";
+import * as crypto from "crypto";
 
 const USER_AGENT = "mattb.tech/1.0";
 const MAIN_USER_ID = "83914470@N00";
@@ -16,10 +18,12 @@ const USERS = [
   "195604247@N08", // "tammytrashbags"
 ];
 
-const API_KEY = env.FLICKR_API_KEY;
 const FLICKR_URL_BASE = "https://www.flickr.com/photos/";
 const FLICKR_API_BASE_URL = "https://api.flickr.com/services/rest/";
-const FLICKR_BASE_PARAMETERS = "?format=json&nojsoncallback=1";
+const FLICKR_BASE_PARAMETERS = {
+  format: "json",
+  nojsoncallback: "1",
+};
 
 const WANTED_IMAGE_SIZES = new Set([
   "Medium",
@@ -29,6 +33,8 @@ const WANTED_IMAGE_SIZES = new Set([
   "Large 1600",
   "Large 2048",
 ]);
+
+const ACCESS_TOKEN = getAccessToken("flickr");
 
 type PhotoPage = {
   total: number;
@@ -270,17 +276,56 @@ async function callFlickr(
   params: { [key: string]: string | number },
   retryNumber: number = 0,
 ): Promise<any> {
-  let url =
-    FLICKR_API_BASE_URL + FLICKR_BASE_PARAMETERS + `&api_key=${API_KEY}&`;
-  let paramsStr = `method=${methodName}`;
-  Object.keys(params).forEach((key) => {
-    const value = params[key];
-    paramsStr += `&${key}=${value}`;
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const nonce = crypto.randomBytes(8).toString("hex");
+
+  const oauthParams = {
+    oauth_consumer_key: env.FLICKR_API_KEY,
+    oauth_nonce: nonce,
+    oauth_signature_method: "HMAC-SHA1",
+    oauth_timestamp: timestamp,
+    oauth_version: "1.0",
+    oauth_token: await ACCESS_TOKEN,
+  };
+
+  // Combine OAuth params with method params
+  const allParams = {
+    ...oauthParams,
+    method: methodName,
+    ...FLICKR_BASE_PARAMETERS,
+    ...params,
+  };
+
+  // Generate signature
+  const signature = generateSignature(
+    FLICKR_API_BASE_URL + "services/rest/",
+    "GET",
+    allParams,
+    env.FLICKR_API_SECRET,
+  );
+
+  // Add signature to OAuth params
+  const authHeader = generateAuthorizationHeader({
+    ...oauthParams,
+    oauth_signature: signature,
   });
-  url += paramsStr;
+
+  const queryString = Object.entries(allParams)
+    .filter(([key]) => !key.startsWith("oauth_"))
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+    )
+    .join("&");
+
+  const url = `${FLICKR_API_BASE_URL}services/rest/?${queryString}`;
+
   try {
     const result = await axios.get(url, {
-      headers: { "User-Agent": USER_AGENT },
+      headers: {
+        Authorization: authHeader,
+        "User-Agent": USER_AGENT,
+      },
     });
     return result.data;
   } catch (err) {
@@ -290,6 +335,58 @@ async function callFlickr(
     console.error(`Error calling flickr url: ${url}\n${err}`);
     throw err;
   }
+}
+
+function generateSignature(
+  url: string,
+  method: string,
+  params: Record<string, string | number>,
+  apiSecret: string,
+): string {
+  // Sort parameters alphabetically
+  const sortedParams = Object.keys(params)
+    .sort()
+    .map(
+      (key) => `${percentEncode(key)}=${percentEncode(params[key].toString())}`,
+    )
+    .join("&");
+
+  // Create signature base string
+  const signatureBase = [
+    method.toUpperCase(),
+    percentEncode(url),
+    percentEncode(sortedParams),
+  ].join("&");
+
+  // Create signing key
+  const signingKey = [
+    percentEncode(apiSecret),
+    "", // No token secret needed for API calls
+  ].join("&");
+
+  // Generate HMAC-SHA1 signature
+  const hmac = crypto.createHmac("sha1", signingKey);
+  hmac.update(signatureBase);
+  return hmac.digest("base64");
+}
+
+function generateAuthorizationHeader(params: Record<string, string>): string {
+  const header = Object.keys(params)
+    .filter((key) => key.startsWith("oauth_"))
+    .sort()
+    .map((key) => `${percentEncode(key)}="${percentEncode(params[key])}"`)
+    .join(", ");
+
+  return `OAuth ${header}`;
+}
+
+function percentEncode(str: string): string {
+  return encodeURIComponent(str)
+    .replace(/!/g, "%21")
+    .replace(/\*/g, "%2A")
+    .replace(/\(/g, "%28")
+    .replace(/\)/g, "%29")
+    .replace(/%20/g, "+");
 }
 
 function buildSizesSources(sizesResponse: any): PhotoSource[] {
