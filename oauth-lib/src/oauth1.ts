@@ -14,6 +14,8 @@ export interface OAuth1Config {
   authorizeUrl: string;
 }
 
+const USER_AGENT = "mattb.tech-oauth-lib/1.0";
+
 export class OAuth1Strategy implements OAuthStrategy {
   private readonly redirectUri: string;
 
@@ -47,6 +49,7 @@ export class OAuth1Strategy implements OAuthStrategy {
           ...requestTokenParams,
           oauth_signature: signature,
         }),
+        "User-Agent": USER_AGENT,
       },
     });
 
@@ -116,6 +119,7 @@ export class OAuth1Strategy implements OAuthStrategy {
           ...accessTokenParams,
           oauth_signature: signature,
         }),
+        "User-Agent": USER_AGENT,
       },
     });
 
