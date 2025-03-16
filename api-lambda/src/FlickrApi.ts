@@ -288,15 +288,13 @@ async function callFlickr(
     oauth_token: await ACCESS_TOKEN,
   };
 
-  // Combine OAuth params with method params
   const allParams = {
     ...oauthParams,
-    method: methodName,
     ...FLICKR_BASE_PARAMETERS,
+    method: methodName,
     ...params,
   };
 
-  // Generate signature
   const signature = generateSignature(
     FLICKR_API_BASE_URL + "services/rest/",
     "GET",
@@ -304,7 +302,6 @@ async function callFlickr(
     env.FLICKR_API_SECRET,
   );
 
-  // Add signature to OAuth params
   const authHeader = generateAuthorizationHeader({
     ...oauthParams,
     oauth_signature: signature,
@@ -312,10 +309,7 @@ async function callFlickr(
 
   const queryString = Object.entries(allParams)
     .filter(([key]) => !key.startsWith("oauth_"))
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
-    )
+    .map(([key, value]) => `${key}=${value}`)
     .join("&");
 
   const url = `${FLICKR_API_BASE_URL}services/rest/?${queryString}`;
