@@ -15,6 +15,3 @@ subgraphs:
   octio:
     schema:
       subgraph_url: https://graphql.octio.mattb.tech
-  baseApi:
-    schema:
-      subgraph_url: https://base.api.mattb.tech
