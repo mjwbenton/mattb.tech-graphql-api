@@ -60,6 +60,7 @@ export class FlickrDataSource {
         per_page: perPage,
         page: page,
         extras: "url_z, url_c, url_l, url_k, tags, description",
+        privacy_filter: "1",
       });
       if (!photosResponse.photoset) {
         return null;
@@ -110,6 +111,7 @@ export class FlickrDataSource {
         user_id: MAIN_USER_ID,
         tags: tag,
         extras: "url_z, url_c, url_l, url_k, tags, description",
+        privacy_filter: "1",
         sort: "date-posted-desc",
         per_page: perPage,
         page,
@@ -156,6 +158,7 @@ export class FlickrDataSource {
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await callFlickr("flickr.photos.search", {
         user_id: MAIN_USER_ID,
+        privacy_filter: "1",
         ...(startDate ? { min_upload_date: startDate.getTime() / 1000 } : {}),
         ...(endDate ? { max_upload_date: endDate.getTime() / 1000 } : {}),
         extras: "url_z, url_c, url_l, url_k, tags, description",
@@ -200,6 +203,7 @@ export class FlickrDataSource {
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await callFlickr("flickr.people.getPublicPhotos", {
         user_id: MAIN_USER_ID,
+        privacy_filter: "1",
         extras: "url_z,%20url_c,%20url_l,%20url_k,%20tags,%20description",
         per_page: perPage,
         page,
