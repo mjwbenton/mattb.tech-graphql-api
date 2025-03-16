@@ -6,14 +6,25 @@ import subSeconds from "date-fns/subSeconds";
 import isBefore from "date-fns/isBefore";
 import { DB_CLIENT } from "./db";
 import { OAuthStrategy } from "./oauth-strategy";
-import { ServiceConfig } from "./service-configuration";
-import { OAUTH_TABLE } from "./env";
+import { OAUTH_DOMAIN, OAUTH_TABLE } from "./env";
 
 // Trigger refresh this many seconds before the expiry of a token
 const EXPIRY_LEEWAY = 60;
 
+export interface ServiceConfig {
+  service: string;
+  clientId: string;
+  clientSecret: string;
+  scope: string;
+  authUrl: string;
+  tokenUrl: string;
+}
+
 export class OAuth2Strategy implements OAuthStrategy {
-  constructor(private readonly config: ServiceConfig) {}
+  private readonly redirectUri: string;
+  constructor(private readonly config: ServiceConfig) {
+    this.redirectUri = `https://${OAUTH_DOMAIN}/authorized?service=${this.config.service}`;
+  }
 
   async startAuthorization(): Promise<string> {
     const state = crypto.randomBytes(8).toString("hex");
@@ -30,7 +41,7 @@ export class OAuth2Strategy implements OAuthStrategy {
       response_type: "code",
       client_id: this.config.clientId,
       scope: this.config.scope,
-      redirect_uri: this.config.redirectUri,
+      redirect_uri: this.redirectUri,
       state,
     })}`;
   }
@@ -71,7 +82,7 @@ export class OAuth2Strategy implements OAuthStrategy {
         },
         params: {
           code,
-          redirect_uri: this.config.redirectUri,
+          redirect_uri: this.redirectUri,
           grant_type: "authorization_code",
         },
       })
@@ -124,7 +135,7 @@ export class OAuth2Strategy implements OAuthStrategy {
         },
         params: {
           refresh_token: item.refreshToken,
-          redirect_uri: this.config.redirectUri,
+          redirect_uri: this.redirectUri,
           grant_type: "refresh_token",
         },
       })

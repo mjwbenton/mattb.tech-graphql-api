@@ -1,40 +1,24 @@
-import { serviceConfigs } from "./service-configuration";
-import { OAuth2Strategy } from "./oauth2";
-
-const strategies = new Map();
+import { services } from "./services";
 
 export async function startAuthorization(service: string): Promise<string> {
-  const strategy = getStrategy(service);
-  return strategy.startAuthorization();
+  return getStrategy(service).startAuthorization();
 }
 
 export async function handleAuthorized(
   service: string,
   query: unknown,
 ): Promise<void> {
-  const strategy = getStrategy(service);
-  return strategy.handleAuthorized(query);
+  return getStrategy(service).handleAuthorized(query);
 }
 
 export async function getAccessToken(service: string): Promise<string> {
-  const strategy = getStrategy(service);
-  return strategy.getAccessToken();
+  return getStrategy(service).getAccessToken();
 }
 
 function getStrategy(service: string) {
-  if (!strategies.has(service)) {
-    const config = serviceConfigs[service];
-    if (!config) {
-      throw new Error(`Service "${service}" not supported`);
-    }
-
-    switch (config.strategy) {
-      case "oauth2":
-        strategies.set(service, new OAuth2Strategy(config));
-        break;
-      default:
-        throw new Error(`Strategy "${config.strategy}" not implemented`);
-    }
+  const strategy = services[service];
+  if (!strategy) {
+    throw new Error(`Service "${service}" not supported`);
   }
-  return strategies.get(service);
+  return strategy;
 }
