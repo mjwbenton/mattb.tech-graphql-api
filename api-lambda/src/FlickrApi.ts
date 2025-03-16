@@ -319,6 +319,7 @@ async function callFlickr(
     .join("&");
 
   const url = `${FLICKR_API_BASE_URL}services/rest/?${queryString}`;
+  console.log("Flickr URL", url);
 
   try {
     const result = await axios.get(url, {
@@ -327,6 +328,7 @@ async function callFlickr(
         "User-Agent": USER_AGENT,
       },
     });
+    console.log("Flickr result", result.data);
     return result.data;
   } catch (err) {
     if (retryNumber < 2) {
