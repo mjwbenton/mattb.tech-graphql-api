@@ -14,6 +14,7 @@ export interface OAuth1Config {
   authorizeUrl: string;
 }
 
+// Flickr requires a User-Agent header
 const USER_AGENT = "mattb.tech-oauth-lib/1.0";
 
 export class OAuth1Strategy implements OAuthStrategy {
@@ -68,6 +69,7 @@ export class OAuth1Strategy implements OAuthStrategy {
     );
 
     // Step 2: Redirect to authorization URL
+    // Flickr requires a perms parameter
     return `${this.config.authorizeUrl}?oauth_token=${requestToken.oauth_token}&perms=read`;
   }
 
