@@ -280,14 +280,11 @@ async function callFlickr(
   params: { [key: string]: string | number },
   retryNumber: number = 0,
 ): Promise<any> {
-  const timestamp = Math.floor(Date.now() / 1000).toString();
-  const nonce = crypto.randomBytes(8).toString("hex");
-
   const oauthParams = {
     oauth_consumer_key: env.FLICKR_API_KEY,
-    oauth_nonce: nonce,
+    oauth_nonce: crypto.randomBytes(8).toString("hex"),
     oauth_signature_method: "HMAC-SHA1",
-    oauth_timestamp: timestamp,
+    oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
     oauth_version: "1.0",
     oauth_token: await ACCESS_TOKEN,
   };

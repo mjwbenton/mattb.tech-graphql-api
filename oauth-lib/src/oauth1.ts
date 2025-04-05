@@ -26,23 +26,17 @@ export class OAuth1Strategy implements OAuthStrategy {
 
   async startAuthorization(): Promise<string> {
     // Step 1: Get request token
-    const timestamp = Math.floor(Date.now() / 1000).toString();
-    const nonce = crypto.randomBytes(8).toString("hex");
 
     const requestTokenParams = {
       oauth_callback: this.redirectUri,
       oauth_consumer_key: this.config.apiKey,
-      oauth_nonce: nonce,
-      oauth_signature_method: "HMAC-SHA1",
-      oauth_timestamp: timestamp,
-      oauth_version: "1.0",
+      ...createOauthBaseParams(),
     };
 
-    const signature = this.generateSignature(
-      this.config.requestTokenUrl,
-      "POST",
-      requestTokenParams,
-    );
+    const signature = this.generateSignature({
+      url: this.config.requestTokenUrl,
+      params: requestTokenParams,
+    });
 
     const response = await axios.post(this.config.requestTokenUrl, null, {
       headers: {
@@ -56,7 +50,6 @@ export class OAuth1Strategy implements OAuthStrategy {
 
     const requestToken = this.parseOAuthResponse(response.data);
 
-    // Store request token for later use
     await DB_CLIENT.send(
       new PutCommand({
         TableName: OAUTH_TABLE,
@@ -80,7 +73,6 @@ export class OAuth1Strategy implements OAuthStrategy {
 
     const { oauth_token, oauth_verifier } = query;
 
-    // Get stored request token
     const { Item: item } = await DB_CLIENT.send(
       new GetCommand({
         TableName: OAUTH_TABLE,
@@ -95,25 +87,19 @@ export class OAuth1Strategy implements OAuthStrategy {
     }
 
     // Step 3: Exchange request token for access token
-    const timestamp = Math.floor(Date.now() / 1000).toString();
-    const nonce = crypto.randomBytes(8).toString("hex");
 
     const accessTokenParams = {
       oauth_token,
       oauth_verifier,
       oauth_consumer_key: this.config.apiKey,
-      oauth_nonce: nonce,
-      oauth_signature_method: "HMAC-SHA1",
-      oauth_timestamp: timestamp,
-      oauth_version: "1.0",
+      ...createOauthBaseParams(),
     };
 
-    const signature = this.generateSignature(
-      this.config.accessTokenUrl,
-      "POST",
-      accessTokenParams,
-      item.requestTokenSecret,
-    );
+    const signature = this.generateSignature({
+      url: this.config.accessTokenUrl,
+      params: accessTokenParams,
+      tokenSecret: item.requestTokenSecret,
+    });
 
     const response = await axios.post(this.config.accessTokenUrl, null, {
       headers: {
@@ -127,7 +113,6 @@ export class OAuth1Strategy implements OAuthStrategy {
 
     const accessToken = this.parseOAuthResponse(response.data);
 
-    // Store access token
     await DB_CLIENT.send(
       new PutCommand({
         TableName: OAUTH_TABLE,
@@ -169,32 +154,32 @@ export class OAuth1Strategy implements OAuthStrategy {
     );
   }
 
-  private generateSignature(
-    url: string,
-    method: string,
-    params: Record<string, string>,
-    tokenSecret?: string,
-  ): string {
+  private generateSignature({
+    url,
+    params,
+    tokenSecret,
+  }: {
+    url: string;
+    params: Record<string, string>;
+    tokenSecret?: string;
+  }): string {
     // Sort parameters alphabetically
     const sortedParams = Object.keys(params)
       .sort()
-      .map(
-        (key) =>
-          `${this.percentEncode(key)}=${this.percentEncode(params[key])}`,
-      )
+      .map((key) => `${percentEncode(key)}=${percentEncode(params[key])}`)
       .join("&");
 
     // Create signature base string
     const signatureBase = [
-      method.toUpperCase(),
-      this.percentEncode(url),
-      this.percentEncode(sortedParams),
+      "POST",
+      percentEncode(url),
+      percentEncode(sortedParams),
     ].join("&");
 
     // Create signing key
     const signingKey = [
-      this.percentEncode(this.config.apiSecret),
-      tokenSecret ? this.percentEncode(tokenSecret) : "",
+      percentEncode(this.config.apiSecret),
+      tokenSecret ? percentEncode(tokenSecret) : "",
     ].join("&");
 
     // Generate HMAC-SHA1 signature
@@ -207,10 +192,7 @@ export class OAuth1Strategy implements OAuthStrategy {
     const header = Object.keys(params)
       .filter((key) => key.startsWith("oauth_"))
       .sort()
-      .map(
-        (key) =>
-          `${this.percentEncode(key)}="${this.percentEncode(params[key])}"`,
-      )
+      .map((key) => `${percentEncode(key)}="${percentEncode(params[key])}"`)
       .join(", ");
 
     return `OAuth ${header}`;
@@ -224,13 +206,22 @@ export class OAuth1Strategy implements OAuthStrategy {
       }),
     );
   }
+}
 
-  private percentEncode(str: string): string {
-    return encodeURIComponent(str)
-      .replace(/!/g, "%21")
-      .replace(/\*/g, "%2A")
-      .replace(/\(/g, "%28")
-      .replace(/\)/g, "%29")
-      .replace(/%20/g, "+");
-  }
+function percentEncode(str: string): string {
+  return encodeURIComponent(str)
+    .replace(/!/g, "%21")
+    .replace(/\*/g, "%2A")
+    .replace(/\(/g, "%28")
+    .replace(/\)/g, "%29")
+    .replace(/%20/g, "+");
+}
+
+function createOauthBaseParams() {
+  return {
+    oauth_nonce: crypto.randomBytes(8).toString("hex"),
+    oauth_signature_method: "HMAC-SHA1",
+    oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
+    oauth_version: "1.0",
+  };
 }
