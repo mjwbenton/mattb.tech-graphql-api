@@ -1,4 +1,5 @@
 import { services } from "./services";
+import oauth1Utils from "./oauth1Utils";
 
 export async function startAuthorization(service: string): Promise<string> {
   return getStrategy(service).startAuthorization();
@@ -22,3 +23,5 @@ function getStrategy(service: string) {
   }
   return strategy;
 }
+
+export { oauth1Utils };

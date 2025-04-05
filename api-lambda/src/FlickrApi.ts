@@ -4,8 +4,7 @@ import { Photo, PhotoSource, PhotoTag } from "./generated/graphql";
 import env from "./env";
 import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 import { CAMERA, FILM, FORMAT, LENS, OTHER } from "./photoTags";
-import { getAccessToken } from "@mattb.tech/graphql-api-oauth-lib";
-import * as crypto from "crypto";
+import { getAccessToken, oauth1Utils } from "@mattb.tech/graphql-api-oauth-lib";
 
 const USER_AGENT = "mattb.tech/1.0";
 const MAIN_USER_ID = "83914470@N00";
@@ -281,11 +280,8 @@ async function callFlickr(
   retryNumber: number = 0,
 ): Promise<any> {
   const oauthParams = {
+    ...oauth1Utils.createOauthBaseParams(),
     oauth_consumer_key: env.FLICKR_API_KEY,
-    oauth_nonce: crypto.randomBytes(8).toString("hex"),
-    oauth_signature_method: "HMAC-SHA1",
-    oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
-    oauth_version: "1.0",
     oauth_token: await ACCESS_TOKEN,
   };
 
@@ -296,14 +292,13 @@ async function callFlickr(
     ...params,
   };
 
-  const signature = generateSignature(
-    FLICKR_API_BASE_URL + "services/rest/",
-    "GET",
-    allParams,
-    env.FLICKR_API_SECRET,
-  );
+  const signature = oauth1Utils.generateSignature({
+    signingKey: oauth1Utils.createSigningKey(env.FLICKR_API_SECRET),
+    url: FLICKR_API_BASE_URL + "services/rest/",
+    params: allParams as Record<string, string>,
+  });
 
-  const authHeader = generateAuthorizationHeader({
+  const authHeader = oauth1Utils.generateAuthorizationHeader({
     ...oauthParams,
     oauth_signature: signature,
   });
@@ -332,58 +327,6 @@ async function callFlickr(
     console.error(`Error calling flickr url: ${url}\n${err}`);
     throw err;
   }
-}
-
-function generateSignature(
-  url: string,
-  method: string,
-  params: Record<string, string | number>,
-  apiSecret: string,
-): string {
-  // Sort parameters alphabetically
-  const sortedParams = Object.keys(params)
-    .sort()
-    .map(
-      (key) => `${percentEncode(key)}=${percentEncode(params[key].toString())}`,
-    )
-    .join("&");
-
-  // Create signature base string
-  const signatureBase = [
-    method.toUpperCase(),
-    percentEncode(url),
-    percentEncode(sortedParams),
-  ].join("&");
-
-  // Create signing key
-  const signingKey = [
-    percentEncode(apiSecret),
-    "", // No token secret needed for API calls
-  ].join("&");
-
-  // Generate HMAC-SHA1 signature
-  const hmac = crypto.createHmac("sha1", signingKey);
-  hmac.update(signatureBase);
-  return hmac.digest("base64");
-}
-
-function generateAuthorizationHeader(params: Record<string, string>): string {
-  const header = Object.keys(params)
-    .filter((key) => key.startsWith("oauth_"))
-    .sort()
-    .map((key) => `${percentEncode(key)}="${percentEncode(params[key])}"`)
-    .join(", ");
-
-  return `OAuth ${header}`;
-}
-
-function percentEncode(str: string): string {
-  return encodeURIComponent(str)
-    .replace(/!/g, "%21")
-    .replace(/\*/g, "%2A")
-    .replace(/\(/g, "%28")
-    .replace(/\)/g, "%29")
-    .replace(/%20/g, "+");
 }
 
 function buildSizesSources(sizesResponse: any): PhotoSource[] {

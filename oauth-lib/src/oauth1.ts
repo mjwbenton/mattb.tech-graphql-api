@@ -1,4 +1,3 @@
-import * as crypto from "crypto";
 import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import axios from "axios";
 import { DB_CLIENT } from "./db";
