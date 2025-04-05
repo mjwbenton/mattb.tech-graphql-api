@@ -4,6 +4,7 @@ import axios from "axios";
 import { DB_CLIENT } from "./db";
 import { OAuthStrategy } from "./oauth-strategy";
 import { OAUTH_DOMAIN, OAUTH_TABLE } from "./env";
+import oauth1Utils from "./oauth1Utils";
 
 export interface OAuth1Config {
   service: string;
@@ -30,17 +31,18 @@ export class OAuth1Strategy implements OAuthStrategy {
     const requestTokenParams = {
       oauth_callback: this.redirectUri,
       oauth_consumer_key: this.config.apiKey,
-      ...createOauthBaseParams(),
+      ...oauth1Utils.createOauthBaseParams(),
     };
 
-    const signature = this.generateSignature({
+    const signature = oauth1Utils.generateSignature({
+      signingKey: oauth1Utils.createSigningKey(this.config.apiSecret),
       url: this.config.requestTokenUrl,
       params: requestTokenParams,
     });
 
     const response = await axios.post(this.config.requestTokenUrl, null, {
       headers: {
-        Authorization: this.generateAuthorizationHeader({
+        Authorization: oauth1Utils.generateAuthorizationHeader({
           ...requestTokenParams,
           oauth_signature: signature,
         }),
@@ -92,18 +94,21 @@ export class OAuth1Strategy implements OAuthStrategy {
       oauth_token,
       oauth_verifier,
       oauth_consumer_key: this.config.apiKey,
-      ...createOauthBaseParams(),
+      ...oauth1Utils.createOauthBaseParams(),
     };
 
-    const signature = this.generateSignature({
+    const signature = oauth1Utils.generateSignature({
+      signingKey: oauth1Utils.createSigningKey(
+        this.config.apiSecret,
+        item.requestTokenSecret,
+      ),
       url: this.config.accessTokenUrl,
       params: accessTokenParams,
-      tokenSecret: item.requestTokenSecret,
     });
 
     const response = await axios.post(this.config.accessTokenUrl, null, {
       headers: {
-        Authorization: this.generateAuthorizationHeader({
+        Authorization: oauth1Utils.generateAuthorizationHeader({
           ...accessTokenParams,
           oauth_signature: signature,
         }),
@@ -154,50 +159,6 @@ export class OAuth1Strategy implements OAuthStrategy {
     );
   }
 
-  private generateSignature({
-    url,
-    params,
-    tokenSecret,
-  }: {
-    url: string;
-    params: Record<string, string>;
-    tokenSecret?: string;
-  }): string {
-    // Sort parameters alphabetically
-    const sortedParams = Object.keys(params)
-      .sort()
-      .map((key) => `${percentEncode(key)}=${percentEncode(params[key])}`)
-      .join("&");
-
-    // Create signature base string
-    const signatureBase = [
-      "POST",
-      percentEncode(url),
-      percentEncode(sortedParams),
-    ].join("&");
-
-    // Create signing key
-    const signingKey = [
-      percentEncode(this.config.apiSecret),
-      tokenSecret ? percentEncode(tokenSecret) : "",
-    ].join("&");
-
-    // Generate HMAC-SHA1 signature
-    const hmac = crypto.createHmac("sha1", signingKey);
-    hmac.update(signatureBase);
-    return hmac.digest("base64");
-  }
-
-  private generateAuthorizationHeader(params: Record<string, string>): string {
-    const header = Object.keys(params)
-      .filter((key) => key.startsWith("oauth_"))
-      .sort()
-      .map((key) => `${percentEncode(key)}="${percentEncode(params[key])}"`)
-      .join(", ");
-
-    return `OAuth ${header}`;
-  }
-
   private parseOAuthResponse(response: string): Record<string, string> {
     return Object.fromEntries(
       response.split("&").map((pair) => {
@@ -206,22 +167,4 @@ export class OAuth1Strategy implements OAuthStrategy {
       }),
     );
   }
-}
-
-function percentEncode(str: string): string {
-  return encodeURIComponent(str)
-    .replace(/!/g, "%21")
-    .replace(/\*/g, "%2A")
-    .replace(/\(/g, "%28")
-    .replace(/\)/g, "%29")
-    .replace(/%20/g, "+");
-}
-
-function createOauthBaseParams() {
-  return {
-    oauth_nonce: crypto.randomBytes(8).toString("hex"),
-    oauth_signature_method: "HMAC-SHA1",
-    oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
-    oauth_version: "1.0",
-  };
 }
