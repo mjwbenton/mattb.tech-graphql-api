@@ -18,8 +18,8 @@ function createOauthBaseParams() {
   };
 }
 
-function createSigningKey(...elements: string[]): string {
-  return elements.map(percentEncode).join("&");
+function createSigningKey(firstPart: string, secondPart: string = ""): string {
+  return [firstPart, secondPart].map(percentEncode).join("&");
 }
 
 function generateSignature({
