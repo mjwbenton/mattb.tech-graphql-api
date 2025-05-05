@@ -197,7 +197,7 @@ export class FlickrDataSource {
   }): Promise<PhotoPage> {
     const cacheKey = `getRecentPhotos-${perPage}p${page}`;
     return doAndCache(this.cache, cacheKey, async () => {
-      const response = await callFlickr("flickr.people.getPublicPhotos", {
+      const response = await callFlickr("flickr.people.getPhotos", {
         user_id: MAIN_USER_ID,
         extras: "url_z,%20url_c,%20url_l,%20url_k,%20tags,%20description",
         per_page: perPage,
