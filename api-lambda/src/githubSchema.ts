@@ -33,6 +33,7 @@ const typeDefs = gql`
     license: String
     primaryLanguage: String
     readme: String
+    topics: [String!]!
   }
 `;
 

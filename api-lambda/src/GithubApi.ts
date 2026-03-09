@@ -40,6 +40,13 @@ const REPOSITORIES_QUERY = (first: number, after?: string) => `{
               text
             }
           }
+          repositoryTopics(first: 20) {
+            nodes {
+              topic {
+                name
+              }
+            }
+          }
         }
       }
     }
@@ -115,6 +122,7 @@ export class GithubDataSourcce {
             updatedAt,
             url,
             readme,
+            repositoryTopics,
           }) => ({
             id,
             name,
@@ -125,6 +133,7 @@ export class GithubDataSourcce {
             license: (licenseInfo || {}).name || null,
             primaryLanguage: (primaryLanguage || {}).name || null,
             readme: (readme || {}).text || null,
+            topics: (repositoryTopics?.nodes || []).map((node) => node.topic.name),
           }),
         );
 
