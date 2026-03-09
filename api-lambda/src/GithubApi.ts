@@ -133,7 +133,9 @@ export class GithubDataSourcce {
             license: (licenseInfo || {}).name || null,
             primaryLanguage: (primaryLanguage || {}).name || null,
             readme: (readme || {}).text || null,
-            topics: (repositoryTopics?.nodes || []).map((node) => node.topic.name),
+            topics: (repositoryTopics?.nodes || []).map(
+              (node) => node.topic.name,
+            ),
           }),
         );
 
