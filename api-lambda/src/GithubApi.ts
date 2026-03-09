@@ -102,7 +102,7 @@ export class GithubDataSourcce {
     first?: number;
     after?: string;
   }): Promise<PaginatedRepositories> {
-    const cacheKey = `recentRepositories-first-${first}-after-${after}`;
+    const cacheKey = `recentRepositories-v2-first-${first}-after-${after}`;
     return doAndCache(this.cache, cacheKey, async () => {
       const response = await this.fetch(REPOSITORIES_QUERY(first, after));
       if (response.errors) {
