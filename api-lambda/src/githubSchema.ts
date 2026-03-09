@@ -34,6 +34,7 @@ const typeDefs = gql`
     primaryLanguage: String
     readme: String
     topics: [String!]!
+    isPrivate: Boolean!
   }
 `;
 

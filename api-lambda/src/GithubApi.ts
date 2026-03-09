@@ -12,8 +12,8 @@ const REPOSITORIES_QUERY = (first: number, after?: string) => `{
     repositories(
       first: ${first}
       ${after ? `after: "${after}"` : ""}
-      privacy: PUBLIC
       isFork: false
+      isArchived: false
       orderBy: { field: UPDATED_AT, direction: DESC }
     ) {
       totalCount
@@ -35,6 +35,7 @@ const REPOSITORIES_QUERY = (first: number, after?: string) => `{
           }
           updatedAt
           url
+          isPrivate
           readme: object(expression: "master:README.md") {
             ... on Blob {
               text
@@ -121,12 +122,14 @@ export class GithubDataSourcce {
             primaryLanguage,
             updatedAt,
             url,
+            isPrivate,
             readme,
             repositoryTopics,
           }) => ({
             id,
             name,
             url,
+            isPrivate,
             createdAt,
             updatedAt,
             description,
