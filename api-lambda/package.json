@@ -7,7 +7,7 @@
     "build": "npm run codegen && npm run typescript",
     "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
     "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
-    "start": "npm run codegen:watch & npm run typescript:watch & AWS_PROFILE=api-development nodemon ./dist/devServer.js",
+    "start": "keeenv run \"npm run codegen:watch & npm run typescript:watch & AWS_PROFILE=api-development nodemon ./dist/devServer.js\"",
     "codegen": "graphql-codegen --config codegen.yml",
     "codegen:watch": "graphql-codegen --config codegen.yml --watch",
     "typescript": "tsc",

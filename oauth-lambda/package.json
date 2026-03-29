@@ -7,7 +7,7 @@
     "build": "npm run typescript",
     "fix": "prettier --write '**/*' -u --ignore-path '../.gitignore'",
     "check": "tsc --noEmit && prettier --check '**/*' -u --ignore-path '../.gitignore'",
-    "start": "npm run typescript:watch & nodemon ./dist/devServer.js",
+    "start": "keeenv run \"npm run typescript:watch & nodemon ./dist/devServer.js\"",
     "typescript": "tsc",
     "typescript:watch": "tsc --watch"
   },

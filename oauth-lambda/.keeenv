@@ -1,0 +1,8 @@
+[keepass]
+database = ~/Dropbox/Apps/KeePass/db.kdbx
+
+[env]
+SPOTIFY_CLIENT_ID = ${"env/SPOTIFY_CLIENT_ID".Password}
+SPOTIFY_CLIENT_SECRET = ${"env/SPOTIFY_CLIENT_SECRET".Password}
+FLICKR_API_KEY = ${"env/FLICKR_API_KEY".Password}
+FLICKR_API_SECRET = ${"env/FLICKR_API_SECRET".Password}

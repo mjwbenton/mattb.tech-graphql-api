@@ -1,0 +1,8 @@
+[keepass]
+database = ~/Dropbox/Apps/KeePass/db.kdbx
+
+[env]
+GH_TOKEN = ${"env/GH_TOKEN".Password}
+FLICKR_API_KEY = ${"env/FLICKR_API_KEY".Password}
+FLICKR_API_SECRET = ${"env/FLICKR_API_SECRET".Password}
+LASTFM_API_KEY = ${"env/LASTFM_API_KEY".Password}
