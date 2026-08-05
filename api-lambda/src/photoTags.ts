@@ -507,6 +507,10 @@ export const FILM = {
   astia: {
     name: "Fuji Astia 100F",
   },
+  ilfordfp4: {
+    name: "Ilford FP4+",
+  },
+  // Duplicate
   fp4: {
     name: "Ilford FP4+",
   },
