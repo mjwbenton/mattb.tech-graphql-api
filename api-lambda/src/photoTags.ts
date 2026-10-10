@@ -547,6 +547,9 @@ export const FILM = {
   rolleiretro80s: {
     name: "Rollei Retro 80S",
   },
+  cinestill400d: {
+    name: "Cinestill 400D",
+  },
 } as const;
 
 export const OTHER = {
